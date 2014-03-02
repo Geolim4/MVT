@@ -1,4 +1,4 @@
 *~
-/cache/*
-/mods/*
+/cache/*.php
+/mods/*/*
 /mvt.nppsession
