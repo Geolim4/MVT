@@ -1,0 +1,242 @@
+<script type="text/javascript">
+//<![CDATA[
+var current_file = '{S_CURRENT_FILE}', current_file_ext = '{S_CURRENT_FILE_EXT}', current_mod = '{S_CURRENT_MOD}';
+var current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+var current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+var current_tree_path = new Array(), expanded_folders = '';
+var ext_association = {'btn_check_syntax': ['php'], 'btn_base64_decode' : ['php', 'js', 'html', 'txt', 'xml']}, ext_unassociation = {'btn_search_engine': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg']};
+var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array();
+var index = '{U_INDEX}';
+
+function add_mod(){
+	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_SUBMIT}';
+	btns[cwBtn] = function () {
+		$(this).dialog('close');
+	};
+	btns[awBtn] = function () {
+		var mod_url = $('#mod_url').val();
+		if(!mod_url){
+			return;
+		}
+		$(this).dialog('close');
+		mods_ary = mod_url.split("\n");
+		content_status(false);
+		for(mod in mods_ary){
+			if(mods_ary[mod]){
+				$.ajax({
+					type: 'POST',
+					url: '{U_AJAX}',
+					data: {'mod' : '{S_CURRENT_MOD}', 'url' : mods_ary[mod], 'mode' : 'add_mod'},
+					timeout: 30000,
+					async: false,
+					dataType  : 'json',
+					beforeSend: function() {
+						
+					},
+					complete: function(data, textStts, errThrown) {
+
+					},
+					success: function(data, textStts, errThrown) {
+						if(data['errmsg']){
+							alert(data['errmsg']);
+						}
+						if(data['eval']){
+							eval(data['eval']);
+						}
+					},
+					error: function(data, textStts, errThrown) {
+
+					},
+				});
+			}
+		}
+		content_status(true);
+		<!-- IF S_NO_MODS -->
+		location.assign('{U_INDEX}');
+		<!-- ENDIF -->
+	};
+	$('#confirmbox').children('div').html('{LA_MVT_ADD_MOD_URL}<br /><textarea class="inputbox text ui-widget-content ui-corner-all" id="mod_url" tabindex="3" cols="78" rows="5" name="mod_url" style="height: 90px;width: 720px;resize: none;"></textarea><br /><br />{LA_MVT_MOD_ALTERNATIVE}');
+	$('#confirmbox').dialog({
+		modal: true, title: "{LA_MVT_ADD_MOD}",
+		zIndex: 10000, autoOpen: true,
+		width: '750px', resizable: false,
+		draggable : false, buttons: btns,
+	});
+}
+
+function mvt_info(boxtitle, boxmsg, on_ok){
+	var btns = {}, awBtn = '{LA_MVT_OK}';
+	btns[awBtn] = function () {
+		if(typeof(on_ok) == "function"){
+			on_ok();
+		}
+		$(this).dialog('close');
+	};
+	$('#infobox').children('div').html(boxmsg);
+	$('#infobox').dialog({
+		modal: true, title: boxtitle,
+		zIndex: 10000, autoOpen: true,
+		width: '350px', resizable: false,
+		draggable : false, buttons: btns,
+	});
+}
+function mvt_confirm(boxtitle, boxmsg, on_confirm, on_cancel){
+
+	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_CONTINUE}';
+	btns[cwBtn] = function () {
+		if(typeof(on_cancel) == "function"){
+			on_cancel();
+		}
+		$(this).dialog('close');
+	};
+	btns[awBtn] = function () {
+		if(typeof(on_confirm) == "function"){
+			on_confirm();
+		}
+		$(this).dialog('close');
+	};
+	$('#confirmbox').children('div').html('<span class="ui-icon ui-icon-alert" style="margin-top: 1px; float: left;"></span>' + boxmsg);
+	$('#confirmbox').dialog({
+		modal: true, title: boxtitle,
+		zIndex: 10000, autoOpen: true,
+		width: '500px', resizable: false,
+		draggable : false, buttons: btns,
+	});
+}
+
+function content_status(status){
+	if(status){
+		$('#tabs').children('ul').children('li.add-mod').children('a').children('span').children('img').attr('src', 'style/images/file_new.gif');
+		$('div.disable-content').hide();
+		$('#acp').children('div.panel').css('position', '');
+	}else{
+		$('#tabs').children('ul').children('li.add-mod').children('a').children('span').children('img').attr('src', 'style/images/mod_loading.gif');
+		$('div.disable-content').show();
+		$('#acp').children('div.panel').css('position', 'relative');
+	}
+
+}
+
+function add_mod_tab(name, uri, path){
+	if(!$("a[href='" + uri + "']").html())
+	{
+		$("#tabs").children("ul").append('<li class="mods-tab"><a class="mods-links" href="' + uri + '"><span>' + name + '&nbsp;&nbsp;&nbsp;</span></a><img alt="" onclick="delete_mod(\'' + path + '\'); return false;" class="mod-delete" src="style/images/mod_delete.png" /></li>');
+		<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
+		$('#tabs').find("a.mods-links").click(function(){
+			exit_handler(this.href);
+			return false;
+		});
+		<!-- ENDIF -->
+	}
+}
+
+function berstick(resize) {
+	var window_top = $(window).scrollTop(), div_top = $('#tools-sticker').offset().top, $el = $('#tools'), $pl = $('#tools-sticker');
+	if(resize === true && window_top > div_top){
+		$('#tools').css({'position': 'fixed', 'top': '6px', 'width' : $pl.css('width')});
+		return;
+	}
+	if (window_top > div_top) {
+		$('#tools').css({'position': 'fixed', 'top': '6px', 'width' : $el.css('width')});
+	} else {
+		$('#tools').css({'position': '', 'top': '0px', 'width' : "auto"});
+	}
+}
+
+/**
+* Insert text at position (borrowed from posting_editor.js)
+*/
+function insert_text(text, spaces, form_name)
+{
+	var textarea;
+	textarea = opener.document.forms[form_name].elements[text_name];
+
+	if (spaces) 
+	{
+		text = ' ' + text + ' ';
+	}
+
+	// Since IE9, IE also has textarea.selectionStart, but it still needs to be treated the old way.
+	// Therefore we simply add a !is_ie here until IE fixes the text-selection completely.
+	if (!isNaN(textarea.selectionStart) && !is_ie)
+	{
+		var sel_start = textarea.selectionStart;
+		var sel_end = textarea.selectionEnd;
+
+		mozWrap(textarea, text, '');
+		textarea.selectionStart = sel_start + text.length;
+		textarea.selectionEnd = sel_end + text.length;
+	}
+	else if (textarea.createTextRange && textarea.caretPos)
+	{
+		if (baseHeight != textarea.caretPos.boundingHeight) 
+		{
+			textarea.focus();
+			storeCaret(textarea);
+		}
+
+		var caret_pos = textarea.caretPos;
+		caret_pos.text = caret_pos.text.charAt(caret_pos.text.length - 1) == ' ' ? caret_pos.text + text + ' ' : caret_pos.text + text;
+	}
+	else
+	{
+		textarea.value = textarea.value + text;
+	}
+}
+
+function strrchr(haystack, needle) {
+	//http://phpjs.org/functions
+	var pos = 0;
+
+	if (typeof needle !== 'string') {
+		needle = String.fromCharCode(parseInt(needle, 10));
+	}
+	needle = needle.charAt(0);
+	pos = haystack.lastIndexOf(needle);
+	if (pos === -1) {
+		return false;
+	}
+	return haystack.substr(pos);
+}
+
+function base64_decoder(data) {
+  //@Source: https://github.com/kvz/phpjs/blob/master/functions/url/base64_decode.js
+  var b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  var o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
+      ac = 0,
+      dec = '',
+      tmp_arr = [];
+
+  if (!data) {
+    return data;
+  }
+
+  data += '';
+
+  do { // unpack four hexets into three octets using index points in b64
+    h1 = b64.indexOf(data.charAt(i++));
+    h2 = b64.indexOf(data.charAt(i++));
+    h3 = b64.indexOf(data.charAt(i++));
+    h4 = b64.indexOf(data.charAt(i++));
+
+    bits = h1 << 18 | h2 << 12 | h3 << 6 | h4;
+
+    o1 = bits >> 16 & 0xff;
+    o2 = bits >> 8 & 0xff;
+    o3 = bits & 0xff;
+
+    if (h3 == 64) {
+      tmp_arr[ac++] = String.fromCharCode(o1);
+    } else if (h4 == 64) {
+      tmp_arr[ac++] = String.fromCharCode(o1, o2);
+    } else {
+      tmp_arr[ac++] = String.fromCharCode(o1, o2, o3);
+    }
+  } while (i < data.length);
+
+  dec = tmp_arr.join('');
+
+  return dec;
+}
+// ]]>
+</script>

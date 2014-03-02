@@ -1,0 +1,252 @@
+/*
+ @package MVT
+ @copyright (c) 2014 phpBB-fr MOD Team
+ @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ @author Georges.L (Geolim4)
+*/
+
+html.busy, html.busy * {
+	cursor: wait !important;
+}
+#page-header{
+	height: 70px;
+}
+#tabs ul li:first-child{
+	margin-left: 1em !important;
+}
+#tabs ul li{
+	float: left;
+	position: relative;/*Delete icons*/
+}
+#tabs ul li.settings{
+	float: right;
+}
+#tabs ul li.add-mod{
+	display: inline;
+	float: right;
+	height: 25px;
+	overflow: hidden;
+}
+#tabs ul li img.mod-delete{
+	cursor: pointer;
+	margin-right: 4px;
+	margin-top: 4px;
+	position: absolute;
+	right: 0;
+	opacity: 0.6;
+}
+#tabs ul li img.mod-delete:hover{
+	opacity: 1;
+}
+a.tree-selected{
+	background-color: #FFFFFF;
+	font-weight: bold;
+}
+div.disable-content {
+	display: none;
+	background-color: #808080;
+	height: 100%;
+	left: -1px;
+	opacity: 0.65;
+	position: absolute;
+	top: 1px;
+	width: 100.111%;
+	z-index: 10;
+}
+span.tree-external{
+	background: url("./images/tree-external.png") no-repeat scroll center top transparent;
+	display: inline-block;
+	height: 16px;
+	width: 16px;
+}
+div.code-content{
+	background-color: #FFFAFA;
+	border: 1px solid #808080;
+	border-radius: 5px;
+	overflow: auto;
+	padding-left: 45px;
+	max-height: 1000px;
+}
+.success{
+	color: #009933;
+}
+#tools {
+	background-color: #E2F7CB;
+	border-radius: 2px;
+	box-shadow: 0 1px 4px 2px;
+	height: 23px;
+	margin-top: -6px;
+	padding-top: 7px;
+	padding-left: 10px;
+}
+#tools ul{
+	list-style: none outside none;
+	margin: 0;
+	padding: 0;
+}
+#tools ul li{
+	display: inline;
+	font-size: 0.85em;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+	letter-spacing: -0.5px;
+}
+#tools ul li.separator{
+	margin-left: 10px;
+	margin-right: 10px;
+}
+#tools ul li a.btn {
+  background: #b7bbbd;
+  background-image: -webkit-linear-gradient(top, #b7bbbd, #9e9e9e);
+  background-image: -moz-linear-gradient(top, #b7bbbd, #9e9e9e);
+  background-image: -ms-linear-gradient(top, #b7bbbd, #9e9e9e);
+  background-image: -o-linear-gradient(top, #b7bbbd, #9e9e9e);
+  background-image: linear-gradient(to bottom, #b7bbbd, #9e9e9e);
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 5px 10px 4px 10px;
+}
+#tools ul li a img {
+	height: 14px;
+}
+#tools ul li a.btn:hover {
+  background: #cfcfcf;
+  background-image: -webkit-linear-gradient(top, #cfcfcf, #b3b3b3);
+  background-image: -moz-linear-gradient(top, #cfcfcf, #b3b3b3);
+  background-image: -ms-linear-gradient(top, #cfcfcf, #b3b3b3);
+  background-image: -o-linear-gradient(top, #cfcfcf, #b3b3b3);
+  background-image: linear-gradient(to bottom, #cfcfcf, #b3b3b3);
+  text-decoration: none;
+}
+
+#notepad{
+	background: url("./images/notepad-bloc.png") repeat scroll center top #F3F3F3;
+	padding: 0px 5px 5px 5px;
+	display: none;
+	left: 150px;
+	opacity: 0.90;
+	position: fixed;
+	top: 0px;
+	overflow: hidden;
+	border: 1px dashed tomato;
+	z-index: 10000;
+	box-shadow: 3px 3px 8px 3px;
+}
+
+#notepad textarea{
+	transition: height 0.2s ease 0s;
+	vertical-align: top;
+	margin-top: 15px;
+	width: auto;
+	max-height: 600px;
+	background-color: #1E1E1E;
+	color: #FFFFE0;
+}
+
+#notepad textarea:focus{
+	color: #FFFF8D;
+}
+
+#notepad h3 a.button{
+	padding-bottom: 2px;
+	float: right;
+	margin-left: 4px;
+	border-radius: 2px;
+	color: white;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	font-size: 1.2em;
+	background: #a90329; /* Old browsers */
+	background: -moz-linear-gradient(top, #a90329 0%, #8f0222 44%, #6d0019 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a90329), color-stop(44%,#8f0222), color-stop(100%,#6d0019)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #a90329 0%,#8f0222 44%,#6d0019 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019',GradientType=0 ); /* IE6-9 */
+}
+#notepad h3 a.button-reduced{
+	float: right;
+	margin-left: 2px;
+	border-radius: 2px;
+	color: white;
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	font-size: 0.8em;
+	background: #a90329; /* Old browsers */
+	background: -moz-linear-gradient(top, #a90329 0%, #8f0222 44%, #6d0019 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a90329), color-stop(44%,#8f0222), color-stop(100%,#6d0019)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #a90329 0%,#8f0222 44%,#6d0019 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #a90329 0%,#8f0222 44%,#6d0019 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019',GradientType=0 ); /* IE6-9 */
+}
+#notepad h3 a.button-reduced{
+	display: none;
+}
+#notepad.reduced h3 a.button-reduced{
+	display: inline-block;
+}
+#notepad.reduced h3 a.button, #notepad.reduced textarea{
+	display: none;
+}
+#notepad.reduced h3{
+	display: inline-block;
+	font-size: 0.9em;
+	height: 12px;
+	overflow: auto;
+	text-align: left;
+}
+#notepad.reduced {
+	border: 1px dashed #008000;
+	border-radius: 2px 2px 0 0;
+	bottom: -1px;
+	cursor: pointer;
+	left: auto !important;
+	padding-left: 20px;
+	position: fixed;
+	right: 50px;
+	top: auto !important;
+	width: 170px;
+}
+#notepad h3{
+	border-bottom: 1px solid #808080;
+	color: #000080;
+	letter-spacing: 0.6px;
+	margin-top: 5px;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+#dialogbox{
+	display: none;
+}
+.uppercase{
+	text-transform:uppercase;
+}
+.ui-effects-transfer { 
+	border: 2px dotted gray; 
+}
+#file-tree {
+	max-height: 1000px;
+	overflow: auto;
+}
+#tree-tools {
+	margin-top: 20px;
+	font-weight: bold;
+	float: left;
+}
+
+.ui-tooltip {
+	background: black;
+	border: 2px solid white;
+	padding: 10px 20px;
+	color: white;
+	border-radius: 20px;
+	font: bold 14px "Helvetica Neue", Sans-Serif;
+	box-shadow: 0 0 7px black;
+}

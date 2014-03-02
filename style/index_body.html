@@ -1,0 +1,535 @@
+<a name="maincontent"></a>
+<!-- IF S_FILE_CODE_CONTENT -->
+<div id="notepad">
+	<h3><span onclick="$('#notepad').removeClass('reduced');">{L_MVT_NOTEPAD_TITLE}</span><a href="javascript:void(0);" onclick="$('#notepad').toggle(300);" class="button">x</a><a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');" class="button">-</a><a id="notepad-handle" href="javascript:void(0);" class="button" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a></h3>
+	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: 9em;"></textarea>
+</div>
+<div id="tools-sticker"></div>
+<div id="tools">
+	<ul>
+		<li id="btn_left_scroll"><a href="#" class="btn" onclick="left_scroll(); return false;" title="{L_MVT_SCROLL_LEFT}" ><img alt="{L_MVT_SCROLL_LEFT}" src="style/images/scroll_left.png" /></a></li>
+		<li id="btn_right_scroll"><a href="#" class="btn" onclick="right_scroll(); return false;" title="{L_MVT_SCROLL_RIGHT}"><img alt="{L_MVT_SCROLL_RIGHT}" src="style/images/scroll_right.png" /></a></li>
+		<li id="btn_top_scroll"><a href="#" class="btn" onclick="top_scroll(); return false;" title="{L_MVT_SCROLL_TOP}"><img alt="{L_MVT_SCROLL_TOP}" src="style/images/scroll_up.png" /></a></li>
+		<li id="btn_down_scroll"><a href="#" class="btn" onclick="down_scroll(); return false;" title="{L_MVT_SCROLL_DOWN}"><img alt="{L_MVT_SCROLL_DOWN}" src="style/images/scroll_down.png" /></a></li>
+		<li class="separator">|</li>
+		<li id="btn_select_code"><a href="#" class="btn" onclick="selectCode(document.getElementById('code-content'), 'ol'); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
+		<li id="btn_notepad"><a href="#" class="btn" onclick="$('#notepad').show(300); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
+		<li id="btn_purge_notepad"><a href="#" class="btn" onclick="purge_notepad(); return false;" id="notepad-purge" title="{L_MVT_PURGE}"><img alt="{L_MVT_PURGE}" src="style/images/purge.png" /></a></li>
+		<li class="separator">|</li>
+		<li id="btn_report_notice"><a href="#" class="btn uppercase" onclick="report_code('[color=blue][ {L_MVT_TAG_NOTICE} ][/color]'); return false;" title="{L_MVT_TAG_NOTICE}"><strong style="color: blue;">[&nbsp;{L_MVT_TAG_NOTICE}&nbsp;]</strong></a></li>
+		<li id="btn_report_warning"><a href="#" class="btn uppercase" onclick="report_code('[color=orange][ {L_MVT_TAG_WARNING} ][/color]'); return false;" title="{L_MVT_TAG_WARNING}"><strong style="color: orange;">[&nbsp;{L_MVT_TAG_WARNING}&nbsp;]</strong></a></li>
+		<li id="btn_report_fail"><a href="#" class="btn uppercase" onclick="report_code('[color=red][ {L_MVT_TAG_FAIL} ][/color]'); return false;" title="{L_MVT_TAG_FAIL}"><strong style="color: red;">[&nbsp;{L_MVT_TAG_FAIL}&nbsp;]</strong></a></li>
+		<li id="btn_internal_mesage"><a href="#" class="btn" onclick="internal_mesage(); return false;" id="internal-button" title="{L_MVT_INTERNAL}"><img alt="{L_MVT_INTERNAL}" src="style/images/internal.png" /></a></li>
+		<li id="btn_filename"><a href="#" class="btn" onclick="insert_filename(); return false;" id="filename-button" title="{L_MVT_INSERT_FILENAME}"><img alt="{L_MVT_INSERT_FILENAME}" src="style/images/filename.png" /></a></li>
+		<li class="separator">|</li>
+		<li id="btn_filestats"><a href="#" class="btn" onclick="get_filestats(); return false;" id="filestats-button" title="{L_MVT_FILESTATS}"><img alt="{L_MVT_FILESTATS}" src="style/images/filestats.png" /></a></li>
+		<li id="btn_search_engine"><a href="#" class="btn" onclick="search_engine(); return false;" title="{L_MVT_SEARCH_ENGINE}"><img alt="{L_MVT_SEARCH_ENGINE}" src="style/images/{S_CFG_SEARCH_ENGINE_IMG}" /></a></li>
+		<li id="btn_base64_decode"><a href="#" class="btn" onclick="base64_decode(); return false;" title="{L_MVT_BASE64_DECODE}"><img alt="{L_MVT_BASE64_DECODE}" src="style/images/base64.png" /></a></li>
+		<!-- IF S_CFG_SYNTAX --><li id="btn_check_syntax"><a href="#" class="btn" onclick="check_syntax(); return false;" title="{L_MVT_PHP_SYNTAX}"><img alt="{L_MVT_PHP_SYNTAX}" src="style/images/php_syntax.png" /></a></li><!-- ENDIF -->
+	</ul>
+</div>
+<p class="clear"></p>
+<div class="code-content" id="code-content">
+{S_FILE_CODE_CONTENT}
+</div>
+<!-- ENDIF -->
+<div id="dialogbox">
+	<div></div><br />
+	<textarea class="inputbox text ui-widget-content ui-corner-all" id="user-report" tabindex="3" cols="75" rows="5" name="message" style="height: 90px;width: 470px;resize: none;"></textarea>
+</div>
+<div id="infobox"><div></div></div>
+<div id="confirmbox"><div></div></div>
+
+<!-- INCLUDE javascript_core.html -->
+<script type="text/javascript">
+// <![CDATA[
+$(document).ready(function() {
+	init();
+});
+function init(){
+	 $(function() {
+		$('.btn').tooltip({
+			 show: {
+				delay: 400
+			},
+			position: {
+				my: "center bottom-30",
+				at: "center bottom",
+			},
+		});
+	});
+	$(document).keydown(function(e)
+	{
+		if (e.keyCode == ctrlKey) ctrlDown = true;
+	}).keyup(function(e)
+	{
+		if (e.keyCode == ctrlKey) ctrlDown = false;
+	});
+	set_button_status();
+	for (key in current_path_anchor){
+		expanded_folders += current_path_anchor[key] + '/';
+		current_tree_path[key] = '{U_MODS_PATH}{S_CURRENT_MOD}/' + expanded_folders;
+	}
+	$('#file-tree').fileTree({
+			root:'{U_MODS_PATH}{S_CURRENT_MOD}/',
+			multiFolder: true,
+			script: '{U_FILE_TREE}',
+			loadMessage : 'Wait...',
+			expandSpeed : 300,
+			collapseSpeed : 150,
+			expandedFolders: current_tree_path,
+		},
+		function(file) {
+			set_active_file(file.replace('{U_MODS_PATH}{S_CURRENT_MOD}/', ''));
+		}
+	);
+	//Wait for Jquery fileTree finish the job
+	setTimeout(function() {
+		if(current_file_anchor){
+			set_active_file(current_file_anchor);
+		}else{
+			reset_file_selected(100);
+		}
+		$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
+	}, 500);
+	$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
+	$(function () {
+		$(window).scroll(berstick);
+		berstick();
+	});
+	$(window).resize(function() {
+		berstick(true);
+	});
+	<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
+	$('#tabs').find("a.mods-links").click(function(){
+		exit_handler(this.href);
+		return false;
+	});
+	<!-- ENDIF -->
+	<!-- IF S_CFG_EXIT_HANDLER -->
+	setInterval(notepad_report_checker, 1000);
+	<!-- ENDIF -->
+}
+
+function left_scroll(){
+	var scroll_value = ctrlDown ? '-=9999' : '-=150';
+	$('#code-content').animate({
+		scrollLeft: scroll_value
+	}, 150);
+}
+
+function right_scroll(){
+	var scroll_value = ctrlDown ? '+=9999' : '+=150';
+	$('#code-content').animate({
+		scrollLeft: scroll_value
+	}, 150);
+}
+
+function top_scroll(){
+	var scroll_value = ctrlDown ? '-=9999' : '-=300';
+	$('#code-content').animate({
+		scrollTop: scroll_value
+	}, 150);
+}
+
+function down_scroll(){
+	var scroll_value = ctrlDown ? '+=9999' : '+=300';
+	$('#code-content').animate({
+		scrollTop: scroll_value
+	}, 150);
+}
+
+function search_engine(){
+	var SelectedCode = getSelectedCode(), engine_url = "{S_CFG_SEARCH_ENGINE_URL}";
+	if(!SelectedCode){
+		alert('{LA_MVT_SELECT_ERROR}');
+	}else{
+		window.open(engine_url.replace('%CODE%', SelectedCode.substr(0, 120)));
+	}
+}
+
+function base64_decode(){
+	var SelectedCode = getSelectedCode();
+	if(!SelectedCode){
+		alert('{LA_MVT_SELECT_ERROR}');
+	}else if (/*SelectedCode.substr(SelectedCode.length - 2) != '==' ||*/ !/^[a-zA-Z0-9=]+$/.test(SelectedCode)){
+		alert('{LA_MVT_INVALID_BASE64}');
+	}else{
+		mvt_info('{L_INFORMATION}', base64_decoder(SelectedCode));
+	}
+}
+
+function collapse_all(){
+	current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+	current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+	current_tree_path = new Array(), expanded_folders = '';
+	for (key in current_path_anchor){
+		expanded_folders += current_path_anchor[key] + '/';
+		current_tree_path[key] = '{U_MODS_PATH}{S_CURRENT_MOD}/' + expanded_folders;
+	}
+	$('#file-tree').fileTree({
+			root:'{U_MODS_PATH}{S_CURRENT_MOD}/',
+			multiFolder: true,
+			script: '{U_FILE_TREE}',
+			loadMessage : 'Wait...',
+			expandSpeed : 300,
+			collapseSpeed : 150,
+			expandedFolders: current_tree_path,
+		},
+		function(file) {
+			set_active_file(file.replace('{U_MODS_PATH}{S_CURRENT_MOD}/', ''));
+		}
+	);
+	$('html, body').animate({
+		scrollTop: $("#tabs").offset().top
+	}, 800);
+	reset_file_selected(500);
+}
+
+function expand_all(){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : '{S_CURRENT_MOD}', 'mode' : 'tree_all'},
+		timeout: 5000,
+		dataType  : 'json',
+		beforeSend: function() {
+			busy = true;
+		},
+		complete: function(data, textStts, errThrown) {
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			$('#file-tree').fileTree({
+					root:'{U_MODS_PATH}{S_CURRENT_MOD}/',
+					multiFolder: true,
+					script: '{U_FILE_TREE}',
+					loadMessage : 'Wait...',
+					expandSpeed : 300,
+					collapseSpeed : 150,
+					expandedFolders: data,
+				},
+				function(file) {
+					set_active_file(file.replace('{U_MODS_PATH}{S_CURRENT_MOD}/', ''));
+				}
+			);
+			reset_file_selected(1000);
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function reset_file_selected(delay){
+	if(delay){
+		var timedelay = delay;
+	} else {
+		var timedelay = 250;
+	}
+	setTimeout(function() {
+		$(".tree-selected").removeClass("tree-selected");
+		$("a[href='#" + current_file + "']").addClass("tree-selected");
+	}, timedelay);
+}
+
+function notepad_report_checker(){
+	if($('#notepad-report').val()){
+		window.onbeforeunload = onbeforeunload_handler;
+	}else{
+		window.onbeforeunload = false;
+	}
+}
+
+function onbeforeunload_handler (){
+	var message = "{LA_MVT_EXIT_ALERT}",
+	e = e || window.event;
+	//IE and Firefox
+	if (e) {
+		e.returnValue = message;
+	}
+	// Safari
+	return message;
+}
+
+function set_onbeforeunload_handler(handler){
+	window.onbeforeunload = handler;
+}
+
+function exit_handler(url){
+	if($('#notepad-report').val()){
+		var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_CONTINUE}';
+		btns[cwBtn] = function () {
+			$('#notepad').show(300);
+			$(this).dialog('close');
+		};
+		btns[awBtn] = function () {
+			window.onbeforeunload = false;
+			window.location.href = url;
+			$(this).dialog('close');
+		};
+		$('#confirmbox').children('div').html('<span class="ui-icon ui-icon-alert" style="margin-top: 1px; float: left;"></span> {LA_MVT_EXIT_ALERT}');
+		$('#confirmbox').dialog({
+			modal: true, title: "{LA_MVT_INFORMATION}",
+			zIndex: 10000, autoOpen: true,
+			width: '500px', resizable: false,
+			draggable : false, buttons: btns,
+		});
+	}else{
+		window.location.href = url;
+	}
+	return false;
+}
+
+function set_active_file(file){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : '{S_CURRENT_MOD}', 'file' : file},
+		timeout: 5000,
+		beforeSend: function() {
+			$('html, body').addClass('busy');
+			busy = true;
+		},
+		complete: function(data, textStts, errThrown) {
+			$('html, body').removeClass('busy');
+			$('#code-content').find("a").attr("onclick", "window.open(this.href); return false;");
+			$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			$("#code-content").html(data);
+			$('html, body').animate({
+				scrollTop: $("#acp").last().offset().top
+			}, 500);
+			$('#code-content').animate({
+				scrollTop: '-=999999'
+			}, 300);
+			current_file = file;
+			current_file_ext = strrchr(file, '.').substr(1);
+			set_button_status();
+			reset_file_selected(100);
+			//Small hack to allow users to use link as shortcut even with hash :)
+			window.location = '#' + file;
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function set_button_status(){
+	for(key in ext_association){
+		if(typeof(ext_association[key]) != 'undefined'){
+			dance: for(subkey in ext_association[key]){
+				$('#' + key).hide();
+				if(ext_association[key][subkey] == current_file_ext){
+					$('#' + key).show();
+					break dance;
+				}
+			}
+		}
+	}
+	for(key in ext_unassociation){
+		if(typeof(ext_unassociation[key]) != 'undefined'){
+			inbad : for(subkey in ext_unassociation[key]){
+				$('#' + key).show();
+				if(ext_unassociation[key][subkey] == current_file_ext){
+					$('#' + key).hide();
+					break inbad;
+				}
+			}
+		}
+	}
+}
+
+function insert_filename(){
+	$("#btn_filename").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+		function () {
+			$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+			$('#notepad-report').val($('#notepad-report').val() + "[b][size=110]" + current_file + "[/size][/b]\n").trigger('autosize.resize');
+		}
+	);
+}
+
+function report_code(err_code){
+	var SelectedCode = getSelectedCode();
+	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_ADD_TO_REPORT}';
+	if(!SelectedCode)
+	{
+		alert('{LA_MVT_SELECT_ERROR}');
+		return;
+	}
+	btns[cwBtn] = function () {
+		$(this).dialog('close');
+	};
+	btns[awBtn] = function () {
+		$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+			function () {
+				$('#notepad-report').val($('#notepad-report').val() + "[b]" + err_code + "[/b]\n[code]" + SelectedCode + "[/code]" + $('#user-report').val() + "\n\n").trigger('autosize.resize');
+				$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+				$('#user-report').val('');
+			}
+		);
+		$(this).dialog('close');
+	};
+	$('#dialogbox').children('div').text('{LA_MVT_DESCRIBE}');
+	$('#dialogbox').dialog({
+		modal: true, title: "{LA_MVT_INFORMATION}",
+		zIndex: 10000, autoOpen: true,
+		width: '500px', resizable: false,
+		draggable : false, buttons: btns,
+	});
+}
+
+function purge_notepad(){
+	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_OK}';
+	btns[cwBtn] = function () {
+		$(this).dialog('close');
+	};
+	btns[awBtn] = function () {
+		$('#notepad-report').val('').trigger('autosize.resize');
+		$(this).dialog('close');
+	};
+	$('#confirmbox').children('div').text('{LA_MVT_PURGE_CONFIRM}');
+	$('#confirmbox').dialog({
+		modal: true, title: "{LA_MVT_PURGE}",
+		zIndex: 10000, autoOpen: true,
+		width: '500px', resizable: false,
+		draggable : false, buttons: btns,
+	});
+}
+
+function get_filestats(){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : '{S_CURRENT_MOD}', 'file' : current_file, 'mode' : 'filestats'},
+		timeout: 5000,
+		dataType  : 'json',
+		beforeSend: function() {
+			busy = true;
+		},
+		complete: function(data, textStts, errThrown) {
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			if(data['errmsg']){
+				alert(data['errmsg']);
+			}
+			if(data['eval']){
+				eval(data['eval']);
+			}
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function check_syntax(){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : '{S_CURRENT_MOD}', 'file' : current_file, 'mode' : 'syntax'},
+		timeout: 5000,
+		beforeSend: function() {
+			busy = true;
+		},
+		complete: function(data, textStts, errThrown) {
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			var btns = {}, cwBtn = '{LA_MVT_OK}';
+			btns[cwBtn] = function () {
+				$(this).dialog('close');
+			};
+			$('#confirmbox').children('div').html(data);
+			$('#confirmbox').dialog({
+				modal: true, title: "{LA_MVT_INFORMATION}",
+				zIndex: 10000, autoOpen: true,
+				width: '500px', resizable: false,
+				draggable : false, buttons: btns,
+			});
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function delete_mod(mod_path){
+	window.mod_to_delete = mod_path;
+	var on_confirm = function(){
+		$.ajax({
+			type: 'POST',
+			url: '{U_AJAX}',
+			data: {'mod' : mod_to_delete, 'mode' : 'delete_mod'},
+			timeout: 30000,
+			async: false,
+			dataType  : 'json',
+			beforeSend: function() {
+				
+			},
+			complete: function(data, textStts, errThrown) {
+
+			},
+			success: function(data, textStts, errThrown) {
+				if(data['errmsg']){
+					alert(data['errmsg']);
+				}
+				if(data['eval']){
+					eval(data['eval']);
+				}
+			},
+			error: function(data, textStts, errThrown) {
+
+			},
+		});
+	};
+	var on_cancel = function(){};
+	mvt_confirm('{LA_CONFIRM}', '{LA_MVT_MOD_DELETE_WARN}', on_confirm, on_cancel);
+}
+
+function internal_mesage(){
+	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_OK}';
+	btns[cwBtn] = function () {
+		$(this).dialog('close');
+	};
+	btns[awBtn] = function () {
+		if(!$('#user-report').val())
+		{
+			alert('{LA_MVT_EMPTY_MESSAGE}');
+			return;
+		}
+		$('#notepad-report').val($('#notepad-report').val() + "[quote][b]{LA_MVT_INTERNAL}:[/b]\n\n" + $('#user-report').val() + "[/quote]\n").trigger('autosize.resize');
+		$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+			function () {
+				$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+				$('#user-report').val('');
+			}
+		);
+		$(this).dialog('close');
+	};
+	$('#dialogbox').children('div').text('{LA_MVT_INTERNAL_EXPLAIN}');
+	$('#dialogbox').dialog({
+		modal: true, title: "{LA_MVT_INFORMATION}",
+		zIndex: 10000, autoOpen: true,
+		width: '500px', resizable: false,
+		draggable : false, buttons: btns,
+	});
+}
+// ]]>
+</script>

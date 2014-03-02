@@ -1,0 +1,75 @@
+<form id="api_settings" method="post" action="{U_ACTION}">
+	<fieldset>
+		<dl>
+			<dt><label for="cfg_lang">{L_MVT_VERSION}:</label></dt>
+			<dd>
+				<strong<!-- IF S_UP_TO_DATE --> style="color: green;"<!-- ELSE --> class="error"<!-- ENDIF -->>{S_CFG_VERSION}</strong>
+				<!-- IF not S_UP_TO_DATE --><br />{S_UPDATE_MSG}<!-- ENDIF -->
+				<!-- IF MVT_VERSION_ERROR_MSG --><br /><span class="error">{MVT_VERSION_ERROR_MSG}</span><!-- ENDIF -->
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mvt_php_syntax">{L_MVT_CFG_PHP_SYNTAX}:</label></dt>
+			<dd>
+				<label><input type="radio" onclick="$('#dl_mvt_php_binary_path').fadeIn(200);" class="radio" name="mvt_php_syntax" value="1"<!-- IF S_CFG_SYNTAX --> checked="checked" id="mvt_php_syntax"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" onclick="$('#dl_mvt_php_binary_path').fadeOut(200);" class="radio" name="mvt_php_syntax" value="0"<!-- IF not S_CFG_SYNTAX --> checked="checked" id="mvt_php_syntax"<!-- ENDIF --> /> {L_NO}</label>
+			</dd>
+		</dl>
+		<dl id="dl_mvt_php_binary_path"<!-- IF not S_CFG_SYNTAX --> style="display: none;"<!-- ENDIF -->>
+			<dt><label for="mvt_php_binary_path">{L_MVT_CFG_PHP_BINARY_PATH}:</label><br />{L_MVT_CFG_PHP_BINARY_PATH_EXPLAIN}</dt>
+			<dd>
+				<input type="text" id="mvt_php_binary_path" name="mvt_php_binary_path" size="50" value="{S_CFG_PHP_BINARY_PATH}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mvt_search_engine">{L_MVT_CFG_SEARCH_ENGINE}:</label></dt>
+			<dd>
+				<input type="text" id="mvt_search_engine" name="mvt_search_engine" size="20" value="{S_CFG_SEARCH_ENGINE}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mvt_search_engine_url">{L_MVT_CFG_SEARCH_ENGINE_URL}:</label><br />{L_MVT_CFG_SEARCH_ENGINE_URL_EXPLAIN}</dt>
+			<dd>
+				<input type="text" id="mvt_search_engine_url" name="mvt_search_engine_url" size="50" value="{S_CFG_SEARCH_ENGINE_URL}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mvt_search_engine_img">{L_MVT_CFG_SEARCH_ENGINE_IMG}:</label></dt>
+			<dd>
+				<input type="text" id="mvt_search_engine_img" name="mvt_search_engine_img" size="50" value="{S_CFG_SEARCH_ENGINE_IMG}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mvt_tab_str_len">{L_MVT_CFG_TAB_STR_LEN}:</label></dt>
+			<dd>
+				<input type="text" id="mvt_tab_str_len" name="mvt_tab_str_len" size="3" maxlength="3" value="{S_CFG_TAB_STR_LEN}" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mvt_new_tab">{L_MVT_NEW_TAB}:</label></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="mvt_new_tab" value="1"<!-- IF S_CFG_MVT_NEW_TAB --> checked="checked" id="mvt_new_tab"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="mvt_new_tab" value="0"<!-- IF not S_CFG_MVT_NEW_TAB --> checked="checked" id="mvt_new_tab"<!-- ENDIF --> /> {L_NO}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="mvt_exit_handler">{L_MVT_EXIT_HANDLER}:</label></dt>
+			<dd>
+				<label><input type="radio" class="radio" name="mvt_exit_handler" value="1"<!-- IF S_CFG_EXIT_HANDLER --> checked="checked" id="mvt_exit_handler"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="mvt_exit_handler" value="0"<!-- IF not S_CFG_EXIT_HANDLER --> checked="checked" id="mvt_exit_handler"<!-- ENDIF --> /> {L_NO}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="cfg_lang">{L_MVT_LANGUAGE}:</label></dt>
+			<dd>
+				<label><select name="mvt_lang">{S_CFG_LANG}</select></label>
+			</dd>
+		</dl>
+	</fieldset>
+
+	<fieldset style="text-align: center;" id="psubmit">
+		<legend>{L_SUBMIT}</legend>
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" onclick="$('#psubmit').fadeOut(50)" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" /><br />
+	</fieldset>
+</form>

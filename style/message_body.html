@@ -1,0 +1,14 @@
+<!-- INCLUDE overall_header.html -->
+<div id="dialogbox">
+	<div></div><br />
+	<textarea class="inputbox text ui-widget-content ui-corner-all" id="user-report" tabindex="3" cols="75" rows="5" name="message" style="height: 90px;width: 470px;resize: none;"></textarea>
+</div>
+<div id="infobox"><div></div></div>
+<div id="confirmbox"><div></div></div>
+
+<div <!-- IF S_USER_NOTICE -->class="successbox"<!-- ELSE -->class="errorbox"<!-- ENDIF -->>
+	<h3>{MESSAGE_TITLE}</h3>
+	<p>{MESSAGE_TEXT}</p>
+</div>
+<!-- INCLUDE javascript_core.html -->
+<!-- INCLUDE overall_footer.html -->
