@@ -49,6 +49,7 @@ $template->assign_vars(array(
 	'U_FILE_TREE'	=> append_sid($phpbb_root_path . 'file_tree.' . $phpEx, array()),
 	'U_CONFIG'		=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mode' => 'config')),
 	'U_AJAX'		=> append_sid($phpbb_root_path . 'ajax.' . $phpEx, array()),
+	'U_GIT_REPOSITORY' => MVT_GIT_REPOSITORY,
 ));
 
 $dh = @opendir($phpbb_root_path . 'mods');

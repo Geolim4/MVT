@@ -15,7 +15,8 @@ if (!defined('IN_PHPBB'))
 }
 
 define('SLASH', '/');
-define('MVT_VERSION', '0.0.1');
+define('MVT_VERSION', '0.0.2');
+define('MVT_GIT_REPOSITORY', 'https://github.com/Geolim4/MVT');
 
 /**
 * Imported phpBB constants

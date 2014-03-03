@@ -128,7 +128,11 @@ function mvt_back_link($u_action)
 
 function mvt_check_php_syntax($file)
 {
-	global $config;
+	global $config, $user;
+	if(empty($config['mvt_php_syntax']))
+	{
+		return $user->lang['MVT_DISABLED_PHPBIN'];
+	}
 	if(empty($config['mvt_php_binary_path']))
 	{
 		return $user->lang['MVT_INVALID_PHPBIN'];
