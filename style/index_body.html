@@ -60,6 +60,9 @@ function init(){
 			},
 		});
 	});
+	if($.cookie(hide_list_cookie_name)){
+		btn_list_numbers();
+	}
 	$(document).keydown(function(e)
 	{
 		if (e.keyCode == ctrlKey) ctrlDown = true;
@@ -102,9 +105,6 @@ function init(){
 	$(window).resize(function() {
 		berstick(true);
 	});
-	if($.cookie(hide_list_cookie_name)){
-		btn_list_numbers();
-	}
 	<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
 	$('#tabs').find("a.mods-links").click(function(){
 		exit_handler(this.href);
@@ -518,6 +518,8 @@ function delete_mod(mod_path){
 
 function internal_mesage(){
 	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_OK}';
+	var SelectedCode = getSelectedCode();
+
 	btns[cwBtn] = function () {
 		$(this).dialog('close');
 	};
@@ -527,7 +529,7 @@ function internal_mesage(){
 			alert('{LA_MVT_EMPTY_MESSAGE}');
 			return;
 		}
-		$('#notepad-report').val($('#notepad-report').val() + "[quote][b]{LA_MVT_INTERNAL}:[/b]\n\n" + $('#user-report').val() + "[/quote]\n").trigger('autosize.resize');
+		$('#notepad-report').val($('#notepad-report').val() + "[quote][size=120][b]{LA_MVT_INTERNAL}:[/b][/size]" + ((SelectedCode) ? "\n\n[b][size=110]" + current_file + "[/size][/b][code]" + SelectedCode + "[/code]" : '') + "\n\n" + $('#user-report').val() + "[/quote]\n").trigger('autosize.resize');
 		$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
 			function () {
 				$("#notepad-button").effect('highlight', {color:"#669966"}, 500);

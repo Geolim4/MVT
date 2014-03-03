@@ -3,7 +3,7 @@
 		<dl>
 			<dt><label for="cfg_lang">{L_MVT_VERSION}:</label></dt>
 			<dd>
-				<strong<!-- IF S_UP_TO_DATE --> style="color: green;"<!-- ELSE --> class="error"<!-- ENDIF -->>{S_CFG_VERSION}</strong>
+				<strong<!-- IF S_UP_TO_DATE --> style="color: green;"<!-- ELSE --> class="error"<!-- ENDIF -->>{S_CFG_VERSION}</strong>&nbsp;|&nbsp;[&nbsp;<a href="{U_GIT_REPOSITORY}">{L_MVT_GIT_REPOSITORY}</a>&nbsp;]
 				<!-- IF not S_UP_TO_DATE --><br />{S_UPDATE_MSG}<!-- ENDIF -->
 				<!-- IF MVT_VERSION_ERROR_MSG --><br /><span class="error">{MVT_VERSION_ERROR_MSG}</span><!-- ENDIF -->
 			</dd>

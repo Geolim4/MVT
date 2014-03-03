@@ -38,38 +38,37 @@ html.busy, html.busy * {
 #tabs ul li img.mod-delete:hover{
 	opacity: 1;
 }
-a.tree-selected{
-	background-color: #FFFFFF;
-	font-weight: bold;
+#code-content > pre > ol > li {
+	font-size: 11px;
 }
-div.disable-content {
+
+#code-content div::selection, #code-content s.tab::selection, #code-content span::selection{
+	background: none repeat scroll 0 0 #ADFEB0 !important;
+}
+#code-content div::-moz-selection, #code-content s.tab::-moz-selection, #code-content span::-moz-selection{
+	background: none repeat scroll 0 0 #ADFEB0 !important;
+}
+#code-content.no-style-type  ol {
+	list-style-type: none;
+}
+#code-content.no-style-type  {
+	padding-left: 5px;
+}
+
+#dialogbox{
 	display: none;
-	background-color: #808080;
-	height: 100%;
-	left: -1px;
-	opacity: 0.65;
-	position: absolute;
-	top: 1px;
-	width: 100.111%;
-	z-index: 10;
 }
-span.tree-external{
-	background: url("./images/tree-external.png") no-repeat scroll center top transparent;
-	display: inline-block;
-	height: 16px;
-	width: 16px;
-}
-div.code-content{
-	background-color: #FFFAFA;
-	border: 1px solid #808080;
-	border-radius: 5px;
-	overflow: auto;
-	padding-left: 45px;
+
+#file-tree {
 	max-height: 1000px;
+	overflow: auto;
 }
-.success{
-	color: #009933;
+#tree-tools {
+	margin-top: 20px;
+	font-weight: bold;
+	float: left;
 }
+
 #tools {
 	background-color: #E2F7CB;
 	border-radius: 2px;
@@ -167,6 +166,7 @@ div.code-content{
 	background: linear-gradient(to bottom, #a90329 0%,#8f0222 44%,#6d0019 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019',GradientType=0 ); /* IE6-9 */
 }
+
 #notepad h3 a.button-reduced{
 	float: right;
 	margin-left: 2px;
@@ -185,15 +185,19 @@ div.code-content{
 	background: linear-gradient(to bottom, #a90329 0%,#8f0222 44%,#6d0019 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019',GradientType=0 ); /* IE6-9 */
 }
+
 #notepad h3 a.button-reduced{
 	display: none;
 }
+
 #notepad.reduced h3 a.button-reduced{
 	display: inline-block;
 }
+
 #notepad.reduced h3 a.button, #notepad.reduced textarea{
 	display: none;
 }
+
 #notepad.reduced h3{
 	display: inline-block;
 	font-size: 0.9em;
@@ -201,6 +205,7 @@ div.code-content{
 	overflow: auto;
 	text-align: left;
 }
+
 #notepad.reduced {
 	border: 1px dashed #008000;
 	border-radius: 2px 2px 0 0;
@@ -213,6 +218,7 @@ div.code-content{
 	top: auto !important;
 	width: 170px;
 }
+
 #notepad h3{
 	border-bottom: 1px solid #808080;
 	color: #000080;
@@ -222,23 +228,46 @@ div.code-content{
 	text-transform: uppercase;
 }
 
-#dialogbox{
-	display: none;
+a.tree-selected{
+	background-color: #FFFFFF;
+	font-weight: bold;
 }
+
+div.disable-content {
+	display: none;
+	background-color: #808080;
+	height: 100%;
+	left: -1px;
+	opacity: 0.65;
+	position: absolute;
+	top: 1px;
+	width: 100.111%;
+	z-index: 10;
+}
+
+span.tree-external{
+	background: url("./images/tree-external.png") no-repeat scroll center top transparent;
+	display: inline-block;
+	height: 16px;
+	width: 16px;
+}
+div.code-content{
+	background-color: #FFFAFA;
+	border: 1px solid #808080;
+	border-radius: 5px;
+	overflow: auto;
+	padding-left: 45px;
+	max-height: 1000px;
+}
+.success{
+	color: #009933;
+}
+
 .uppercase{
 	text-transform:uppercase;
 }
 .ui-effects-transfer { 
 	border: 2px dotted gray; 
-}
-#file-tree {
-	max-height: 1000px;
-	overflow: auto;
-}
-#tree-tools {
-	margin-top: 20px;
-	font-weight: bold;
-	float: left;
 }
 
 .ui-tooltip {
@@ -253,20 +282,4 @@ div.code-content{
 .tab{
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
 	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
-}
-#code-content > pre > ol > li {
-	font-size: 11px;
-}
-
-#code-content div::selection, #code-content s.tab::selection, #code-content span::selection{
-	background: none repeat scroll 0 0 #ADFEB0 !important;
-}
-#code-content div::-moz-selection, #code-content s.tab::-moz-selection, #code-content span::-moz-selection{
-	background: none repeat scroll 0 0 #ADFEB0 !important;
-}
-#code-content.no-style-type  ol {
-	list-style-type: none;
-}
-#code-content.no-style-type  {
-	padding-left: 5px;
 }
