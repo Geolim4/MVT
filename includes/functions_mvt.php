@@ -109,12 +109,9 @@ function mvt_set_config($array, $value = '')
 		mvt_set_config(array($array => $value));
 		return;
 	}
-	if(file_exists($config_file) && is_array($array))
-	{
-		$cfg = fopen($config_file, 'wb');
-		fwrite($cfg, json_encode($array + $config));//We need to be sure that we do not remove unupdated config values!!
-		fclose($cfg);
-	}
+	$cfg = fopen($config_file, 'wb');
+	fwrite($cfg, json_encode($array + $config)); // We need to be sure that we do not remove unupdated config values!!
+	fclose($cfg);
 }
 
 /**
