@@ -1,7 +1,7 @@
 <a name="maincontent"></a>
 <!-- IF S_FILE_CODE_CONTENT -->
 <div id="notepad">
-	<h3><span onclick="$('#notepad').removeClass('reduced');">{L_MVT_NOTEPAD_TITLE}</span><a href="javascript:void(0);" onclick="$('#notepad').toggle(300);" class="button">x</a><a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');" class="button">-</a><a id="notepad-handle" href="javascript:void(0);" class="button" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a></h3>
+	<h3><span onclick="$('#notepad').removeClass('reduced');$('#notepad').draggable({axis: null, handle: '#notepad-handle'});reset_notepad_pos();">{L_MVT_NOTEPAD_TITLE}</span><a href="javascript:void(0);" onclick="$('#notepad').toggle(300);" class="button">x</a><a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');$('#notepad').effect('highlight', {color:'#669966'}, 1500);$('#notepad').draggable({axis: 'x', handle: '#notepad-handle'});" class="button">-</a><a id="notepad-handle" href="javascript:void(0);" class="button display-on-reduced" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a></h3>
 	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: 9em;"></textarea>
 </div>
 <div id="tools-sticker"></div>
@@ -104,6 +104,7 @@ function init(){
 	});
 	$(window).resize(function() {
 		berstick(true);
+		reset_notepad_pos();
 	});
 	<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
 	$('#tabs').find("a.mods-links").click(function(){
@@ -114,6 +115,11 @@ function init(){
 	<!-- IF S_CFG_EXIT_HANDLER -->
 	setInterval(notepad_report_checker, 1000);
 	<!-- ENDIF -->
+}
+function reset_notepad_pos(){
+	var pos = $(window).width() - $('#notepad').width() - 50;
+	$('#notepad').css('left', pos + 'px');
+	$('#notepad').css('top', '25px');
 }
 function btn_list_numbers(){
 	if($('#code-content').hasClass('no-style-type')){

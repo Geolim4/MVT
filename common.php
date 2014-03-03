@@ -22,7 +22,7 @@ set_error_handler(defined('PHPBB_MSG_HANDLER') ? PHPBB_MSG_HANDLER : 'mvt_msg_ha
 check_cache_directory();
 
 $config = mvt_get_config();
-//In case the config file has corrupted for an unknow reason, we keep the hardcoded version of the MVT config 
+//In case the config file has corrupted for an unknown reason, we keep the hardcoded version of the MVT config 
 $config['load_tplcompile']			= isset($config['load_tplcompile'])			? $config['load_tplcompile']		: true;
 $config['tpl_allow_php']			= isset($config['tpl_allow_php'])			? $config['tpl_allow_php']			: false;
 $config['mvt_lang']					= isset($config['mvt_lang'])				? $config['mvt_lang']				: 'en';
@@ -36,6 +36,18 @@ $config['mvt_search_engine_url']	= isset($config['mvt_search_engine_url'])	? $co
 $config['mvt_tab_str_len']			= isset($config['mvt_tab_str_len'])			? $config['mvt_tab_str_len']		: 25;
 $config['mvt_exit_handler']			= isset($config['mvt_exit_handler'])		? $config['mvt_exit_handler']		: true;
 
+$directories = array('cache' => 0600, 'mods' => 0700);
+//Check directories
+foreach($directories AS $directory => $dir_chmod)
+{
+	if(!is_dir($phpbb_root_path . $directory))
+	{
+		mkdir($phpbb_root_path . $directory, $dir_chmod);
+		$fp = fopen($phpbb_root_path . $directory . "index.htm", "a+b");
+		fwrite($fp, '');
+		fclose($fp);
+	}
+}
 //Global routines
 $template = new template();
 $user = new user();

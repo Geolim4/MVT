@@ -126,7 +126,7 @@ html.busy, html.busy * {
 	left: 150px;
 	opacity: 0.90;
 	position: fixed;
-	top: 0px;
+	top: 25px;
 	overflow: hidden;
 	border: 1px dashed tomato;
 	z-index: 10000;
@@ -197,7 +197,14 @@ html.busy, html.busy * {
 #notepad.reduced h3 a.button, #notepad.reduced textarea{
 	display: none;
 }
-
+#notepad.reduced h3 a.button, #notepad.reduced textarea{
+	display: none;
+}
+#notepad.reduced h3 a.display-on-reduced{
+	display: inline-block;
+	margin-left: 8px;
+	width: 11px;
+}
 #notepad.reduced h3{
 	display: inline-block;
 	font-size: 0.9em;
@@ -207,16 +214,17 @@ html.busy, html.busy * {
 }
 
 #notepad.reduced {
+	display: block;
 	border: 1px dashed #008000;
 	border-radius: 2px 2px 0 0;
 	bottom: -1px;
 	cursor: pointer;
-	left: auto !important;
-	padding-left: 20px;
-	position: fixed;
-	right: 50px;
+	left: 90%;
 	top: auto !important;
-	width: 170px;
+	padding-left: 20px;
+	padding-right: 20px;
+	position: fixed;
+	width: auto;
 }
 
 #notepad h3{
@@ -280,6 +288,8 @@ div.code-content{
 	box-shadow: 0 0 7px black;
 }
 .tab{
+	display: inline-block;
+	width: 56px;
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
 	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
 }
