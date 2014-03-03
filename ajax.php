@@ -45,7 +45,7 @@ switch($mode)
 			$geshi = new GeSHi(file_get_contents($mods_root_path . $mod . SLASH . $file), $file_ext);
 			$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
 
-			echo $geshi->parse_code();
+			echo preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $geshi->parse_code());
 
 		}
 		else if (in_array(substr(strrchr($file, '.'), 1), $picture_exts))

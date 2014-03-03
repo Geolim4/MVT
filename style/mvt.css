@@ -250,3 +250,23 @@ div.code-content{
 	font: bold 14px "Helvetica Neue", Sans-Serif;
 	box-shadow: 0 0 7px black;
 }
+.tab{
+	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
+	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
+}
+#code-content > pre > ol > li {
+	font-size: 11px;
+}
+
+#code-content div::selection, #code-content s.tab::selection, #code-content span::selection{
+	background: none repeat scroll 0 0 #ADFEB0 !important;
+}
+#code-content div::-moz-selection, #code-content s.tab::-moz-selection, #code-content span::-moz-selection{
+	background: none repeat scroll 0 0 #ADFEB0 !important;
+}
+#code-content.no-style-type  ol {
+	list-style-type: none;
+}
+#code-content.no-style-type  {
+	padding-left: 5px;
+}

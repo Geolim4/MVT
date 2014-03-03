@@ -134,7 +134,7 @@ if ($dh)
 							$geshi = new GeSHi(file_get_contents($phpbb_root_path .'mods/' . $mod_directory_), $file_ext);
 							$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
 							$template->assign_vars(array(
-								'S_FILE_CODE_CONTENT'	=>  $geshi->parse_code(),
+								'S_FILE_CODE_CONTENT'	=> preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $geshi->parse_code()),
 								'S_CURRENT_FILE' => str_replace($mod_dir . SLASH, '', $mod_directory_),
 								'S_CURRENT_FILE_EXT' => substr(strrchr(str_replace($mod_dir . SLASH, '', $mod_directory_), '.'), 1),
 							));
