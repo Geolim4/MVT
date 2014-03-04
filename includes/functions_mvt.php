@@ -130,7 +130,7 @@ function mvt_check_php_syntax($file)
 	{
 		return $user->lang['MVT_INVALID_PHPBIN'];
 	}
-	exec($config['mvt_php_binary_path'] . ' -l ' . $file, $output, $result);
+	exec($config['mvt_php_binary_path'] . ' -lf ' . $file, $output, $result);
 	return implode('<br />', $output);
 }
 

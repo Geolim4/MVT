@@ -7,7 +7,7 @@
 */
 define('IN_PHPBB', true);
 define('IN_PHPBB_MVT', true);
-ini_set('auto_detect_line_endings',true);
+ini_set('auto_detect_line_endings', true);
 
 $level = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED;
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
