@@ -7,6 +7,7 @@
 */
 define('IN_PHPBB', true);
 define('IN_PHPBB_MVT', true);
+ini_set('auto_detect_line_endings',true);
 
 $level = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED;
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
@@ -128,25 +129,71 @@ switch($mode)
 				$mod_dir = str_replace($phpbb_root_path, '', current(array_diff($after_extracting, $before_extracting)));
 				if($mod_dir)
 				{
+					$vmode = ''; 
+					$base_30x_file = BASE_30X_FILE; 
+					$base_31x_file = BASE_31X_FILE;
+
+					$mod_subfolder = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir . SLASH, false, true, true);
+
 					if(isset($xml_mapping[$mod_dir . SLASH]))
 					{
-						$xml_main_file = $xml_mapping[$mod_dir . SLASH];
+						$base_30x_file = $xml_mapping[$mod_dir . SLASH];
 					}
 					else
 					{
-						$xml_main_file = 'install_mod.xml';
+						$base_30x_file = 'install_mod.xml';
 					}
-					if(file_exists($phpbb_root_path . $mod_dir . SLASH . $xml_main_file))
+					if(file_exists($phpbb_root_path . $mod_dir . SLASH . $base_30x_file))
 					{
-						$parser = new parser('xml');
-						$parser->set_file($phpbb_root_path . $mod_dir . SLASH . $xml_main_file);
+						$vmode = '3.0.x';
+					}
+					else if (file_exists($phpbb_root_path . $mod_dir . SLASH . $base_31x_file))
+					{
+						$vmode = '3.1.x';
+					}
+					//Not file found in the main directory, try second-level directory
+					if(empty($vmode))
+					{
+						switch(true)
+						{
+							case file_exists($mod_subfolder[0] . SLASH . $base_30x_file):
+								$base_30x_file = substr(strrchr(str_replace('/' . $base_30x_file, '', $mod_subfolder[0] . SLASH . $base_30x_file), '/'), 1) . strrchr($mod_subfolder[0] . SLASH . $base_30x_file, '/');
+								$vmode = '3.0.x';
+
+							case file_exists($mod_subfolder[0] . SLASH . $base_31x_file):
+								$base_31x_file = substr(strrchr(str_replace('/' . $base_31x_file, '', $mod_subfolder[0] . SLASH . $base_31x_file), '/'), 1) . strrchr($mod_subfolder[0] . SLASH . $base_31x_file, '/');
+								$vmode = '3.1.x';
+						}
+					}
+
+					if($vmode)
+					{
+/*						$parser = new parser('xml');
+						$parser->set_file($phpbb_root_path . $mod_dir . SLASH . $base_30x_file);
 						$mod_details = $parser->get_details();
 						$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
-						$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}";
+						$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}"; */
+						switch($vmode)
+						{
+							case '3.0.x':
+								$parser = new parser('xml');
+								$parser->set_file($phpbb_root_path . $mod_dir . SLASH . $base_30x_file);
+								$mod_details = $parser->get_details();
+								$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
+								$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}";
+							break;
+
+							case '3.1.x':
+								$mod_details = json_decode(file_get_contents($phpbb_root_path . $mod_dir . SLASH . $base_31x_file), true);
+								$mod_name = $mod_details['extra']['display-name'];
+								$mod_name_versioned = "$mod_name {$mod_details['version']}";
+							break;
+						}
+						
 
 						$json = array(
 							'status' => true, 
-							'eval' => 'add_mod_tab("' . (strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned) . '", "' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => substr(strrchr($mod_dir, '/'), 1))) . '", "' . str_replace('mods' . SLASH, '', $mod_dir) . '")'
+							'eval' => 'add_mod_tab("' . (strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned) . '", "' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => substr(strrchr($mod_dir, '/'), 1))) . '", "' . str_replace('mods' . SLASH, '', $mod_dir) . '", "' . $vmode . '")'
 						);
 					}
 					else
@@ -230,6 +277,67 @@ switch($mode)
 			}
 		}
 	break;
+
+	case 'file_encoding':
+		if($mod && $file && file_exists($mods_root_path . $mod . SLASH . $file))
+		{
+			$filename = $mods_root_path . $mod . SLASH . $file;
+			$handle = fopen($filename, "r");
+			$contents = fread($handle, filesize($filename));
+			fclose($handle);
+			if(function_exists('mb_detect_encoding'))
+			{
+				echo json_encode(array(
+						'eval' => "file_encoding('{$mod}', '{$file}', '" . mb_detect_encoding($contents) . "')",
+						'status' => true,
+					)
+				);
+			}
+			else
+			{
+				echo json_encode(array(
+						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_MOD_DELETE_FAILED', $mod) . '")',
+						'status' => false,
+					)
+				);
+			}
+		}
+	break;
+
+	case 'file_eol':
+			$filename = $mods_root_path . $mod . SLASH . $file;
+			$handle = fopen($filename, "r");
+			$contents = fread($handle, filesize($filename));
+			fclose($handle);
+			echo json_encode(array(
+					'eval' => "file_eol('{$mod}', '{$file}', '" . detect_eol($contents, '') . "')",
+					'status' => true,
+				)
+			);
+	break;
+}
+
+/**
+ * Detects the end-of-line character of a string.
+ * @param string $str The string to check.
+ */
+function detect_eol($str)
+{
+	$cr = "\r";	// Carriage Return: Mac
+	$lf = "\n";	// Line Feed: Unix
+	$crlf = "\r\n";	// Carriage Return and Line Feed: Windows
+	if(strpos($str, $crlf) !== false)
+	{
+		return 'Dos/Windows (CR+LF)';
+	}
+	else if(strpos($str, $lf) !== false)
+	{
+		return 'UNIX (LF)';
+	}
+	else if(strpos($str, $cr) !== false)
+	{
+		return 'MAC (CR)';
+	}
 }
 //No garbage here
 exit_handler();

@@ -1,5 +1,6 @@
 <a name="maincontent"></a>
 <!-- IF S_FILE_CODE_CONTENT -->
+
 <div id="notepad">
 	<h3><span onclick="$('#notepad').removeClass('reduced');$('#notepad').draggable({axis: null, handle: '#notepad-handle'});reset_notepad_pos();">{L_MVT_NOTEPAD_TITLE}</span><a href="javascript:void(0);" onclick="$('#notepad').toggle(300);" class="button">x</a><a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');$('#notepad').effect('highlight', {color:'#669966'}, 1500);$('#notepad').draggable({axis: 'x', handle: '#notepad-handle'});" class="button">-</a><a id="notepad-handle" href="javascript:void(0);" class="button display-on-reduced" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a></h3>
 	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: 9em;"></textarea>
@@ -27,6 +28,7 @@
 		<li id="btn_search_engine"><a href="#" class="btn" onclick="search_engine(); return false;" title="{L_MVT_SEARCH_ENGINE}"><img alt="{L_MVT_SEARCH_ENGINE}" src="style/images/{S_CFG_SEARCH_ENGINE_IMG}" /></a></li>
 		<li id="btn_base64_decode"><a href="#" class="btn" onclick="base64_decode(); return false;" title="{L_MVT_BASE64_DECODE}"><img alt="{L_MVT_BASE64_DECODE}" src="style/images/base64.png" /></a></li>
 		<!-- IF S_CFG_SYNTAX --><li id="btn_check_syntax"><a href="#" class="btn" onclick="check_syntax(); return false;" title="{L_MVT_PHP_SYNTAX}"><img alt="{L_MVT_PHP_SYNTAX}" src="style/images/php_syntax.png" /></a></li><!-- ENDIF -->
+		<li class="btn-enc-eol"><a href="#" class="btn" onclick="return false;"><span id="file-encoding"></span>&nbsp;|&nbsp;<span id="file-eol"></span></a></li>
 	</ul>
 </div>
 <p class="clear"></p>
@@ -115,6 +117,8 @@ function init(){
 	<!-- IF S_CFG_EXIT_HANDLER -->
 	setInterval(notepad_report_checker, 1000);
 	<!-- ENDIF -->
+	file_encoding(current_mod, current_file, false);
+	file_eol(current_mod, current_file, false);
 }
 function reset_notepad_pos(){
 	var pos = $(window).width() - $('#notepad').width() - 50;
@@ -336,6 +340,8 @@ function set_active_file(file){
 			reset_file_selected(100);
 			//Small hack to allow users to use link as shortcut even with hash :)
 			window.location = '#' + file;
+			file_encoding(current_mod, current_file, false);
+			file_eol(current_mod, current_file, false);
 		},
 		error: function(data, textStts, errThrown) {
 

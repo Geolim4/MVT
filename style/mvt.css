@@ -118,7 +118,16 @@ html.busy, html.busy * {
   background-image: linear-gradient(to bottom, #cfcfcf, #b3b3b3);
   text-decoration: none;
 }
-
+#tools ul li.btn-enc-eol{
+	float: right;
+	margin-right: 5px;
+}
+#tools ul li.btn-enc-eol a span:first-child{
+	color: #FEBF53;
+}
+#tools ul li.btn-enc-eol a span:last-child{
+	color: #BEEC81;
+}
 #notepad{
 	background: url("./images/notepad-bloc.png") repeat scroll center top #F3F3F3;
 	padding: 0px 5px 5px 5px;
@@ -293,3 +302,8 @@ div.code-content{
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
 	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
 }
+/* @media screen and (max-width: 1625px) {
+	#tools ul li a.btn{
+		font-size: 10px;
+	}
+} */

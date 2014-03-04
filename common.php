@@ -29,7 +29,7 @@ $config['mvt_lang']					= isset($config['mvt_lang'])				? $config['mvt_lang']			
 $config['mvt_version_check']		= isset($config['mvt_version_check'])		? $config['mvt_version_check']		: '';
 $config['mvt_php_syntax']			= isset($config['mvt_php_syntax'])			? $config['mvt_php_syntax']			: true;
 $config['mvt_php_binary_path']		= isset($config['mvt_php_binary_path'])		? $config['mvt_php_binary_path']	: 'php';
-$config['mvt_new_tab']				= isset($config['mvt_new_tab'])				? $config['mvt_new_tab']			: true;
+$config['mvt_new_tab']				= isset($config['mvt_new_tab'])				? $config['mvt_new_tab']			: false;
 $config['mvt_search_engine']		= isset($config['mvt_search_engine'])		? $config['mvt_search_engine']		: 'Github';
 $config['mvt_search_engine_img']	= isset($config['mvt_search_engine_img'])	? $config['mvt_search_engine_img']	: 'search_engine.png';
 $config['mvt_search_engine_url']	= isset($config['mvt_search_engine_url'])	? $config['mvt_search_engine_url']	: 'https://github.com/search?type=Code&q=%CODE%';

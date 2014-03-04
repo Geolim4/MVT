@@ -36,6 +36,7 @@ if (empty($lang) || !is_array($lang))
 // For add Color
 
 $lang = array_merge($lang, array(
+	'MVT'	=> 'MVT',
 	'MVT_LANG' => 'en',
 	'MVT_DATE_FORMAT' => 'D M d, Y g:i a',
 	'MVT_CFG_PHP_SYNTAX' => 'PHP syntax checker',
@@ -44,6 +45,8 @@ $lang = array_merge($lang, array(
 	'MVT_BASE64_DECODE' => 'Decode base64 code',
 	'MVT_INVALID_BASE64' => 'Invalid base64 string!',
 	'MVT_INSERT_FILENAME' => 'Insert filename',
+	'MVT_FILE_EOL' => 'File EOL: %s',
+	'MVT_FILE_ENCODING' => 'File encoding: %s',
 	'MVT_EXIT_HANDLER' => 'Exit alert handler',
 	'MVT_FILESTATS' => 'Get file statistics',
 	'MVT_GIT_REPOSITORY' => 'GIT repository',
@@ -83,7 +86,7 @@ $lang = array_merge($lang, array(
 	'MVT_DESCRIBE' => 'Describe the reason to report that part of code:',
 	'MVT_CANCEL' => 'Cancel',
 	'MVT_ADD_TO_REPORT' => 'Add to report',
-	'MVT_HOME'	=> 'MVT home',
+	'MVT_HOME'	=> 'Home',
 	'MVT_FILE_BROWSER' => 'File browser',
 	'MVT_OPEN_NOTEPAD' => 'Open validation notepad',
 	'MVT_PHP_SYNTAX' => 'PHP syntax checking',
@@ -98,9 +101,11 @@ $lang = array_merge($lang, array(
 	'MVT_SCROLL_TOP' => 'Scroll top',
 	'MVT_SCROLL_LEFT' => 'Scroll left',
 	'MVT_SCROLL_RIGHT' => 'Scroll right',
+	'MVT_SUPPORTED_VERSIONS' => 'Supported phpBB versions',
 	'MVT_TAG_NOTICE' => 'NOTICE',
 	'MVT_TAG_WARNING' => 'WARNING',
 	'MVT_TAG_FAIL' => 'FAIL',
+	'MVT_TOGGLE' => 'Hide or display the side menu',
 	'MVT_VERSION_ERROR' => 'Cannot retrieve version from server, error message: %s',
 	'MVT_LATEST_VERSION' => 'Latest version: %1$s, <a href="%1$s">read more</a>.',
 	'MVT_EXPAND_ALL' => 'Expand all',

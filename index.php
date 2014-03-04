@@ -26,7 +26,6 @@ $mod = request_var('mod', '');
 $file = request_var('file', '');
 $tpl_file = 'mvt_body.html';
 $ignored_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'psd');
-
 //Check up the MOD directory status
 check_mods_directory();
 
@@ -42,6 +41,7 @@ $xml_mapping = $temp_sorting;
 
 $template->assign_vars(array(
 	//Links
+	'PAGE_TITLE'	=> $user->lang['MVT_HOME'],
 	'S_NO_MODS'		=> true,
 	'S_TITLE'		=> '',
 	'U_MODS_PATH'	=> $phpbb_root_path . 'mods/',
@@ -51,37 +51,85 @@ $template->assign_vars(array(
 	'U_AJAX'		=> append_sid($phpbb_root_path . 'ajax.' . $phpEx, array()),
 	'U_GIT_REPOSITORY' => MVT_GIT_REPOSITORY,
 ));
-
+foreach(explode(',', MVT_SUPPORTED_VERSIONS) AS $supported_versions)
+{
+	$template->assign_block_vars('supported_versions', array(
+		'REAL_BRANCH' => substr($supported_versions, 0, strpos($supported_versions, ':')),
+		'SHORT_BRANCH' => substr(strrchr($supported_versions, ':'), 1),
+	));
+}
 $dh = @opendir($phpbb_root_path . 'mods');
 if ($dh)
 {
 	while (($mod_dir = readdir($dh)) !== false)
 	{
+		$vmode = ''; 
+		$base_30x_file = BASE_30X_FILE; 
+		$base_31x_file = BASE_31X_FILE;
+
 		if (is_dir($phpbb_root_path .'mods/' . $mod_dir) && !in_array($mod_dir, array('.', '..')))
 		{
+			$mod_subfolder = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir . SLASH, false, true, true);
+
 			if(isset($xml_mapping['mods/' . $mod_dir . SLASH]))
 			{
-				$xml_main_file = $xml_mapping['mods/' . $mod_dir . SLASH];
+				$base_30x_file = $xml_mapping['mods/' . $mod_dir . SLASH];
 			}
 			else
 			{
-				$xml_main_file = 'install_mod.xml';
+				$base_30x_file = 'install_mod.xml';
 			}
 			$mod_name = $mod_dir;
-			if(file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $xml_main_file))
+
+			if(file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file))
 			{
+				$vmode = '3.0.x';
+			}
+			else if (file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_31x_file))
+			{
+				$vmode = '3.1.x';
+			}
+
+			//Not file found in the main directory, try second-level directory
+			if(empty($vmode))
+			{
+				switch(true)
+				{
+					case file_exists($mod_subfolder[0] . SLASH . $base_30x_file):
+						$base_30x_file = substr(strrchr(str_replace('/' . $base_30x_file, '', $mod_subfolder[0] . SLASH . $base_30x_file), '/'), 1) . strrchr($mod_subfolder[0] . SLASH . $base_30x_file, '/');
+						$vmode = '3.0.x';
+
+					case file_exists($mod_subfolder[0] . SLASH . $base_31x_file):
+						$base_31x_file = substr(strrchr(str_replace('/' . $base_31x_file, '', $mod_subfolder[0] . SLASH . $base_31x_file), '/'), 1) . strrchr($mod_subfolder[0] . SLASH . $base_31x_file, '/');
+						$vmode = '3.1.x';
+				}
+			}
+			if($vmode)
+			{
+				switch($vmode)
+				{
+					case '3.0.x':
+						$parser = new parser('xml');
+						$parser->set_file($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file);
+						$mod_details = $parser->get_details();
+						$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
+						$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}";
+					break;
+
+					case '3.1.x':
+						$mod_details = json_decode(file_get_contents($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_31x_file), true);
+						$mod_name = $mod_details['extra']['display-name'];
+						$mod_name_versioned = "$mod_name {$mod_details['version']}";
+					break;
+				}
 				//Set a default one if no one was selected
 				if(empty($mod) && $mode == 'validation')
 				{
 					$mod = $mod_dir;
 				}
-				$parser = new parser('xml');
-				$parser->set_file($phpbb_root_path .'mods/' . $mod_dir . SLASH . $xml_main_file);
-				$mod_details = $parser->get_details();
-				$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
-				$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}";
 
 				$template->assign_block_vars('mods_blocks', array(
+					'S_VMODE'	=> $vmode,
 					'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
 					'U_TITLE'	=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir)),
 					'S_MOD_DIR'	=> $mod_dir,
@@ -114,8 +162,8 @@ if ($dh)
 							'U_TITLE'			=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir, 'file' => $mod_directory_)),
 							'S_SELECTED'		=> $file == $mod_directory_ ? true : false,
 						));
-						//We automatically handle $xml_main_file if present.
-						if(strpos($mod_directory_, $xml_main_file) || $file == $mod_directory_)
+						//We automatically handle $base_30x_file if present.
+						if(strpos($mod_directory_, $base_30x_file) || $file == $mod_directory_)
 						{
 							switch($file_ext)
 							{
@@ -158,7 +206,10 @@ if ($dh)
 }
 if($mode == 'config')
 {
-	$template->assign_var('S_IN_CONFIG', true);
+	$template->assign_vars(array(
+		'S_IN_CONFIG'	=> true,
+		'PAGE_TITLE'	=> $user->lang['MVT_SETTINGS'],
+	));
 	// Get current and latest version
 	$errstr = '';
 	$errno = 0;
@@ -234,7 +285,6 @@ $template->assign_vars(array(
 
 	//Misc
 	'L_MVT_SEARCH_ENGINE' => $user->lang('MVT_SEARCH_ENGINE', $config['mvt_search_engine']),
-	'PAGE_TITLE'	=> $user->lang['MVT_HOME'],
 ));
 
 $template->set_filenames(array(

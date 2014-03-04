@@ -36,6 +36,7 @@ if (empty($lang) || !is_array($lang))
 // For add Color
 
 $lang = array_merge($lang, array(
+	'MVT'	=> 'MVT',
 	'MVT_LANG' => 'fr',
 	'MVT_DATE_FORMAT' => 'd M Y, H:i',
 	'MVT_CFG_PHP_SYNTAX' => 'Vérificateur de syntaxe PHP',
@@ -44,6 +45,8 @@ $lang = array_merge($lang, array(
 	'MVT_BASE64_DECODE' => 'Decoder code base64',
 	'MVT_INVALID_BASE64' => 'Chaine base64 invalide!',
 	'MVT_INSERT_FILENAME' => 'Insérer le nom du fichier',
+	'MVT_FILE_EOL' => 'Fichier EOL: %s',
+	'MVT_FILE_ENCODING' => 'Encodage du fichier: %s',
 	'MVT_EXIT_HANDLER' => 'Avertisseur d’abandon',
 	'MVT_FILESTATS' => 'Récupérer les statistiques du fichier',
 	'MVT_GIT_REPOSITORY' => 'Dépôt GIT',
@@ -83,7 +86,7 @@ $lang = array_merge($lang, array(
 	'MVT_DESCRIBE' => 'Décrire la raison qui vous pousse à rapporter cette portion de code:',
 	'MVT_CANCEL' => 'Annuler',
 	'MVT_ADD_TO_REPORT' => 'Ajouter au rapport',
-	'MVT_HOME'	=> 'Accueil MVT',
+	'MVT_HOME'	=> 'Accueil',
 	'MVT_FILE_BROWSER' => 'Explorateur de fichier',
 	'MVT_OPEN_NOTEPAD' => 'Ouvrir le bloc-note de validation',
 	'MVT_PHP_SYNTAX' => 'Vérification de syntaxe PHP',
@@ -98,9 +101,11 @@ $lang = array_merge($lang, array(
 	'MVT_SCROLL_TOP' => 'Monter',
 	'MVT_SCROLL_LEFT' => 'Défiler à gauche',
 	'MVT_SCROLL_RIGHT' => 'Défiler à droite',
+	'MVT_SUPPORTED_VERSIONS' => 'Versions de phpBB supportées',
 	'MVT_TAG_NOTICE' => 'NOTICE',
 	'MVT_TAG_WARNING' => 'AVERTISEMENT',
 	'MVT_TAG_FAIL' => 'ECHEC',
+	'MVT_TOGGLE' => 'Afficher ou cacher le menu latéral',
 	'MVT_VERSION_ERROR' => 'Impossible de récupérer la version depuis le serveur, message d’erreur: %s',
 	'MVT_LATEST_VERSION' => 'Dernière version: %1$s, <a href="%1$s">plus d’informations</a>.',
 	'MVT_EXPAND_ALL' => 'Tout déplier',

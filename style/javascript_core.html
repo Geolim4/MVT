@@ -116,11 +116,85 @@ function content_status(status){
 	}
 
 }
+function file_encoding(mod, file, encoding){
+	if(mod && file && encoding === false){
+		$.ajax({
+			type: 'POST',
+			url: '{U_AJAX}',
+			data: {'mod' : mod, 'file' : file, 'mode' : 'file_encoding'},
+			timeout: 30000,
+			async: false,
+			dataType  : 'json',
+			beforeSend: function() {
+				
+			},
+			complete: function(data, textStts, errThrown) {
 
-function add_mod_tab(name, uri, path){
+			},
+			success: function(data, textStts, errThrown) {
+				if(data['errmsg']){
+					alert(data['errmsg']);
+				}
+				if(data['eval']){
+					eval(data['eval']);
+				}
+			},
+			error: function(data, textStts, errThrown) {
+
+			},
+		});
+	}else if(encoding !== false){
+		$('#file-encoding').text(encoding);
+	}
+}
+function file_eol(mod, file, eol){
+	if(mod && file && eol === false){
+		$.ajax({
+			type: 'POST',
+			url: '{U_AJAX}',
+			data: {'mod' : mod, 'file' : file, 'mode' : 'file_eol'},
+			timeout: 30000,
+			async: false,
+			dataType  : 'json',
+			beforeSend: function() {
+				
+			},
+			complete: function(data, textStts, errThrown) {
+
+			},
+			success: function(data, textStts, errThrown) {
+				if(data['errmsg']){
+					alert(data['errmsg']);
+				}
+				if(data['eval']){
+					eval(data['eval']);
+				}
+			},
+			error: function(data, textStts, errThrown) {
+
+			},
+		});
+	}else if(eol !== false){
+		$('#file-eol').text(eol);
+	}
+}
+function add_mod_tab(name, uri, path, vmode){
 	if(!$("a[href='" + uri + "']").html())
 	{
-		$("#tabs").children("ul").append('<li class="mods-tab"><a class="mods-links" href="' + uri + '"><span>' + name + '&nbsp;&nbsp;&nbsp;</span></a><img alt="" onclick="delete_mod(\'' + path + '\'); return false;" class="mod-delete" src="style/images/mod_delete.png" /></li>');
+		switch(vmode){
+			case '3.0.x':
+				var vmode_class = 'vmode30x';
+			break;
+
+			case '3.1.x':
+				var vmode_class = 'vmode31x';
+			break;
+
+			default:
+				var vmode_class = 'vmodeunknown';
+			break;
+		}
+		$("#tabs").children("ul").append('<li class="mods-tab"><a class="mods-links" href="' + uri + '"><span class="' + vmode_class + '">' + name + '&nbsp;&nbsp;&nbsp;</span></a><img alt="" onclick="delete_mod(\'' + path + '\'); return false;" class="mod-delete" src="style/images/mod_delete.png" /></li>');
 		<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
 		$('#tabs').find("a.mods-links").click(function(){
 			exit_handler(this.href);
@@ -238,5 +312,6 @@ function base64_decoder(data) {
 
   return dec;
 }
+
 // ]]>
 </script>

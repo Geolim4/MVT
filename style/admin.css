@@ -1703,3 +1703,15 @@ span.error-main {
 	font-weight: bold;
 	display: none;
 }
+#tabs a span.vmode31x, span.vmode31x{
+	color: darkgreen;
+}
+#tabs a span.vmode30x, span.vmode30x{
+	color: darkred;
+}
+#tabs #activetab a span.vmode31x {
+	color: green;
+}
+#tabs #activetab a span.vmode30x {
+	color: indianred;
+}

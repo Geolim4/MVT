@@ -96,21 +96,17 @@ function mvt_get_config()
 
 	if(file_exists($config_file))
 	{
-		return json_decode(file_get_contents($phpbb_root_path .'includes/config.json'), true);
+		return json_decode(file_get_contents($config_file), true);
 	}
 }
 
-function mvt_set_config($array, $value = '')
+function mvt_set_config($name, $value = '')
 {
 	global $phpbb_root_path, $phpEx, $config;
 	$config_file = $phpbb_root_path . 'includes/config.json';
-	if(!is_array($array))
-	{
-		mvt_set_config(array($array => $value));
-		return;
-	}
+	$config[$name] = $value;
 	$cfg = fopen($config_file, 'wb');
-	fwrite($cfg, json_encode($array + $config)); // We need to be sure that we do not remove unupdated config values!!
+	fwrite($cfg, json_encode($config)); // We need to be sure that we do not remove unupdated config values!!
 	fclose($cfg);
 }
 

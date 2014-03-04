@@ -195,7 +195,7 @@ function switch_menu()
 			menu_state = 'hidden';
 			menu.style.display = 'none';
 			toggle.style.width = '20px';
-			handle.style.backgroundImage = 'url(images/toggle.gif)';
+			handle.style.backgroundImage = 'url(style/images/toggle.gif)';
 			handle.style.backgroundRepeat = 'no-repeat';
 
 			<!-- IF S_CONTENT_DIRECTION eq 'rtl' -->
@@ -213,7 +213,7 @@ function switch_menu()
 			menu_state = 'shown';
 			menu.style.display = 'block';
 			toggle.style.width = '5%';
-			handle.style.backgroundImage = 'url(images/toggle.gif)';
+			handle.style.backgroundImage = 'url(style/images/toggle.gif)';
 			handle.style.backgroundRepeat = 'no-repeat';
 
 			<!-- IF S_CONTENT_DIRECTION eq 'rtl' -->
@@ -235,15 +235,16 @@ function switch_menu()
 
 <div id="wrap">
 	<div id="page-header">
-		<h1><a href="{U_INDEX}">{L_MVT_HOME}</a></h1>
+		<h1><a href="{U_INDEX}">{L_MVT}: {PAGE_TITLE}</a></h1>
+		<p>{L_MVT_SUPPORTED_VERSIONS}: <!-- BEGIN supported_versions --><!-- IF supported_versions.S_ROW_COUNT > 0 -->, <!-- ENDIF --><span class="vmode{supported_versions.SHORT_BRANCH}">{supported_versions.REAL_BRANCH}</span><!-- END supported_versions --></p>
 	</div>
 	
 	<div id="page-body">
 		<div id="tabs">
 			<ul>
-			<!-- IF not .mods_blocks and not S_USER_NOTICE --><li><a href="{U_INDEX}"><span>{L_MVT_HOME}</span></a></li><!-- ENDIF -->
+			<!-- IF not .mods_blocks and not S_USER_NOTICE --><li><a href="{U_INDEX}"><span class="<!-- IF mods_blocks.S_VMODE == "3.1.x" -->vmode31x<!-- ELSE -->vmode30x<!-- ENDIF -->">{L_MVT_HOME}</span></a></li><!-- ENDIF -->
 			<!-- BEGIN mods_blocks -->
-				<li<!-- IF mods_blocks.S_SELECTED --> id="activetab"<!-- ENDIF --> class="mods-tab"><a class="mods-links" href="{mods_blocks.U_TITLE}"<!-- IF S_CFG_NEW_TAB --> onclick="window.open(this.href); return false;"<!-- ENDIF -->><span>{mods_blocks.L_TITLE}&nbsp;&nbsp;&nbsp;</span></a><!-- IF not S_IN_CONFIG --><img alt="" onclick="delete_mod('{mods_blocks.S_MOD_DIR}'); return false;" class="mod-delete" src="style/images/mod_delete.png" /><!-- ENDIF --></li>
+				<li<!-- IF mods_blocks.S_SELECTED --> id="activetab"<!-- ENDIF --> class="mods-tab"><a class="mods-links" href="{mods_blocks.U_TITLE}"<!-- IF S_CFG_NEW_TAB --> onclick="window.open(this.href); return false;"<!-- ENDIF -->><span class="<!-- IF mods_blocks.S_VMODE == "3.1.x" -->vmode31x<!-- ELSE -->vmode30x<!-- ENDIF -->">{mods_blocks.L_TITLE}&nbsp;&nbsp;&nbsp;</span></a><!-- IF not S_IN_CONFIG --><img alt="" onclick="delete_mod('{mods_blocks.S_MOD_DIR}'); return false;" class="mod-delete" src="style/images/mod_delete.png" /><!-- ENDIF --></li>
 			<!-- END mods_blocks -->
 				<!-- IF S_USER_NOTICE --><li id="activetab"><a href="javascript:void(0)"><span>{L_INFORMATION}</span></a></li><!-- ENDIF -->
 				<li<!-- IF S_IN_CONFIG --> id="activetab"<!-- ENDIF --> class="settings"><a class="mods-links" href="{U_CONFIG}"<!-- IF S_CFG_NEW_TAB --> onclick="window.open(this.href); return false;"<!-- ENDIF -->><span>{L_MVT_SETTINGS}</span></a></li>
@@ -256,6 +257,9 @@ function switch_menu()
 			<span class="corners-top"><span></span></span>
 				<div class="disable-content"></div>
 				<div id="content">
+					<div id="toggle">
+						<a id="toggle-handle" accesskey="m" title="{L_MVT_TOGGLE}" onclick="switch_menu(); return false;" href="#"></a>
+					</div>
 					<!-- IF not S_IN_CONFIG and not S_USER_NOTICE -->
 					<div id="menu">
 						<h3>{L_MVT_FILE_BROWSER}: <span class="small">{S_CURRENT_MOD_NAME}</span></h3>
