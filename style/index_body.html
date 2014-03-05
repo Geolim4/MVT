@@ -122,9 +122,9 @@ function init(){
 			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 			if(current_file_anchor){
-				set_active_file(current_file_anchor);
+				set_active_file(current_file_anchor, true);
 			}else{
-				set_active_file('{S_CURRENT_FILE}');
+				set_active_file('{S_CURRENT_FILE}', true);
 			}
 		}
 	}
@@ -191,6 +191,48 @@ function down_scroll(){
 	}, 150);
 }
 
+function previous_file(){
+	var file_found = false, break_traversing = false;
+	$($("a.tree-link").get().reverse()).each(function() {
+		if(break_traversing){
+			return;
+		}else if(file_found){
+			window.location.hash = $(this).attr('href');
+			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+			set_active_file(current_file_anchor);
+			break_traversing =  true;
+		}
+		else
+		{
+			if($(this).hasClass("tree-selected")){
+				file_found = true;
+			}
+		}
+	});
+}
+
+function next_file(){
+	var file_found = false, break_traversing = false;
+	$("a.tree-link").each(function() {
+		if(break_traversing){
+			return;
+		}else if(file_found){
+			window.location.hash = $(this).attr('href');
+			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+			set_active_file(current_file_anchor);
+			break_traversing =  true;
+		}
+		else
+		{
+			if($(this).hasClass("tree-selected")){
+				file_found = true;
+			}
+		}
+	});
+}
+
 function search_engine(){
 	var SelectedCode = getSelectedCode(), engine_url = "{S_CFG_SEARCH_ENGINE_URL}";
 	if(!SelectedCode){
@@ -211,7 +253,10 @@ function base64_decode(){
 	}
 }
 
-function collapse_all(){
+function collapse_all(force_collaspe){
+	if(menu_state == 'shown' && !force_collaspe){
+		return;
+	}
 	current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 	current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 	current_tree_path = new Array(), expanded_folders = '';
@@ -336,7 +381,7 @@ function exit_handler(url){
 	return false;
 }
 
-function set_active_file(file){
+function set_active_file(file, collapse_on_complete){
 	if(busy){
 		return;
 	}
@@ -348,11 +393,15 @@ function set_active_file(file){
 		beforeSend: function() {
 			$('html, body').addClass('busy');
 			busy = true;
+			$("#code-content").html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
 		},
 		complete: function(data, textStts, errThrown) {
 			$('html, body').removeClass('busy');
 			$('#code-content').find("a").attr("onclick", "window.open(this.href); return false;");
 			$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
+			if(collapse_on_complete){
+				collapse_all();
+			}
 			busy = false;
 		},
 		success: function(data, textStts, errThrown) {
@@ -368,6 +417,7 @@ function set_active_file(file){
 			set_button_status();
 			reset_file_selected(100);
 			$('title').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
+			$('#page-header').children('h1').children('a').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
 			//Small hack to allow users to use link as shortcut even with hash :)
 			window.location = '#' + file;
 			file_encoding(current_mod, current_file, false);

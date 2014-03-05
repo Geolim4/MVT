@@ -475,3 +475,56 @@ function check_cache_directory()
 		}
 	}
 }
+
+/**
+ * Detects the charset of a string.
+ * @param string $str The string to check.
+  * @param string $encoding_list The supported encoding list
+ */
+function mvt_detect_encoding($str, $encoding_list = 'auto')
+{
+	global $user;
+
+	//Limit to 32768 to prevent unexpected CPU overload
+	$encoding = mb_detect_encoding(utf8_substr($str, 0, 32768), $encoding_list);
+	if (stripos($encoding, 'UTF-8') !== false)
+	{
+		$utf8_bom = chr(0xEF) . chr(0xBB) . chr(0xBF);
+		$first3 = utf8_substr($str, 0, 3);
+		if ($first3 == $utf8_bom)
+		{
+			return $encoding;
+		}
+		else
+		{
+			return "UTF-8 ({$user->lang['MVT_NO_BOM']})";
+		}
+	}
+	else
+	{
+		return $encoding;
+	}
+}
+
+/**
+ * Detects the end-of-line character of a string.
+ * @param string $str The string to check.
+ */
+function detect_eol($str)
+{
+	$cr = "\r";	// Carriage Return: Mac
+	$lf = "\n";	// Line Feed: Unix
+	$crlf = "\r\n";	// Carriage Return and Line Feed: Windows
+	if (strpos($str, $crlf) !== false)
+	{
+		return 'Dos/Windows (CR+LF)';
+	}
+	else if (strpos($str, $lf) !== false)
+	{
+		return 'UNIX (LF)';
+	}
+	else if (strpos($str, $cr) !== false)
+	{
+		return 'MAC (CR)';
+	}
+}

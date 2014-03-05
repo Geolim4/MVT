@@ -50,6 +50,7 @@ $lang = array_merge($lang, array(
 	'MVT_EXIT_HANDLER' => 'Exit alert handler',
 	'MVT_FILESTATS' => 'Get file statistics',
 	'MVT_GIT_REPOSITORY' => 'GIT repository',
+	'MVT_LOADING' => 'Loading...',
 	'MVT_NO_BOM' => 'sans BOM',
 	'MVT_NO_XML' => 'Any valid XML file found!',
 	'MVT_NO_MOD' => 'The specified MOD does not exists in <strong>/mods</strong> directory.',

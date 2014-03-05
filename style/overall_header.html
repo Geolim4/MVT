@@ -183,6 +183,8 @@ function popup(url, width, height, name)
 function switch_menu()
 {
 	var menu = document.getElementById('menu');
+	var previous_file = document.getElementById('previous_file');
+	var next_file = document.getElementById('next_file');
 	var main = document.getElementById('main');
 	var toggle = document.getElementById('toggle');
 	var handle = document.getElementById('toggle-handle');
@@ -191,9 +193,11 @@ function switch_menu()
 	{
 		// hide
 		case 'shown':
-			main.style.width = '93%';
+			main.style.width = '94%';
 			menu_state = 'hidden';
 			menu.style.display = 'none';
+			previous_file.style.display = 'block';
+			next_file.style.display = 'block';
 			toggle.style.width = '20px';
 			handle.style.backgroundImage = 'url(style/images/toggle.gif)';
 			handle.style.backgroundRepeat = 'no-repeat';
@@ -205,6 +209,10 @@ function switch_menu()
 				handle.style.backgroundPosition = '100% 50%';
 				toggle.style.left = '0';
 			<!-- ENDIF -->
+			
+			if(typeof('expand_all') !== "undefined"){
+				expand_all();
+			}
 		break;
 
 		// show
@@ -212,6 +220,8 @@ function switch_menu()
 			main.style.width = '76%';
 			menu_state = 'shown';
 			menu.style.display = 'block';
+			previous_file.style.display = 'none';
+			next_file.style.display = 'none';
 			toggle.style.width = '5%';
 			handle.style.backgroundImage = 'url(style/images/toggle.gif)';
 			handle.style.backgroundRepeat = 'no-repeat';
@@ -223,6 +233,10 @@ function switch_menu()
 				handle.style.backgroundPosition = '0% 50%';
 				toggle.style.left = '15%';
 			<!-- ENDIF -->
+			
+			if(typeof('collapse_all') !== "undefined"){
+				collapse_all(true);
+			}
 		break;
 	}
 }
@@ -258,6 +272,8 @@ function switch_menu()
 				<div class="disable-content"></div>
 				<div id="content">
 					<!-- IF not S_USER_NOTICE and not S_IN_CONFIG -->
+					<div id="previous_file"><a href="javascript:previous_file();"><img src="style/images/previous_file.png"></a></div>
+					<div id="next_file"><a href="javascript:next_file();"><img src="style/images/next_file.png"></a></div>
 					<div id="toggle">
 						<a id="toggle-handle" accesskey="m" title="{L_MVT_TOGGLE}" onclick="switch_menu(); return false;" href="#"></a>
 					</div>

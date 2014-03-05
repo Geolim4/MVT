@@ -26,13 +26,13 @@ $url = request_var('url', '');
 $file = request_var('file', '');
 $mode = request_var('mode', 'geshi');
 
-switch($mode)
+switch ($mode)
 {
 	case 'geshi':
-		if(file_exists($mods_root_path . $mod . SLASH . $file) && !in_array(substr(strrchr($file, '.'), 1), $picture_exts))
+		if (file_exists($mods_root_path . $mod . SLASH . $file) && !in_array(substr(strrchr($file, '.'), 1), $picture_exts))
 		{
 			$file_ext = substr(strrchr($file, '.'), 1);
-			switch($file_ext)
+			switch ($file_ext)
 			{
 				case 'html':
 				case 'htm':
@@ -56,7 +56,7 @@ switch($mode)
 		}
 		else if (in_array(substr(strrchr($file, '.'), 1), $picture_exts))
 		{
-			if(substr(strrchr($file, '.'), 1) == 'svg')
+			if (substr(strrchr($file, '.'), 1) == 'svg')
 			{
 				echo '<object type="image/svg+xml" data="' . $phpbb_root_path . 'mods/' . $mod . SLASH . $file . '"></object>';
 			}
@@ -72,13 +72,13 @@ switch($mode)
 	break;
 
 	case 'syntax':
-		if(file_exists($mods_root_path . $mod . SLASH . $file) && !in_array(substr(strrchr($file, '.'), 1), $picture_exts))
+		if (file_exists($mods_root_path . $mod . SLASH . $file) && !in_array(substr(strrchr($file, '.'), 1), $picture_exts))
 		{
 			$file_ext = substr(strrchr($file, '.'), 1);
-			if($file_ext == 'php')
+			if ($file_ext == 'php')
 			{
 				$result = mvt_check_php_syntax(str_replace(SLASH, DIRECTORY_SEPARATOR, $absolute_mod_path . $mod . SLASH . $file));
-				if(strpos($result, 'No syntax errors detected') === 0)
+				if (strpos($result, 'No syntax errors detected') === 0)
 				{
 					echo $user->lang['MVT_PHP_SYNTAX'] . ': <span class="success">' . $user->lang['MVT_OK'] . "</span>";
 				}
@@ -91,12 +91,12 @@ switch($mode)
 	break;
 	
 	case 'tree_all':
-		if(substr($mod, -1) == SLASH)
+		if (substr($mod, -1) == SLASH)
 		{
 			$mod = substr($mod, 0, -1);
 		}
 		$file_mapping = directory_to_array($phpbb_root_path . 'mods/' . $mod , true, true, false);
-		foreach($file_mapping AS &$file_)
+		foreach ($file_mapping AS &$file_)
 		{
 			$file_ .= SLASH;
 		}
@@ -110,16 +110,16 @@ switch($mode)
 		include($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
 
 		$stream = stream_copy($url, $phpbb_root_path . 'mods/');
-		if($stream)
+		if ($stream)
 		{	
-			if(substr(strrchr($stream['filename'], '.'), 1) == 'zip')
+			if (substr(strrchr($stream['filename'], '.'), 1) == 'zip')
 			{
 				$before_extracting = directory_to_array($phpbb_root_path . 'mods', false, true, false);
 				$compress = new compress_zip('r', $phpbb_root_path . 'mods/' . $stream['filename']);
 				$compress->extract($phpbb_root_path . 'mods/');
 				$compress->close();
 				$after_extracting = directory_to_array($phpbb_root_path . 'mods', false, true, false);
-				if(file_exists($phpbb_root_path . 'mods/' . $stream['filename']))
+				if (file_exists($phpbb_root_path . 'mods/' . $stream['filename']))
 				{
 					unlink($phpbb_root_path . 'mods/' . $stream['filename']);
 				}
@@ -132,7 +132,7 @@ switch($mode)
 				}
 				$xml_mapping = $temp_sorting;
 				$mod_dir = str_replace($phpbb_root_path, '', current(array_diff($after_extracting, $before_extracting)));
-				if($mod_dir)
+				if ($mod_dir)
 				{
 					$vmode = ''; 
 					$base_30x_file = BASE_30X_FILE; 
@@ -140,7 +140,7 @@ switch($mode)
 
 					$mod_subfolder = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir . SLASH, false, true, true);
 
-					if(isset($xml_mapping[$mod_dir . SLASH]))
+					if (isset($xml_mapping[$mod_dir . SLASH]))
 					{
 						$base_30x_file = $xml_mapping[$mod_dir . SLASH];
 					}
@@ -148,7 +148,7 @@ switch($mode)
 					{
 						$base_30x_file = 'install_mod.xml';
 					}
-					if(file_exists($phpbb_root_path . $mod_dir . SLASH . $base_30x_file))
+					if (file_exists($phpbb_root_path . $mod_dir . SLASH . $base_30x_file))
 					{
 						$vmode = '3.0.x';
 					}
@@ -157,9 +157,9 @@ switch($mode)
 						$vmode = '3.1.x';
 					}
 					//Not file found in the main directory, try second-level directory
-					if(empty($vmode))
+					if (empty($vmode))
 					{
-						switch(true)
+						switch (true)
 						{
 							case file_exists($mod_subfolder[0] . SLASH . $base_30x_file):
 								$base_30x_file = substr(strrchr(str_replace('/' . $base_30x_file, '', $mod_subfolder[0] . SLASH . $base_30x_file), '/'), 1) . strrchr($mod_subfolder[0] . SLASH . $base_30x_file, '/');
@@ -171,14 +171,14 @@ switch($mode)
 						}
 					}
 
-					if($vmode)
+					if ($vmode)
 					{
 /*						$parser = new parser('xml');
 						$parser->set_file($phpbb_root_path . $mod_dir . SLASH . $base_30x_file);
 						$mod_details = $parser->get_details();
 						$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
 						$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}"; */
-						switch($vmode)
+						switch ($vmode)
 						{
 							case '3.0.x':
 								$parser = new parser('xml');
@@ -238,7 +238,7 @@ switch($mode)
 	break;
 	
 	case 'filestats':
-		if(file_exists($mods_root_path . $mod . SLASH . $file))
+		if (file_exists($mods_root_path . $mod . SLASH . $file))
 		{
 			$stats = array();
 			$stats[] = strongify("MD5: ") . md5_file($mods_root_path . $mod . SLASH . $file);
@@ -261,7 +261,7 @@ switch($mode)
 	break;
 	
 	case 'delete_mod':
-		if($mod && strpos($mod, '..') === false)
+		if ($mod && strpos($mod, '..') === false)
 		{
 			header('Content-Type: application/json; charset=UTF-8');
 			if (destroy_dir($mods_root_path . $mod . SLASH))
@@ -284,13 +284,13 @@ switch($mode)
 	break;
 
 	case 'file_encoding':
-		if($mod && $file && file_exists($mods_root_path . $mod . SLASH . $file))
+		if ($mod && $file && file_exists($mods_root_path . $mod . SLASH . $file))
 		{
 			$filename = $mods_root_path . $mod . SLASH . $file;
 			$handle = fopen($filename, "r");
 			$contents = fread($handle, filesize($filename));
 			fclose($handle);
-			if(function_exists('mb_detect_encoding'))
+			if (function_exists('mb_detect_encoding'))
 			{
 				echo json_encode(array(
 						'eval' => "file_encoding('{$mod}', '{$file}', '" . mvt_detect_encoding($contents, array('UTF-8', 'UTF-7', 'ASCII','EUC-JP,SJIS', 'eucJP-win', 'SJIS-win', 'JIS', 'iso-8859-1', 'iso-8859-15', 'ISO-2022-JP', 'Windows-1250', 'Windows-1251', 'Windows-1252')) . "')",
@@ -322,56 +322,5 @@ switch($mode)
 	break;
 }
 
-/**
- * Detects the charset of a string.
- * @param string $str The string to check.
-  * @param string $encoding_list The supported encoding list
- */
-function mvt_detect_encoding($str, $encoding_list = 'auto')
-{
-	global $user;
-
-	$encoding = mb_detect_encoding($str, $encoding_list);
-	if(stripos($encoding, 'UTF-8') !== false)
-	{
-		$utf8_bom = chr(0xEF) . chr(0xBB) . chr(0xBF);
-		$first3 = substr($str, 0, 3);
-		if ($first3 == $utf8_bom)
-		{
-			return $encoding;
-		}
-		else
-		{
-			return "UTF-8 ({$user->lang['MVT_NO_BOM']})";
-		}
-	}
-	else
-	{
-		return $encoding;
-	}
-}
-
-/**
- * Detects the end-of-line character of a string.
- * @param string $str The string to check.
- */
-function detect_eol($str)
-{
-	$cr = "\r";	// Carriage Return: Mac
-	$lf = "\n";	// Line Feed: Unix
-	$crlf = "\r\n";	// Carriage Return and Line Feed: Windows
-	if(strpos($str, $crlf) !== false)
-	{
-		return 'Dos/Windows (CR+LF)';
-	}
-	else if(strpos($str, $lf) !== false)
-	{
-		return 'UNIX (LF)';
-	}
-	else if(strpos($str, $cr) !== false)
-	{
-		return 'MAC (CR)';
-	}
-}
 //No garbage here
 exit_handler();

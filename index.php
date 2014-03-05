@@ -10,6 +10,7 @@ define('IN_PHPBB', true);
 define('IN_PHPBB_MVT', true);
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
+
 include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/functions_mods.' . $phpEx);
 include($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
@@ -17,6 +18,7 @@ include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
 
 $template->set_custom_template($phpbb_root_path . 'style', 'mvt');
 $template->assign_var('T_TEMPLATE_PATH', $phpbb_root_path . 'style');
+
 // the acp template is never stored in the database
 $user->theme['template_storedb'] = false;
 $user->add_lang('mvt');
@@ -26,10 +28,11 @@ $mod = request_var('mod', '');
 $file = request_var('file', '');
 $tpl_file = 'mvt_body.html';
 $ignored_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'psd');
+
 //Check up the MOD directory status
 check_mods_directory();
 // Now search for MOD install files...
-foreach(explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
+foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 {
 	//Variables variable are so convenient  !!
 	${$install_ext . '_mapping'} = glob("mods/*/*." . $install_ext);
@@ -39,7 +42,7 @@ foreach(explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 		$filename = substr(strrchr($value, SLASH), 1);
 		$temp_sorting[str_replace($filename, '', $value)] = $filename;
 		//3.0.x hack
-		if(strpos($filename, 'install') !== false)
+		if (strpos($filename, 'install') !== false)
 		{
 			break;
 		}
@@ -59,13 +62,15 @@ $template->assign_vars(array(
 	'U_AJAX'		=> append_sid($phpbb_root_path . 'ajax.' . $phpEx, array()),
 	'U_GIT_REPOSITORY' => MVT_GIT_REPOSITORY,
 ));
-foreach(explode(',', MVT_SUPPORTED_VERSIONS) AS $supported_versions)
+
+foreach (explode(',', MVT_SUPPORTED_VERSIONS) AS $supported_versions)
 {
 	$template->assign_block_vars('supported_versions', array(
 		'REAL_BRANCH' => substr($supported_versions, 0, strpos($supported_versions, ':')),
 		'SHORT_BRANCH' => substr(strrchr($supported_versions, ':'), 1),
 	));
 }
+
 $dh = @opendir($phpbb_root_path . 'mods');
 if ($dh)
 {
@@ -79,7 +84,7 @@ if ($dh)
 		{
 			$mod_subfolder = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir . SLASH, false, true, true);
 
-			if(isset($xml_mapping['mods/' . $mod_dir . SLASH]))
+			if (isset($xml_mapping['mods/' . $mod_dir . SLASH]))
 			{
 				$base_30x_file = $xml_mapping['mods/' . $mod_dir . SLASH];
 			}
@@ -87,7 +92,7 @@ if ($dh)
 			{
 				$base_30x_file = 'install_mod.xml';
 			}
-			if(isset($json_mapping['mods/' . $mod_dir . SLASH]))
+			if (isset($json_mapping['mods/' . $mod_dir . SLASH]))
 			{
 				$base_31x_file = $json_mapping['mods/' . $mod_dir . SLASH];
 			}
@@ -98,7 +103,7 @@ if ($dh)
 
 			$mod_name = $mod_dir;
 
-			if(file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file))
+			if (file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file))
 			{
 				$vmode = '3.0.x';
 			}
@@ -107,9 +112,9 @@ if ($dh)
 				$vmode = '3.1.x';
 			}
 			//Not file found in the main MOD directory, subdirectory
-			if(empty($vmode))
+			if (empty($vmode))
 			{
-				switch(true)
+				switch (true)
 				{
 					case file_exists($mod_subfolder[0] . SLASH . $base_30x_file):
 						$base_30x_file = substr(strrchr(str_replace('/' . $base_30x_file, '', $mod_subfolder[0] . SLASH . $base_30x_file), '/'), 1) . strrchr($mod_subfolder[0] . SLASH . $base_30x_file, '/');
@@ -120,9 +125,9 @@ if ($dh)
 						$vmode = '3.1.x';
 				}
 			}
-			if($vmode)
+			if ($vmode)
 			{
-				switch($vmode)
+				switch ($vmode)
 				{
 					case '3.0.x':
 						$parser = new parser('xml');
@@ -141,7 +146,7 @@ if ($dh)
 					break;
 				}
 				//Set a default one if no one was selected
-				if(empty($mod) && $mode == 'validation')
+				if (empty($mod) && $mode == 'validation')
 				{
 					$mod = $mod_dir;
 				}
@@ -153,7 +158,7 @@ if ($dh)
 					'S_MOD_DIR'	=> $mod_dir,
 					'S_SELECTED'=> $mod == $mod_dir ? true : false,
 				));
-				if($mod == $mod_dir)
+				if ($mod == $mod_dir)
 				{
 					$template->assign_vars(array(
 						'S_NO_MODS'		=> false,
@@ -162,15 +167,15 @@ if ($dh)
 					));
 					$mod_mapping = array();
 					$mod_directory = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir);
-					foreach($mod_directory AS $mod_directory_)
+					foreach ($mod_directory AS $mod_directory_)
 					{
 						$mod_directory_ = str_replace($phpbb_root_path .'mods/', '', $mod_directory_);
 						$file_ext = substr(strrchr($mod_directory_, '.'), 1);
-						if(in_array($file_ext, $ignored_exts))
+						if (in_array($file_ext, $ignored_exts))
 						{
 							continue;
 						}
-						if(empty($file))
+						if (empty($file))
 						{
 							$file = $mod_directory_;
 						}
@@ -181,9 +186,9 @@ if ($dh)
 							'S_SELECTED'		=> $file == $mod_directory_ ? true : false,
 						));
 						//We automatically handle $base_3xx_file if present.
-						if((strpos($mod_directory_, $base_30x_file) || strpos($mod_directory_, $base_31x_file))|| $file == $mod_directory_)
+						if ((strpos($mod_directory_, $base_30x_file) || strpos($mod_directory_, $base_31x_file))|| $file == $mod_directory_)
 						{
-							switch($file_ext)
+							switch ($file_ext)
 							{
 								case 'html':
 								case 'htm':
@@ -222,16 +227,16 @@ if ($dh)
 	}
 	closedir($dh);
 	//Error: No valid MOD selected, back to the index.
-	if(empty($geshi) && $mode == 'validation' && !isset($mod_name))
+	if (empty($geshi) && $mode == 'validation' && !isset($mod_name))
 	{
 		trigger_error('MVT_NO_MODS');
 	}
-	if(empty($geshi) && $mode == 'validation')
+	if (empty($geshi) && $mode == 'validation')
 	{
 		trigger_error('MVT_NO_MOD');
 	}
 }
-if($mode == 'config')
+if ($mode == 'config')
 {
 	$template->assign_vars(array(
 		'S_IN_CONFIG'	=> true,
@@ -240,7 +245,7 @@ if($mode == 'config')
 	// Get current and latest version
 	$errstr = '';
 	$errno = 0;
-	if($config['mvt_version_check'] < time())
+	if ($config['mvt_version_check'] < time())
 	{
 		$info = get_remote_file('gl4.fr', '', 'mvt.txt', $errstr, $errno);
 		if ($info !== false)
@@ -268,7 +273,7 @@ if($mode == 'config')
 		));
 	}
 
-	if($submit)
+	if ($submit)
 	{
 		$settings = array (
 			'mvt_php_syntax' => request_var('mvt_php_syntax', 1),
@@ -291,7 +296,7 @@ if($mode == 'config')
 		trigger_error($user->lang['MVT_SETTINGS_SAVED'] . mvt_back_link(append_sid($phpbb_root_path . 'index.' . $phpEx, array('mode' => 'config'))));
 	}
 	$language = '';
-	foreach($user->languages AS $iso => $lang)
+	foreach ($user->languages AS $iso => $lang)
 	{
 		$language .= '<option value="' . $iso . '"' . (($config['mvt_lang'] == $iso) ? ' selected="selected"' : '' ) . '>' . $lang . '</option>';
 	}
@@ -317,7 +322,6 @@ $template->assign_vars(array(
 $template->set_filenames(array(
 	'index'	=> 'mvt_body.html',
 ));
+
 set_default_template_vars();
 $template->display('index');
-
-exit;//For now
