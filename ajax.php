@@ -38,8 +38,13 @@ switch($mode)
 				case 'htm':
 					$file_ext = 'html4strict';
 				break;
-				
+
+				case 'yml':
+					$file_ext = 'yaml';
+				break;
+
 				case 'js':
+				case 'json':
 					$file_ext = 'javascript';
 				break;
 			}

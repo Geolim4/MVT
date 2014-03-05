@@ -4,13 +4,16 @@ var current_file = '{S_CURRENT_FILE}', current_file_ext = '{S_CURRENT_FILE_EXT}'
 var current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 var current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 var current_tree_path = new Array(), expanded_folders = '';
+var file_groups = {
+	'media': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg']
+};
 var ext_association = {
 	'btn_check_syntax': ['php'], 
 	'btn_base64_decode' : ['php', 'js', 'html', 'txt', 'xml']
 }; 
 var ext_unassociation = {
-	'btn_search_engine': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg'],
-	'btn_enc_eol': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg']
+	'btn_search_engine': file_groups['media'],
+	'btn_enc_eol': file_groups['media']
 };
 var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array();
 var index = '{U_INDEX}';
@@ -214,11 +217,11 @@ function add_mod_tab(name, uri, path, vmode){
 function berstick(resize) {
 	var window_top = $(window).scrollTop(), div_top = $('#tools-sticker').offset().top, $el = $('#tools'), $pl = $('#tools-sticker');
 	if(resize === true && window_top > div_top){
-		$('#tools').css({'position': 'fixed', 'top': '6px', 'width' : $pl.css('width')});
+		$('#tools').css({'position': 'fixed', 'top': '5px', 'width' : $pl.css('width')});
 		return;
 	}
 	if (window_top > div_top) {
-		$('#tools').css({'position': 'fixed', 'top': '6px', 'width' : $el.css('width')});
+		$('#tools').css({'position': 'fixed', 'top': '5px', 'width' : $el.css('width')});
 	} else {
 		$('#tools').css({'position': '', 'top': '0px', 'width' : "auto"});
 	}

@@ -29,15 +29,24 @@ $ignored_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'psd');
 //Check up the MOD directory status
 check_mods_directory();
 
-// Now search for mods...
-$xml_mapping = glob("mods/*/*.xml");
-$temp_sorting = array();
-foreach ($xml_mapping AS $key => $value)
+// Now search for MOD install files...
+foreach(explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 {
-	$filename = substr(strrchr($value, SLASH), 1);
-	$temp_sorting[str_replace($filename, '', $value)] = $filename;
+	//Variables variable are so convenient  !!
+	${$install_ext .'_mapping'} = glob("mods/*/*." . $install_ext);
+	$temp_sorting = array();
+	foreach (${$install_ext .'_mapping'} AS $key => $value)
+	{
+		$filename = substr(strrchr($value, SLASH), 1);
+		$temp_sorting[str_replace($filename, '', $value)] = $filename;
+		//3.0.x hack
+		if(strpos($filename, 'install') !== false)
+		{
+			break;
+		}
+	}
+	${$install_ext .'_mapping'} = $temp_sorting;
 }
-$xml_mapping = $temp_sorting;
 
 $template->assign_vars(array(
 	//Links
@@ -79,6 +88,15 @@ if ($dh)
 			{
 				$base_30x_file = 'install_mod.xml';
 			}
+			if(isset($json_mapping['mods/' . $mod_dir . SLASH]))
+			{
+				$base_31x_file = $json_mapping['mods/' . $mod_dir . SLASH];
+			}
+			else
+			{
+				$base_31x_file = BASE_31X_FILE;
+			}
+
 			$mod_name = $mod_dir;
 
 			if(file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file))
@@ -89,8 +107,7 @@ if ($dh)
 			{
 				$vmode = '3.1.x';
 			}
-
-			//Not file found in the main directory, try second-level directory
+			//Not file found in the main MOD directory, subdirectory
 			if(empty($vmode))
 			{
 				switch(true)
@@ -162,8 +179,8 @@ if ($dh)
 							'U_TITLE'			=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir, 'file' => $mod_directory_)),
 							'S_SELECTED'		=> $file == $mod_directory_ ? true : false,
 						));
-						//We automatically handle $base_30x_file if present.
-						if(strpos($mod_directory_, $base_30x_file) || $file == $mod_directory_)
+						//We automatically handle $base_3xx_file if present.
+						if((strpos($mod_directory_, $base_30x_file) || strpos($mod_directory_, $base_31x_file))|| $file == $mod_directory_)
 						{
 							switch($file_ext)
 							{
@@ -172,7 +189,12 @@ if ($dh)
 									$file_ext = 'html4strict';
 								break;
 
+								case 'yml':
+									$file_ext = 'yaml';
+								break;
+
 								case 'js':
+								case 'json':
 									$file_ext = 'javascript';
 								break;
 

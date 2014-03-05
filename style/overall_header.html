@@ -257,9 +257,11 @@ function switch_menu()
 			<span class="corners-top"><span></span></span>
 				<div class="disable-content"></div>
 				<div id="content">
+					<!-- IF not S_USER_NOTICE and not S_IN_CONFIG -->
 					<div id="toggle">
 						<a id="toggle-handle" accesskey="m" title="{L_MVT_TOGGLE}" onclick="switch_menu(); return false;" href="#"></a>
 					</div>
+					<!-- ENDIF -->
 					<!-- IF not S_IN_CONFIG and not S_USER_NOTICE -->
 					<div id="menu">
 						<h3>{L_MVT_FILE_BROWSER}: <span class="small">{S_CURRENT_MOD_NAME}</span></h3>
