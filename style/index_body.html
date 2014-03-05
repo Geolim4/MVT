@@ -117,6 +117,31 @@ function init(){
 		exit_handler(this.href);
 		return false;
 	});
+	if ("onhashchange" in window) { // event supported?
+		window.onhashchange = function () {
+			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+			if(current_file_anchor){
+				set_active_file(current_file_anchor);
+			}else{
+				set_active_file('{S_CURRENT_FILE}');
+			}
+		}
+	}
+	else { // event not supported:
+		var storedHash = window.location.hash;
+		window.setInterval(function () {
+			if (window.location.hash != storedHash) {
+				current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+				current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+				if(current_file_anchor){
+					set_active_file(current_file_anchor);
+				}else{
+					set_active_file('{S_CURRENT_FILE}');
+				}
+			}
+		}, 100);
+	}
 	<!-- ENDIF -->
 	<!-- IF S_CFG_EXIT_HANDLER -->
 	setInterval(notepad_report_checker, 1000);
