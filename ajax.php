@@ -288,7 +288,7 @@ switch($mode)
 			if(function_exists('mb_detect_encoding'))
 			{
 				echo json_encode(array(
-						'eval' => "file_encoding('{$mod}', '{$file}', '" . mb_detect_encoding($contents) . "')",
+						'eval' => "file_encoding('{$mod}', '{$file}', '" . mvt_detect_encoding($contents, '') . "')",
 						'status' => true,
 					)
 				);
@@ -310,11 +310,40 @@ switch($mode)
 			$contents = fread($handle, filesize($filename));
 			fclose($handle);
 			echo json_encode(array(
-					'eval' => "file_eol('{$mod}', '{$file}', '" . detect_eol($contents, '') . "')",
+					'eval' => "file_eol('{$mod}', '{$file}', '" . detect_eol($contents) . "')",
 					'status' => true,
 				)
 			);
 	break;
+}
+
+/**
+ * Detects the charset of a string.
+ * @param string $str The string to check.
+  * @param string $def_charset The default charset to return if encoding not detected
+ */
+function mvt_detect_encoding($str, $def_charset)
+{
+	global $user;
+
+	$encoding = mb_detect_encoding($str, $def_charset);
+	if(stripos($encoding, 'UTF-8') !== false)
+	{
+		$utf8_bom = chr(0xEF) . chr(0xBB) . chr(0xBF);
+		$first3 = substr($str, 0, 3);
+		if ($first3 == $utf8_bom)
+		{
+			return $encoding;
+		}
+		else
+		{
+			return "UTF-8 ({$user->lang['MVT_NO_BOM']})";
+		}
+	}
+	else
+	{
+		return $encoding;
+	}
 }
 
 /**

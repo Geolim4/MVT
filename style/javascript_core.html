@@ -4,7 +4,14 @@ var current_file = '{S_CURRENT_FILE}', current_file_ext = '{S_CURRENT_FILE_EXT}'
 var current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 var current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 var current_tree_path = new Array(), expanded_folders = '';
-var ext_association = {'btn_check_syntax': ['php'], 'btn_base64_decode' : ['php', 'js', 'html', 'txt', 'xml']}, ext_unassociation = {'btn_search_engine': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg']};
+var ext_association = {
+	'btn_check_syntax': ['php'], 
+	'btn_base64_decode' : ['php', 'js', 'html', 'txt', 'xml']
+}; 
+var ext_unassociation = {
+	'btn_search_engine': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg'],
+	'btn_enc_eol': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg']
+};
 var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array();
 var index = '{U_INDEX}';
 

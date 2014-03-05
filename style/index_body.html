@@ -28,7 +28,8 @@
 		<li id="btn_search_engine"><a href="#" class="btn" onclick="search_engine(); return false;" title="{L_MVT_SEARCH_ENGINE}"><img alt="{L_MVT_SEARCH_ENGINE}" src="style/images/{S_CFG_SEARCH_ENGINE_IMG}" /></a></li>
 		<li id="btn_base64_decode"><a href="#" class="btn" onclick="base64_decode(); return false;" title="{L_MVT_BASE64_DECODE}"><img alt="{L_MVT_BASE64_DECODE}" src="style/images/base64.png" /></a></li>
 		<!-- IF S_CFG_SYNTAX --><li id="btn_check_syntax"><a href="#" class="btn" onclick="check_syntax(); return false;" title="{L_MVT_PHP_SYNTAX}"><img alt="{L_MVT_PHP_SYNTAX}" src="style/images/php_syntax.png" /></a></li><!-- ENDIF -->
-		<li class="btn-enc-eol"><a href="#" class="btn" onclick="return false;"><span id="file-encoding"></span>&nbsp;|&nbsp;<span id="file-eol"></span></a></li>
+		<li class="separator">|</li>
+		<li id="btn_enc_eol"><a href="#" class="btn" onclick="return false;"><span id="file-encoding"></span>&nbsp;|&nbsp;<span id="file-eol"></span></a></li>
 	</ul>
 </div>
 <p class="clear"></p>
@@ -108,6 +109,9 @@ function init(){
 		berstick(true);
 		reset_notepad_pos();
 	});
+	$('html, body').animate({
+		scrollTop: $("#acp").last().offset().top
+	}, 250);
 	<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
 	$('#tabs').find("a.mods-links").click(function(){
 		exit_handler(this.href);
@@ -330,7 +334,7 @@ function set_active_file(file){
 			$("#code-content").html(data);
 			$('html, body').animate({
 				scrollTop: $("#acp").last().offset().top
-			}, 500);
+			}, 250);
 			$('#code-content').animate({
 				scrollTop: '-=999999'
 			}, 300);

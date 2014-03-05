@@ -73,10 +73,12 @@ html.busy, html.busy * {
 	background-color: #E2F7CB;
 	border-radius: 2px;
 	box-shadow: 0 1px 4px 2px;
-	height: 23px;
+	min-height: 23px;
+	height: auto;
 	margin-top: -6px;
-	padding-top: 7px;
+	padding-top: 2px;
 	padding-left: 10px;
+	padding-right: 10px;
 }
 #tools ul{
 	list-style: none outside none;
@@ -84,12 +86,16 @@ html.busy, html.busy * {
 	padding: 0;
 }
 #tools ul li{
-	display: inline;
+	display: inline-block;
 	font-size: 0.85em;
 	font-weight: bold;
-	margin: 0;
+	letter-spacing: -0.8px;
+	line-height: 30px;
+	margin-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
 	padding: 0;
-	letter-spacing: -0.5px;
+	text-transform: uppercase;
 }
 #tools ul li.separator{
 	margin-left: 10px;
@@ -118,14 +124,10 @@ html.busy, html.busy * {
   background-image: linear-gradient(to bottom, #cfcfcf, #b3b3b3);
   text-decoration: none;
 }
-#tools ul li.btn-enc-eol{
-	float: right;
-	margin-right: 5px;
-}
-#tools ul li.btn-enc-eol a span:first-child{
+#tools ul #btn_enc_eol a span:first-child{
 	color: #FEBF53;
 }
-#tools ul li.btn-enc-eol a span:last-child{
+#tools ul #btn_enc_eol a span:last-child{
 	color: #BEEC81;
 }
 #notepad{
