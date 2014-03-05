@@ -28,14 +28,13 @@ $tpl_file = 'mvt_body.html';
 $ignored_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'psd');
 //Check up the MOD directory status
 check_mods_directory();
-
 // Now search for MOD install files...
 foreach(explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 {
 	//Variables variable are so convenient  !!
-	${$install_ext .'_mapping'} = glob("mods/*/*." . $install_ext);
+	${$install_ext . '_mapping'} = glob("mods/*/*." . $install_ext);
 	$temp_sorting = array();
-	foreach (${$install_ext .'_mapping'} AS $key => $value)
+	foreach (${$install_ext . '_mapping'} AS $key => $value)
 	{
 		$filename = substr(strrchr($value, SLASH), 1);
 		$temp_sorting[str_replace($filename, '', $value)] = $filename;
@@ -45,7 +44,7 @@ foreach(explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 			break;
 		}
 	}
-	${$install_ext .'_mapping'} = $temp_sorting;
+	${$install_ext . '_mapping'} = $temp_sorting;
 }
 
 $template->assign_vars(array(
@@ -131,12 +130,14 @@ if ($dh)
 						$mod_details = $parser->get_details();
 						$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
 						$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}";
+						$mod_version = $mod_details['MOD_VERSION'];
 					break;
 
 					case '3.1.x':
 						$mod_details = json_decode(file_get_contents($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_31x_file), true);
 						$mod_name = $mod_details['extra']['display-name'];
 						$mod_name_versioned = "$mod_name {$mod_details['version']}";
+						$mod_version = $mod_details['version'];
 					break;
 				}
 				//Set a default one if no one was selected
@@ -204,9 +205,13 @@ if ($dh)
 							}
 							$geshi = new GeSHi(file_get_contents($phpbb_root_path .'mods/' . $mod_directory_), $file_ext);
 							$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
+							$s_current_file = str_replace($mod_dir . SLASH, '', $mod_directory_);
 							$template->assign_vars(array(
 								'S_FILE_CODE_CONTENT'	=> preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $geshi->parse_code()),
 								'S_CURRENT_FILE' => str_replace($mod_dir . SLASH, '', $mod_directory_),
+								'S_CURRENT_REAL_MOD' => $mod_name,
+								'S_CURRENT_MOD_VERSION' => $mod_version,
+								'PAGE_TITLE'	=> $mod_name . ' » ' . $s_current_file,
 								'S_CURRENT_FILE_EXT' => substr(strrchr(str_replace($mod_dir . SLASH, '', $mod_directory_), '.'), 1),
 							));
 						}

@@ -342,6 +342,7 @@ function set_active_file(file){
 			current_file_ext = strrchr(file, '.').substr(1);
 			set_button_status();
 			reset_file_selected(100);
+			$('title').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
 			//Small hack to allow users to use link as shortcut even with hash :)
 			window.location = '#' + file;
 			file_encoding(current_mod, current_file, false);
