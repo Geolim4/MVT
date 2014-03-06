@@ -123,14 +123,22 @@ switch ($mode)
 				{
 					unlink($phpbb_root_path . 'mods/' . $stream['filename']);
 				}
-				$xml_mapping = glob("mods/*/*.xml");
-				$temp_sorting = array();
-				foreach ($xml_mapping AS $key => $value)
+
+				// Now search for MOD install files...
+				foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 				{
-					$filename = substr(strrchr($value, SLASH), 1);
-					$temp_sorting[str_replace($filename, '', $value)] = $filename;
+
+					//Variables variable are so convenient  !!
+					${$install_ext . '_mapping'} = glob("mods/*/*." . $install_ext);
+					$temp_sorting = array();
+					foreach (${$install_ext . '_mapping'} AS $key => $value)
+					{
+						$filename = substr(strrchr($value, SLASH), 1);
+						$temp_sorting[str_replace($filename, '', $value)] = $filename;
+					}
+					${$install_ext . '_mapping'} = $temp_sorting;
 				}
-				$xml_mapping = $temp_sorting;
+
 				$mod_dir = str_replace($phpbb_root_path, '', current(array_diff($after_extracting, $before_extracting)));
 				if ($mod_dir)
 				{
@@ -138,7 +146,7 @@ switch ($mode)
 					$base_30x_file = BASE_30X_FILE; 
 					$base_31x_file = BASE_31X_FILE;
 
-					$mod_subfolder = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir . SLASH, false, true, true);
+					$mod_subfolder = directory_to_array($mod_dir . SLASH, false, true, true);
 
 					if (isset($xml_mapping[$mod_dir . SLASH]))
 					{
@@ -148,6 +156,14 @@ switch ($mode)
 					{
 						$base_30x_file = 'install_mod.xml';
 					}
+					if (isset($json_mapping[$mod_dir . SLASH]))
+					{
+						$base_31x_file = $json_mapping[$mod_dir . SLASH];
+					}
+					else
+					{
+						$base_31x_file = BASE_31X_FILE;
+					}
 					if (file_exists($phpbb_root_path . $mod_dir . SLASH . $base_30x_file))
 					{
 						$vmode = '3.0.x';
@@ -156,7 +172,8 @@ switch ($mode)
 					{
 						$vmode = '3.1.x';
 					}
-					//Not file found in the main directory, try second-level directory
+
+					//Not file found in the main MOD directory, try subdirectory
 					if (empty($vmode))
 					{
 						switch (true)
@@ -173,11 +190,6 @@ switch ($mode)
 
 					if ($vmode)
 					{
-/*						$parser = new parser('xml');
-						$parser->set_file($phpbb_root_path . $mod_dir . SLASH . $base_30x_file);
-						$mod_details = $parser->get_details();
-						$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
-						$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}"; */
 						switch ($vmode)
 						{
 							case '3.0.x':

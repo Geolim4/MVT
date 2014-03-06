@@ -28,6 +28,11 @@ function directory_to_array($directory, $recursive = true, $list_dirs = false, $
 {
 	$array_items = array();
 	$skip_by_exclude = false;
+	//Prevent opendir warnings.
+	if(!is_dir($directory))
+	{
+		return false;
+	}
 	$handle = opendir($directory);
 	if ($handle ) 
 	{

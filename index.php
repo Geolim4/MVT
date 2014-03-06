@@ -40,12 +40,12 @@ foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 	foreach (${$install_ext . '_mapping'} AS $key => $value)
 	{
 		$filename = substr(strrchr($value, SLASH), 1);
-		$temp_sorting[str_replace($filename, '', $value)] = $filename;
 		//3.0.x hack
-		if (strpos($filename, 'install') !== false)
+		if (isset($temp_sorting[str_replace($filename, '', $value)]) && strpos($temp_sorting[str_replace($filename, '', $value)], 'install') !== false )
 		{
-			break;
+			continue;
 		}
+		$temp_sorting[str_replace($filename, '', $value)] = $filename;
 	}
 	${$install_ext . '_mapping'} = $temp_sorting;
 }
@@ -111,7 +111,7 @@ if ($dh)
 			{
 				$vmode = '3.1.x';
 			}
-			//Not file found in the main MOD directory, subdirectory
+			//Not file found in the main MOD directory, try subdirectory
 			if (empty($vmode))
 			{
 				switch (true)
