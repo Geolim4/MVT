@@ -51,14 +51,15 @@
 $(document).ready(function() {
 	init();
 });
+
 function btn_fullscreen(){
-	var myelement = document.getElementById("acp");
-	if(myelement.requestFullScreen || myelement.webkitRequestFullScreen || myelement.mozRequestFullScreen){
+	var acp_element = document.getElementById("acp");
+	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
 		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
 			RunPrefixMethod(document, "CancelFullScreen");
 		}
 		else {
-			RunPrefixMethod(myelement, "RequestFullScreen");
+			RunPrefixMethod(acp_element, "RequestFullScreen");
 		}
 	}else{
 		mvt_info('{LA_MVT_FULLSCREEN_UNSUPPORTED}');

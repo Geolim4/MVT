@@ -81,7 +81,7 @@ function mvt_info(boxtitle, boxmsg, on_ok, custom_width){
 		width: ((custom_width) ? custom_width : '350px'), resizable: false,
 		draggable : false, buttons: btns,
 	});
-	if(RunPrefixMethod(document, "IsFullScreen")){
+	if(RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")){
 		$('.ui-widget-overlay, .ui-dialog').css('z-index', 2147483647);
 	}
 }
@@ -127,7 +127,7 @@ function mvt_confirm(boxtitle, boxmsg, on_confirm, on_cancel, alert_icon, boxid,
 		width: ((custom_width) ? custom_width : '500px'), resizable: false,
 		draggable : false, buttons: btns,
 	});
-	if(RunPrefixMethod(document, "IsFullScreen")){
+	if(RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")){
 		$('.ui-widget-overlay, .ui-dialog').css('z-index', 2147483647);
 	}
 }

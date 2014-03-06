@@ -8,7 +8,9 @@
 html.busy, html.busy * {
 	cursor: wait !important;
 }
-/*We need to separate each full-screen declarations otherwise chrome doesn't recognize them */
+/* http://www.sitepoint.com/html5-full-screen-api/ 
+	Quote:" For some bizarre reason, you must repeat the styles in their own blocks or they won’t be applied"
+*/
 #acp:-webkit-full-screen{
 	max-height: 100%;
 	height: 100%;
@@ -352,8 +354,7 @@ div.code-content{
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
 	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
 }
-/* @media screen and (max-width: 1625px) {
-	#tools ul li a.btn{
-		font-size: 10px;
-	}
-} */
+/* Fullscreen protection*/
+.ui-tooltip, .ui-effects-transfer{
+	z-index: 2147483647 !important;
+}
