@@ -4,6 +4,7 @@ var current_file = '{S_CURRENT_FILE}', current_file_ext = '{S_CURRENT_FILE_EXT}'
 var current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 var current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 var current_tree_path = new Array(), expanded_folders = '';
+var hash_ignore_update = false, hide_list_cookie_name = 'mvt_hide_list', vendor_prefix = ["webkit", "moz", "ms", "o", ""];
 var file_groups = {
 	'media': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg']
 };
@@ -15,66 +16,57 @@ var ext_unassociation = {
 	'btn_search_engine': file_groups['media'],
 	'btn_enc_eol': file_groups['media']
 };
-var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array();
-var index = '{U_INDEX}';
+var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array(), index = '{U_INDEX}';
 
 function add_mod(){
-	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_SUBMIT}';
-	btns[cwBtn] = function () {
-		$(this).dialog('close');
-	};
-	btns[awBtn] = function () {
-		var mod_url = $('#mod_url').val();
-		if(!mod_url){
-			return;
-		}
-		$(this).dialog('close');
-		mods_ary = mod_url.split("\n");
-		content_status(false);
-		for(mod in mods_ary){
-			if(mods_ary[mod]){
-				$.ajax({
-					type: 'POST',
-					url: '{U_AJAX}',
-					data: {'mod' : '{S_CURRENT_MOD}', 'url' : mods_ary[mod], 'mode' : 'add_mod'},
-					timeout: 30000,
-					async: false,
-					dataType  : 'json',
-					beforeSend: function() {
-						
-					},
-					complete: function(data, textStts, errThrown) {
-
-					},
-					success: function(data, textStts, errThrown) {
-						if(data['errmsg']){
-							alert(data['errmsg']);
-						}
-						if(data['eval']){
-							eval(data['eval']);
-						}
-					},
-					error: function(data, textStts, errThrown) {
-
-					},
-				});
+	mvt_confirm("{LA_MVT_ADD_MOD}", '{LA_MVT_ADD_MOD_URL}<br /><textarea class="inputbox text ui-widget-content ui-corner-all" id="mod_url" tabindex="3" cols="78" rows="5" name="mod_url" style="height: 90px;width: 720px;resize: none;"></textarea><br /><br />{LA_MVT_MOD_ALTERNATIVE}', 
+		function () {
+			var mod_url = $('#mod_url').val();
+			if(!mod_url){
+				return;
 			}
-		}
-		content_status(true);
-		<!-- IF S_NO_MODS -->
-		location.assign('{U_INDEX}');
-		<!-- ENDIF -->
-	};
-	$('#confirmbox').children('div').html('{LA_MVT_ADD_MOD_URL}<br /><textarea class="inputbox text ui-widget-content ui-corner-all" id="mod_url" tabindex="3" cols="78" rows="5" name="mod_url" style="height: 90px;width: 720px;resize: none;"></textarea><br /><br />{LA_MVT_MOD_ALTERNATIVE}');
-	$('#confirmbox').dialog({
-		modal: true, title: "{LA_MVT_ADD_MOD}",
-		zIndex: 10000, autoOpen: true,
-		width: '750px', resizable: false,
-		draggable : false, buttons: btns,
-	});
+			mods_ary = mod_url.split("\n");
+			content_status(false);
+			for(mod in mods_ary){
+				if(mods_ary[mod]){
+					$.ajax({
+						type: 'POST',
+						url: '{U_AJAX}',
+						data: {'mod' : '{S_CURRENT_MOD}', 'url' : mods_ary[mod], 'mode' : 'add_mod'},
+						timeout: 30000,
+						async: false,
+						dataType  : 'json',
+						beforeSend: function() {
+							
+						},
+						complete: function(data, textStts, errThrown) {
+
+						},
+						success: function(data, textStts, errThrown) {
+							if(data['errmsg']){
+								alert(data['errmsg']);
+							}
+							if(data['eval']){
+								eval(data['eval']);
+							}
+						},
+						error: function(data, textStts, errThrown) {
+
+						},
+					});
+				}
+			}
+			content_status(true);
+			<!-- IF S_NO_MODS -->
+			location.assign('{U_INDEX}');
+			<!-- ENDIF -->
+		}, 
+		function () {
+		}, false, '', true, '750px'
+	);
 }
 
-function mvt_info(boxtitle, boxmsg, on_ok){
+function mvt_info(boxtitle, boxmsg, on_ok, custom_width){
 	var btns = {}, awBtn = '{LA_MVT_OK}';
 	btns[awBtn] = function () {
 		if(typeof(on_ok) == "function"){
@@ -86,32 +78,58 @@ function mvt_info(boxtitle, boxmsg, on_ok){
 	$('#infobox').dialog({
 		modal: true, title: boxtitle,
 		zIndex: 10000, autoOpen: true,
-		width: '350px', resizable: false,
+		width: ((custom_width) ? custom_width : '350px'), resizable: false,
 		draggable : false, buttons: btns,
 	});
+	if(RunPrefixMethod(document, "IsFullScreen")){
+		$('.ui-widget-overlay, .ui-dialog').css('z-index', 2147483647);
+	}
 }
-function mvt_confirm(boxtitle, boxmsg, on_confirm, on_cancel){
+
+function mvt_confirm(boxtitle, boxmsg, on_confirm, on_cancel, alert_icon, boxid, close_before, custom_width){
 
 	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_CONTINUE}';
 	btns[cwBtn] = function () {
-		if(typeof(on_cancel) == "function"){
-			on_cancel();
+		if(close_before){
+			$(this).dialog('close');
+			if(typeof(on_cancel) == "function"){
+				on_cancel();
+			}
+		}else{
+			if(typeof(on_cancel) == "function"){
+				on_cancel();
+			}
+			$(this).dialog('close');
 		}
-		$(this).dialog('close');
 	};
 	btns[awBtn] = function () {
-		if(typeof(on_confirm) == "function"){
-			on_confirm();
+		if(close_before){
+			$(this).dialog('close');
+			if(typeof(on_confirm) == "function"){
+				on_confirm();
+			}
+		}else{
+			if(typeof(on_confirm) == "function"){
+				on_confirm();
+			}
+			$(this).dialog('close');
 		}
-		$(this).dialog('close');
 	};
-	$('#confirmbox').children('div').html('<span class="ui-icon ui-icon-alert" style="margin-top: 1px; float: left;"></span>' + boxmsg);
-	$('#confirmbox').dialog({
+	if(boxid){
+		var confirmbox_id = boxid;
+	}else{
+		var confirmbox_id = '#confirmbox';
+	}
+	$(confirmbox_id).children('div').html(((alert_icon) ? '<span class="ui-icon ui-icon-alert" style="margin-top: 1px; float: left;"></span> ' : '') + boxmsg);
+	$(confirmbox_id).dialog({
 		modal: true, title: boxtitle,
 		zIndex: 10000, autoOpen: true,
-		width: '500px', resizable: false,
+		width: ((custom_width) ? custom_width : '500px'), resizable: false,
 		draggable : false, buttons: btns,
 	});
+	if(RunPrefixMethod(document, "IsFullScreen")){
+		$('.ui-widget-overlay, .ui-dialog').css('z-index', 2147483647);
+	}
 }
 
 function content_status(status){
@@ -126,6 +144,7 @@ function content_status(status){
 	}
 
 }
+
 function file_encoding(mod, file, encoding){
 	if(mod && file && encoding === false){
 		$.ajax({
@@ -157,6 +176,7 @@ function file_encoding(mod, file, encoding){
 		$('#file-encoding').text(encoding);
 	}
 }
+
 function file_eol(mod, file, eol){
 	if(mod && file && eol === false){
 		$.ajax({
@@ -188,6 +208,7 @@ function file_eol(mod, file, eol){
 		$('#file-eol').text(eol);
 	}
 }
+
 function add_mod_tab(name, uri, path, vmode){
 	if(!$("a[href='" + uri + "']").html())
 	{
@@ -323,5 +344,22 @@ function base64_decoder(data) {
   return dec;
 }
 
+function RunPrefixMethod(obj, method) {
+	
+	var p = 0, m, t;
+	while (p < vendor_prefix.length && !obj[m]) {
+		m = method;
+		if (vendor_prefix[p] == "") {
+			m = m.substr(0,1).toLowerCase() + m.substr(1);
+		}
+		m = vendor_prefix[p] + m;
+		t = typeof obj[m];
+		if (t != "undefined") {
+			vendor_prefix = [vendor_prefix[p]];
+			return (t == "function" ? obj[m]() : obj[m]);
+		}
+		p++;
+	}
+}
 // ]]>
 </script>

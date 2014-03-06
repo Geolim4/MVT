@@ -14,6 +14,7 @@
 		<li id="btn_top_scroll"><a href="#" class="btn" onclick="top_scroll(); return false;" title="{L_MVT_SCROLL_TOP}"><img alt="{L_MVT_SCROLL_TOP}" src="style/images/scroll_up.png" /></a></li>
 		<li id="btn_down_scroll"><a href="#" class="btn" onclick="down_scroll(); return false;" title="{L_MVT_SCROLL_DOWN}"><img alt="{L_MVT_SCROLL_DOWN}" src="style/images/scroll_down.png" /></a></li>
 		<li class="separator">|</li>
+		<li id="btn_fullscreen"><a href="#" class="btn" onclick="btn_fullscreen(); return false;" title="{L_MVT_FULLSCREEN}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/fullscreen.png" /></a></li>
 		<li id="btn_select_code"><a href="#" class="btn" onclick="selectCode(document.getElementById('code-content'), 'ol'); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
 		<li id="btn_notepad"><a href="#" class="btn" onclick="$('#notepad').show(300); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
 		<li id="btn_purge_notepad"><a href="#" class="btn" onclick="purge_notepad(); return false;" id="notepad-purge" title="{L_MVT_PURGE}"><img alt="{L_MVT_PURGE}" src="style/images/purge.png" /></a></li>
@@ -47,10 +48,23 @@
 <!-- INCLUDE javascript_core.html -->
 <script type="text/javascript">
 // <![CDATA[
-var hide_list_cookie_name = 'mvt_hide_list';
 $(document).ready(function() {
 	init();
 });
+function btn_fullscreen(){
+	var myelement = document.getElementById("acp");
+	if(myelement.requestFullScreen || myelement.webkitRequestFullScreen || myelement.mozRequestFullScreen){
+		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
+			RunPrefixMethod(document, "CancelFullScreen");
+		}
+		else {
+			RunPrefixMethod(myelement, "RequestFullScreen");
+		}
+	}else{
+		mvt_info('{LA_MVT_FULLSCREEN_UNSUPPORTED}');
+	}
+}
+
 function init(){
 	 $(function() {
 		$('.btn').tooltip({
@@ -119,6 +133,10 @@ function init(){
 	});
 	if ("onhashchange" in window) { // event supported?
 		window.onhashchange = function () {
+			if(hash_ignore_update){
+				hash_ignore_update = false;
+				return;
+			}
 			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 			if(current_file_anchor){
@@ -132,6 +150,10 @@ function init(){
 		var storedHash = window.location.hash;
 		window.setInterval(function () {
 			if (window.location.hash != storedHash) {
+				if(hash_ignore_update){
+					hash_ignore_update = false;
+					return;
+				}
 				current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 				current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 				if(current_file_anchor){
@@ -149,11 +171,13 @@ function init(){
 	file_encoding(current_mod, current_file, false);
 	file_eol(current_mod, current_file, false);
 }
+
 function reset_notepad_pos(){
 	var pos = $(window).width() - $('#notepad').width() - 50;
 	$('#notepad').css('left', pos + 'px');
 	$('#notepad').css('top', '25px');
 }
+
 function btn_list_numbers(){
 	if($('#code-content').hasClass('no-style-type')){
 		$.removeCookie(hide_list_cookie_name, {path: '/'});
@@ -163,6 +187,7 @@ function btn_list_numbers(){
 		$('#code-content').addClass('no-style-type');
 	}
 }
+
 function left_scroll(){
 	var scroll_value = ctrlDown ? '-=9999' : '-=150';
 	$('#code-content').animate({
@@ -372,23 +397,15 @@ function set_onbeforeunload_handler(handler){
 
 function exit_handler(url){
 	if($('#notepad-report').val()){
-		var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_CONTINUE}';
-		btns[cwBtn] = function () {
-			$('#notepad').show(300);
-			$(this).dialog('close');
-		};
-		btns[awBtn] = function () {
-			window.onbeforeunload = false;
-			window.location.href = url;
-			$(this).dialog('close');
-		};
-		$('#confirmbox').children('div').html('<span class="ui-icon ui-icon-alert" style="margin-top: 1px; float: left;"></span> {LA_MVT_EXIT_ALERT}');
-		$('#confirmbox').dialog({
-			modal: true, title: "{LA_MVT_INFORMATION}",
-			zIndex: 10000, autoOpen: true,
-			width: '500px', resizable: false,
-			draggable : false, buttons: btns,
-		});
+		mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}", 
+			function () {
+				window.onbeforeunload = false;
+				window.location.href = url;
+			}, 
+			function () {
+				$('#notepad').show(300);
+			}
+		);
 	}else{
 		window.location.href = url;
 	}
@@ -432,7 +449,9 @@ function set_active_file(file, collapse_on_complete){
 			reset_file_selected(100);
 			$('title').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
 			$('#page-header').children('h1').children('a').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
+			
 			//Small hack to allow users to use link as shortcut even with hash :)
+			hash_ignore_update = true;
 			window.location = '#' + file;
 			file_encoding(current_mod, current_file, false);
 			file_eol(current_mod, current_file, false);
@@ -485,44 +504,30 @@ function report_code(err_code){
 		alert('{LA_MVT_SELECT_ERROR}');
 		return;
 	}
-	btns[cwBtn] = function () {
-		$(this).dialog('close');
-	};
-	btns[awBtn] = function () {
-		$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
-			function () {
-				$('#notepad-report').val($('#notepad-report').val() + "[b]" + err_code + "[/b]\n[code]" + SelectedCode + "[/code]" + $('#user-report').val() + "\n\n").trigger('autosize.resize');
-				$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
-				$('#user-report').val('');
-			}
-		);
-		$(this).dialog('close');
-	};
-	$('#dialogbox').children('div').text('{LA_MVT_DESCRIBE}');
-	$('#dialogbox').dialog({
-		modal: true, title: "{LA_MVT_INFORMATION}",
-		zIndex: 10000, autoOpen: true,
-		width: '500px', resizable: false,
-		draggable : false, buttons: btns,
-	});
+
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_DESCRIBE}", 
+		function () {
+			$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+				function () {
+					$('#notepad-report').val($('#notepad-report').val() + "[b]" + err_code + "[/b]\n[code]" + SelectedCode + "[/code]" + $('#user-report').val() + "\n\n").trigger('autosize.resize');
+					$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+					$('#user-report').val('');
+				}
+			);
+		}, 
+		function () {
+		}, false, '#dialogbox'
+	);
 }
 
 function purge_notepad(){
-	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_OK}';
-	btns[cwBtn] = function () {
-		$(this).dialog('close');
-	};
-	btns[awBtn] = function () {
-		$('#notepad-report').val('').trigger('autosize.resize');
-		$(this).dialog('close');
-	};
-	$('#confirmbox').children('div').text('{LA_MVT_PURGE_CONFIRM}');
-	$('#confirmbox').dialog({
-		modal: true, title: "{LA_MVT_PURGE}",
-		zIndex: 10000, autoOpen: true,
-		width: '500px', resizable: false,
-		draggable : false, buttons: btns,
-	});
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_PURGE_CONFIRM}", 
+		function () {
+			$('#notepad-report').val('').trigger('autosize.resize');
+		}, 
+		function () {
+		}, true
+	);
 }
 
 function get_filestats(){
@@ -571,17 +576,7 @@ function check_syntax(){
 			busy = false;
 		},
 		success: function(data, textStts, errThrown) {
-			var btns = {}, cwBtn = '{LA_MVT_OK}';
-			btns[cwBtn] = function () {
-				$(this).dialog('close');
-			};
-			$('#confirmbox').children('div').html(data);
-			$('#confirmbox').dialog({
-				modal: true, title: "{LA_MVT_INFORMATION}",
-				zIndex: 10000, autoOpen: true,
-				width: '500px', resizable: false,
-				draggable : false, buttons: btns,
-			});
+			mvt_info("{LA_MVT_INFORMATION}", data, function(){});
 		},
 		error: function(data, textStts, errThrown) {
 
@@ -618,39 +613,29 @@ function delete_mod(mod_path){
 			},
 		});
 	};
-	var on_cancel = function(){};
-	mvt_confirm('{LA_CONFIRM}', '{LA_MVT_MOD_DELETE_WARN}', on_confirm, on_cancel);
+	mvt_confirm('{LA_CONFIRM}', '{LA_MVT_MOD_DELETE_WARN}', on_confirm, function(){});
 }
 
 function internal_mesage(){
-	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_OK}';
 	var SelectedCode = getSelectedCode();
-
-	btns[cwBtn] = function () {
-		$(this).dialog('close');
-	};
-	btns[awBtn] = function () {
-		if(!$('#user-report').val())
-		{
-			alert('{LA_MVT_EMPTY_MESSAGE}');
-			return;
-		}
-		$('#notepad-report').val($('#notepad-report').val() + "[quote][size=120][b]{LA_MVT_INTERNAL}:[/b][/size]" + ((SelectedCode) ? "\n\n[b][size=110]" + current_file + "[/size][/b][code]" + SelectedCode + "[/code]" : '') + "\n\n" + $('#user-report').val() + "[/quote]\n").trigger('autosize.resize');
-		$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
-			function () {
-				$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
-				$('#user-report').val('');
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_INTERNAL_EXPLAIN}", 
+		function () {
+			if(!$('#user-report').val())
+			{
+				alert('{LA_MVT_EMPTY_MESSAGE}');
+				return;
 			}
-		);
-		$(this).dialog('close');
-	};
-	$('#dialogbox').children('div').text('{LA_MVT_INTERNAL_EXPLAIN}');
-	$('#dialogbox').dialog({
-		modal: true, title: "{LA_MVT_INFORMATION}",
-		zIndex: 10000, autoOpen: true,
-		width: '500px', resizable: false,
-		draggable : false, buttons: btns,
-	});
+			$('#notepad-report').val($('#notepad-report').val() + "[quote][size=120][b]{LA_MVT_INTERNAL}:[/b][/size]" + ((SelectedCode) ? "\n\n[b][size=110]" + current_file + "[/size][/b][code]" + SelectedCode + "[/code]" : '') + "\n\n" + $('#user-report').val() + "[/quote]\n").trigger('autosize.resize');
+			$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+				function () {
+					$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+					$('#user-report').val('');
+				}
+			);
+		}, 
+		function () {
+		}, false, '#dialogbox'
+	);
 }
 // ]]>
 </script>

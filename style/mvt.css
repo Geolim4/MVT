@@ -8,6 +8,34 @@
 html.busy, html.busy * {
 	cursor: wait !important;
 }
+/*We need to separate each full-screen declarations otherwise chrome doesn't recognize them */
+#acp:-webkit-full-screen{
+	max-height: 100%;
+	height: 100%;
+	max-width: 100%;
+	width: 100%;
+}
+#acp:-moz-full-screen{
+	max-height: 100%;
+	height: 100%;
+	max-width: 100%;
+	width: 100%;
+}
+#acp:full-screen{
+	max-height: 100%;
+	height: 100%;
+	max-width: 100%;
+	width: 100%;
+}
+#acp:-webkit-full-screen #content{
+	height: 1200px;
+}
+#acp:-moz-full-screen #content{
+	height: 1200px;
+}
+#acp:full-screen #content{
+	height: 1200px;
+}
 #page-header{
 	height: 70px;
 }
@@ -98,7 +126,7 @@ html.busy, html.busy * {
 	margin-left: 0;
 	margin-right: 0;
 	padding: 0;
-	text-transform: uppercase;
+
 }
 #tools ul li.separator{
 	margin-left: 10px;
