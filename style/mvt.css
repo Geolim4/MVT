@@ -295,6 +295,9 @@ div.code-content{
 #next_file{
 	right: 2px;
 }
+#previous_file:hover, #next_file:hover{
+	opacity: 1;
+}
 .success{
 	color: #009933;
 }

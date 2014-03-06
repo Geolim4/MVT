@@ -193,8 +193,15 @@ function down_scroll(){
 
 function previous_file(){
 	var file_found = false, break_traversing = false;
+	//Hide the current button
+	$('#previous_file').hide();
+	//Re-enable the opposite button
+	$('#next_file').show();
+
 	$($("a.tree-link").get().reverse()).each(function() {
 		if(break_traversing){
+			//If a previous file is found then re-enable the current button
+			$('#previous_file').show();
 			return;
 		}else if(file_found){
 			window.location.hash = $(this).attr('href');
@@ -214,8 +221,15 @@ function previous_file(){
 
 function next_file(){
 	var file_found = false, break_traversing = false;
+	//Hide the current button
+	$('#next_file').hide();
+	//Re-enable the opposite button
+	$('#previous_file').show();
+
 	$("a.tree-link").each(function() {
 		if(break_traversing){
+			//If a next file is found then re-enable the current button
+			$('#next_file').show();
 			return;
 		}else if(file_found){
 			window.location.hash = $(this).attr('href');
