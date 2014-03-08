@@ -294,7 +294,7 @@ function base64_decode(){
 }
 
 function collapse_all(force_collaspe){
-	if(menu_state == 'shown' && !force_collaspe){
+	if(menu_state == 'hidden' && !force_collaspe){
 		return;
 	}
 	current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
