@@ -37,17 +37,20 @@ foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 	//Variables variable are so convenient  !!
 	${$install_ext . '_mapping'} = glob("mods/*/*." . $install_ext);
 	$temp_sorting = array();
-	foreach (${$install_ext . '_mapping'} AS $key => $value)
+	if (!empty(${$install_ext . '_mapping'}))
 	{
-		$filename = substr(strrchr($value, SLASH), 1);
-		//3.0.x hack
-		if (isset($temp_sorting[str_replace($filename, '', $value)]) && strpos($temp_sorting[str_replace($filename, '', $value)], 'install') !== false )
+		foreach (${$install_ext . '_mapping'} AS $key => $value)
 		{
-			continue;
+			$filename = substr(strrchr($value, SLASH), 1);
+			//3.0.x hack
+			if (isset($temp_sorting[str_replace($filename, '', $value)]) && strpos($temp_sorting[str_replace($filename, '', $value)], 'install') !== false )
+			{
+				continue;
+			}
+			$temp_sorting[str_replace($filename, '', $value)] = $filename;
 		}
-		$temp_sorting[str_replace($filename, '', $value)] = $filename;
+		${$install_ext . '_mapping'} = $temp_sorting;
 	}
-	${$install_ext . '_mapping'} = $temp_sorting;
 }
 
 $template->assign_vars(array(
