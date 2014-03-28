@@ -276,15 +276,15 @@ if ($mode == 'config')
 	if ($submit)
 	{
 		$settings = array (
-			'mvt_php_syntax' => request_var('mvt_php_syntax', 1),
+			//'mvt_php_syntax' => request_var('mvt_php_syntax', 1),
 			//'mvt_php_binary_path' => request_var('mvt_php_binary_path', ''),
 			'mvt_lang' => request_var('mvt_lang', ''),
-			'mvt_new_tab' => request_var('mvt_lang', 1),
-			'mvt_search_engine' => request_var('mvt_search_engine', ''),
-			'mvt_search_engine_url' => request_var('mvt_search_engine_url', ''),
-			'mvt_search_engine_img' => request_var('mvt_search_engine_img', ''),
-			'mvt_tab_str_len' => request_var('mvt_tab_str_len', 25),
-			'mvt_exit_handler' => request_var('mvt_exit_handler', 1),
+			//'mvt_new_tab' => request_var('mvt_lang', 1),
+			//'mvt_search_engine' => request_var('mvt_search_engine', ''),
+			//'mvt_search_engine_url' => request_var('mvt_search_engine_url', ''),
+			//'mvt_search_engine_img' => request_var('mvt_search_engine_img', ''),
+			//'mvt_tab_str_len' => request_var('mvt_tab_str_len', 25),
+			//'mvt_exit_handler' => request_var('mvt_exit_handler', 1),
 		);
 		foreach ($settings as $config_name => $config_value)
 		{

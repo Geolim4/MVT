@@ -11,52 +11,60 @@
 		<dl>
 			<dt><label for="mvt_php_syntax">{L_MVT_CFG_PHP_SYNTAX}:</label></dt>
 			<dd>
-				<label><input type="radio" onclick="$('#dl_mvt_php_binary_path').fadeIn(200);" class="radio" name="mvt_php_syntax" value="1"<!-- IF S_CFG_SYNTAX --> checked="checked" id="mvt_php_syntax"<!-- ENDIF --> /> {L_YES}</label>
-				<label><input type="radio" onclick="$('#dl_mvt_php_binary_path').fadeOut(200);" class="radio" name="mvt_php_syntax" value="0"<!-- IF not S_CFG_SYNTAX --> checked="checked" id="mvt_php_syntax"<!-- ENDIF --> /> {L_NO}</label>
+				<label><input type="radio" onclick="$('#dl_mvt_php_binary_path').fadeIn(200);" class="radio" name="mvt_php_syntax" value="1"<!-- IF S_CFG_SYNTAX --> checked="checked" id="mvt_php_syntax"<!-- ENDIF --> disabled="disabled" class="disabled" /> {L_YES}</label>
+				<label><input type="radio" onclick="$('#dl_mvt_php_binary_path').fadeOut(200);" class="radio" name="mvt_php_syntax" value="0"<!-- IF not S_CFG_SYNTAX --> checked="checked" id="mvt_php_syntax"<!-- ENDIF --> disabled="disabled" class="disabled" /> {L_NO}</label>
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl id="dl_mvt_php_binary_path"<!-- IF not S_CFG_SYNTAX --> style="display: none;"<!-- ENDIF -->>
 			<dt><label for="mvt_php_binary_path">{L_MVT_CFG_PHP_BINARY_PATH}:</label><br />{L_MVT_CFG_PHP_BINARY_PATH_EXPLAIN}</dt>
 			<dd>
-				<input readonly="readonly" type="text" id="mvt_php_binary_path" name="mvt_php_binary_path" size="50" value="{S_CFG_PHP_BINARY_PATH}" />
+				<input type="text" id="mvt_php_binary_path" name="mvt_php_binary_path" size="50" value="{S_CFG_PHP_BINARY_PATH}" disabled="disabled" class="disabled" />
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl>
 			<dt><label for="mvt_search_engine">{L_MVT_CFG_SEARCH_ENGINE}:</label></dt>
 			<dd>
-				<input type="text" id="mvt_search_engine" name="mvt_search_engine" size="20" value="{S_CFG_SEARCH_ENGINE}" />
+				<input type="text" id="mvt_search_engine" name="mvt_search_engine" size="20" value="{S_CFG_SEARCH_ENGINE}" disabled="disabled" class="disabled" />
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl>
 			<dt><label for="mvt_search_engine_url">{L_MVT_CFG_SEARCH_ENGINE_URL}:</label><br />{L_MVT_CFG_SEARCH_ENGINE_URL_EXPLAIN}</dt>
 			<dd>
-				<input type="text" id="mvt_search_engine_url" name="mvt_search_engine_url" size="50" value="{S_CFG_SEARCH_ENGINE_URL}" />
+				<input type="text" id="mvt_search_engine_url" name="mvt_search_engine_url" size="50" value="{S_CFG_SEARCH_ENGINE_URL}" disabled="disabled" class="disabled" />
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl>
 			<dt><label for="mvt_search_engine_img">{L_MVT_CFG_SEARCH_ENGINE_IMG}:</label></dt>
 			<dd>
-				<input type="text" id="mvt_search_engine_img" name="mvt_search_engine_img" size="50" value="{S_CFG_SEARCH_ENGINE_IMG}" />
+				<input type="text" id="mvt_search_engine_img" name="mvt_search_engine_img" size="50" value="{S_CFG_SEARCH_ENGINE_IMG}" disabled="disabled" class="disabled" />
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl>
 			<dt><label for="mvt_tab_str_len">{L_MVT_CFG_TAB_STR_LEN}:</label></dt>
 			<dd>
-				<input type="text" id="mvt_tab_str_len" name="mvt_tab_str_len" size="3" maxlength="3" value="{S_CFG_TAB_STR_LEN}" />
+				<input type="text" id="mvt_tab_str_len" name="mvt_tab_str_len" size="3" maxlength="3" value="{S_CFG_TAB_STR_LEN}" disabled="disabled" class="disabled" />
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl>
 			<dt><label for="mvt_new_tab">{L_MVT_NEW_TAB}:</label></dt>
 			<dd>
-				<label><input type="radio" class="radio" name="mvt_new_tab" value="1"<!-- IF S_CFG_MVT_NEW_TAB --> checked="checked" id="mvt_new_tab"<!-- ENDIF --> /> {L_YES}</label>
-				<label><input type="radio" class="radio" name="mvt_new_tab" value="0"<!-- IF not S_CFG_MVT_NEW_TAB --> checked="checked" id="mvt_new_tab"<!-- ENDIF --> /> {L_NO}</label>
+				<label><input type="radio" class="radio" name="mvt_new_tab" value="1"<!-- IF S_CFG_MVT_NEW_TAB --> checked="checked" id="mvt_new_tab"<!-- ENDIF --> disabled="disabled" class="disabled" /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="mvt_new_tab" value="0"<!-- IF not S_CFG_MVT_NEW_TAB --> checked="checked" id="mvt_new_tab"<!-- ENDIF --> disabled="disabled" class="disabled" /> {L_NO}</label>
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl>
 			<dt><label for="mvt_exit_handler">{L_MVT_EXIT_HANDLER}:</label></dt>
 			<dd>
-				<label><input type="radio" class="radio" name="mvt_exit_handler" value="1"<!-- IF S_CFG_EXIT_HANDLER --> checked="checked" id="mvt_exit_handler"<!-- ENDIF --> /> {L_YES}</label>
-				<label><input type="radio" class="radio" name="mvt_exit_handler" value="0"<!-- IF not S_CFG_EXIT_HANDLER --> checked="checked" id="mvt_exit_handler"<!-- ENDIF --> /> {L_NO}</label>
+				<label><input type="radio" class="radio" name="mvt_exit_handler" value="1"<!-- IF S_CFG_EXIT_HANDLER --> checked="checked" id="mvt_exit_handler"<!-- ENDIF --> disabled="disabled" class="disabled" /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="mvt_exit_handler" value="0"<!-- IF not S_CFG_EXIT_HANDLER --> checked="checked" id="mvt_exit_handler"<!-- ENDIF --> disabled="disabled" class="disabled" /> {L_NO}</label>
+				<p class="error">{L_MVT_DISABLED}</p>
 			</dd>
 		</dl>
 		<dl>

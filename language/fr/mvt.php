@@ -41,6 +41,7 @@ $lang = array_merge($lang, array(
 	'MVT_DATE_FORMAT' => 'd M Y, H:i',
 	'MVT_CFG_PHP_SYNTAX' => 'Vérificateur de syntaxe PHP',
 	'MVT_CREDIT_LINE' => 'Mod Validation Tool © 2013, 2014 phpBB-fr MOD Team',
+	'MVT_DISABLED' => 'Cette fonctionnalité est en lecture seule en mode public.',
 	'MVT_DRAG_BUTTON' => '░',
 	'MVT_BASE64_DECODE' => 'Decoder code base64',
 	'MVT_INVALID_BASE64' => 'Chaine base64 invalide!',
