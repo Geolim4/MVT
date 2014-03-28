@@ -277,7 +277,7 @@ if ($mode == 'config')
 	{
 		$settings = array (
 			'mvt_php_syntax' => request_var('mvt_php_syntax', 1),
-			'mvt_php_binary_path' => request_var('mvt_php_binary_path', ''),
+			//'mvt_php_binary_path' => request_var('mvt_php_binary_path', ''),
 			'mvt_lang' => request_var('mvt_lang', ''),
 			'mvt_new_tab' => request_var('mvt_lang', 1),
 			'mvt_search_engine' => request_var('mvt_search_engine', ''),
