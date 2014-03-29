@@ -21,9 +21,9 @@ include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
 $user->add_lang('mvt');
 $picture_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'swf');
 
-$mod = request_var('mod', '');
-$url = request_var('url', '');
-$file = request_var('file', '');
+$mod = utf8_normalize_nfc(request_var('mod', '', true));
+$url = utf8_normalize_nfc(request_var('url', '', true));
+$file = utf8_normalize_nfc(request_var('file', '', true));
 $mode = request_var('mode', 'geshi');
 
 switch ($mode)
@@ -205,13 +205,13 @@ switch ($mode)
 								$parser->set_file($phpbb_root_path . $mod_dir . SLASH . $base_30x_file);
 								$mod_details = $parser->get_details();
 								$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
-								$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}";
+								$mod_name_versioned = addslashes("$mod_name {$mod_details['MOD_VERSION']}");
 							break;
 
 							case '3.1.x':
 								$mod_details = json_decode(file_get_contents($phpbb_root_path . $mod_dir . SLASH . $base_31x_file), true);
 								$mod_name = $mod_details['extra']['display-name'];
-								$mod_name_versioned = "$mod_name {$mod_details['version']}";
+								$mod_name_versioned = addslashes("$mod_name {$mod_details['version']}");
 							break;
 						}
 						

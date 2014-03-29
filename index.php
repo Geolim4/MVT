@@ -23,8 +23,8 @@ $user->theme['template_storedb'] = false;
 $user->add_lang('mvt');
 $submit = !empty($_POST['submit']) ? true : false;
 $mode = request_var('mode', 'validation');
-$mod = request_var('mod', '');
-$file = request_var('file', '');
+$mod = utf8_normalize_nfc(request_var('mod', '', true));
+$file = utf8_normalize_nfc(request_var('file', '', true));
 $tpl_file = 'mvt_body.html';
 $ignored_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'psd');
 

@@ -111,9 +111,7 @@ function init(){
 		if(current_file_anchor){
 			set_active_file(current_file_anchor);
 		}else{
-			reset_file_selected(100);
 		}
-		$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
 	}, 500);
 	$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
 	$(function () {
@@ -169,6 +167,7 @@ function init(){
 	<!-- IF S_CFG_EXIT_HANDLER -->
 	setInterval(notepad_report_checker, 1000);
 	<!-- ENDIF -->
+	setInterval(reset_file_selected, 250);
 	file_encoding(current_mod, current_file, false);
 	file_eol(current_mod, current_file, false);
 }
@@ -320,7 +319,6 @@ function collapse_all(force_collaspe){
 	$('html, body').animate({
 		scrollTop: $("#tabs").offset().top
 	}, 800);
-	reset_file_selected(500);
 }
 
 function expand_all(){
@@ -353,7 +351,6 @@ function expand_all(){
 					set_active_file(file.replace('{U_MODS_PATH}{S_CURRENT_MOD}/', ''));
 				}
 			);
-			reset_file_selected(1000);
 		},
 		error: function(data, textStts, errThrown) {
 
@@ -370,6 +367,9 @@ function reset_file_selected(delay){
 	setTimeout(function() {
 		$(".tree-selected").removeClass("tree-selected");
 		$("a[href='#" + current_file + "']").addClass("tree-selected");
+		$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
+		setTimeout(function() {
+		}, 500);
 	}, timedelay);
 }
 
@@ -430,7 +430,6 @@ function set_active_file(file, collapse_on_complete){
 		complete: function(data, textStts, errThrown) {
 			$('html, body').removeClass('busy');
 			$('#code-content').find("a").attr("onclick", "window.open(this.href); return false;");
-			$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
 			if(collapse_on_complete){
 				collapse_all();
 			}
@@ -447,7 +446,6 @@ function set_active_file(file, collapse_on_complete){
 			current_file = file;
 			current_file_ext = strrchr(file, '.').substr(1);
 			set_button_status();
-			reset_file_selected(100);
 			$('title').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
 			$('#page-header').children('h1').children('a').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
 			

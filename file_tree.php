@@ -17,7 +17,7 @@ include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
 
 $user->add_lang('mvt');
-$dir = urldecode(request_var('dir', ''));
+$dir = to_utf8(urldecode(request_var('dir', '', true)));
 
 if (file_exists($phpbb_root_path . $dir) && strpos($dir, $mods_root_path) === 0 && strpos($dir, '../') === false) 
 {
@@ -50,7 +50,7 @@ if (file_exists($phpbb_root_path . $dir) && strpos($dir, $mods_root_path) === 0 
 }
 else
 {
-	echo $user->lang['MVT_NO_FILE'];
+	echo $user->lang['MVT_NO_FILE'] . $dir;
 }
 //No garbage here
 exit_handler();
