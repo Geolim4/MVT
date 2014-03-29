@@ -10,7 +10,6 @@ define('IN_PHPBB', true);
 define('IN_PHPBB_MVT', true);
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
-
 include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/functions_mods.' . $phpEx);
 include($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
@@ -37,17 +36,20 @@ foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 	//Variables variable are so convenient  !!
 	${$install_ext . '_mapping'} = glob("mods/*/*." . $install_ext);
 	$temp_sorting = array();
-	foreach (${$install_ext . '_mapping'} AS $key => $value)
+	if (!empty(${$install_ext . '_mapping'}))
 	{
-		$filename = substr(strrchr($value, SLASH), 1);
-		//3.0.x hack
-		if (isset($temp_sorting[str_replace($filename, '', $value)]) && strpos($temp_sorting[str_replace($filename, '', $value)], 'install') !== false )
+		foreach (${$install_ext . '_mapping'} AS $key => $value)
 		{
-			continue;
+			$filename = substr(strrchr($value, SLASH), 1);
+			//3.0.x hack
+			if (isset($temp_sorting[str_replace($filename, '', $value)]) && strpos($temp_sorting[str_replace($filename, '', $value)], 'install') !== false )
+			{
+				continue;
+			}
+			$temp_sorting[str_replace($filename, '', $value)] = $filename;
 		}
-		$temp_sorting[str_replace($filename, '', $value)] = $filename;
+		${$install_ext . '_mapping'} = $temp_sorting;
 	}
-	${$install_ext . '_mapping'} = $temp_sorting;
 }
 
 $template->assign_vars(array(
@@ -276,16 +278,21 @@ if ($mode == 'config')
 	if ($submit)
 	{
 		$settings = array (
-			'mvt_php_syntax' => request_var('mvt_php_syntax', 1),
-			'mvt_php_binary_path' => request_var('mvt_php_binary_path', ''),
 			'mvt_lang' => request_var('mvt_lang', ''),
-			'mvt_new_tab' => request_var('mvt_lang', 1),
-			'mvt_search_engine' => request_var('mvt_search_engine', ''),
-			'mvt_search_engine_url' => request_var('mvt_search_engine_url', ''),
-			'mvt_search_engine_img' => request_var('mvt_search_engine_img', ''),
-			'mvt_tab_str_len' => request_var('mvt_tab_str_len', 25),
-			'mvt_exit_handler' => request_var('mvt_exit_handler', 1),
 		);
+		if(!MVT_DEMO_MODE)
+		{
+			$settings += array (
+				'mvt_php_syntax' => request_var('mvt_php_syntax', 1),
+				'mvt_php_binary_path' => request_var('mvt_php_binary_path', ''),
+				'mvt_new_tab' => request_var('mvt_lang', 1),
+				'mvt_search_engine' => request_var('mvt_search_engine', ''),
+				'mvt_search_engine_url' => request_var('mvt_search_engine_url', ''),
+				'mvt_search_engine_img' => request_var('mvt_search_engine_img', ''),
+				'mvt_tab_str_len' => request_var('mvt_tab_str_len', 25),
+				'mvt_exit_handler' => request_var('mvt_exit_handler', 1),
+			);
+		}
 		foreach ($settings as $config_name => $config_value)
 		{
 			if (!isset($config[$config_name]) || $config_value != $config[$config_name])
@@ -317,6 +324,7 @@ $template->assign_vars(array(
 
 	//Misc
 	'L_MVT_SEARCH_ENGINE' => $user->lang('MVT_SEARCH_ENGINE', $config['mvt_search_engine']),
+	'S_DEMO_MODE' => MVT_DEMO_MODE,
 ));
 
 $template->set_filenames(array(

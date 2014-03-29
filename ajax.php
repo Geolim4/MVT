@@ -7,7 +7,7 @@
 */
 define('IN_PHPBB', true);
 define('IN_PHPBB_MVT', true);
-ini_set('auto_detect_line_endings', true);
+@ini_set('auto_detect_line_endings', true);
 
 $level = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED;
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
@@ -19,7 +19,7 @@ include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
 
 $user->add_lang('mvt');
-$picture_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg');
+$picture_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'swf');
 
 $mod = request_var('mod', '');
 $url = request_var('url', '');
@@ -58,11 +58,19 @@ switch ($mode)
 		{
 			if (substr(strrchr($file, '.'), 1) == 'svg')
 			{
-				echo '<object type="image/svg+xml" data="' . $phpbb_root_path . 'mods/' . $mod . SLASH . $file . '"></object>';
+				echo '<object type="image/svg+xml" data="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '"></object>';
+			}
+			else if (substr(strrchr($file, '.'), 1) == 'swf')
+			{
+				echo '<object type="application/x-shockwave-flash" data="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">
+					<param name="movie" value="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">
+					<param name="loop" value="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">
+					alt : <a href="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">test.swf</a>
+				</object>';
 			}
 			else
 			{
-				echo '<img alt="' . $file . '" src="' . $phpbb_root_path . 'mods/' . $mod . SLASH . $file . '" />';
+				echo '<img alt="' . $file . '" src="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '" />';
 			}
 		}
 		else
