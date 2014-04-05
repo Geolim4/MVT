@@ -17,7 +17,12 @@ include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
 
 $user->add_lang('mvt');
-$dir = to_utf8(urldecode(request_var('dir', '', true)));
+$dir = to_utf8(urldecode(request_var('dir', '', true)));//utf8_normalize_nfc() not working properly here :|
+//Sometimes an array is sent, we try to handle it.
+if (empty($dir))
+{
+	$dir = to_utf8(urldecode(current(request_var('dir', array(''), true))));
+}
 
 if (file_exists($phpbb_root_path . $dir) && strpos($dir, $mods_root_path) === 0 && strpos($dir, '../') === false) 
 {
@@ -50,7 +55,7 @@ if (file_exists($phpbb_root_path . $dir) && strpos($dir, $mods_root_path) === 0 
 }
 else
 {
-	echo $user->lang['MVT_NO_FILE'] . $dir;
+	echo $user->lang['MVT_NO_FILE'];
 }
 //No garbage here
 exit_handler();
