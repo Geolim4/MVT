@@ -273,6 +273,16 @@ function switch_menu()
 			<span class="corners-top"><span></span></span>
 				<div class="disable-content"></div>
 				<div id="content">
+				<!-- IF .version_selector -->
+					<div id="version-selector">
+						<form action="" method="GET" id="version-form">
+							<span>{L_MVT_MOD_VERSION}:&nbsp;</span>
+							<select name="mod" onchange="if(this.options[this.selectedIndex].value != -1){ document.forms['version-form'].submit() }">
+								<!-- BEGIN version_selector --><option<!-- IF version_selector.S_SELECTED --> selected="seleted"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option><!-- END version_selector -->
+							</select>
+						</form>
+					</div>
+				<!-- ENDIF -->
 					<!-- IF not S_USER_NOTICE and not S_IN_CONFIG -->
 					<div id="previous_file"><a href="javascript:previous_file();"><img src="style/images/previous_file.png"></a></div>
 					<div id="next_file"><a href="javascript:next_file();"><img src="style/images/next_file.png"></a></div>

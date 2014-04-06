@@ -68,6 +68,12 @@ html.busy, html.busy * {
 #tabs ul li img.mod-delete:hover{
 	opacity: 1;
 }
+#version-selector
+{
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
 #code-content > pre > ol > li {
 	font-size: 11px;
 }
@@ -363,4 +369,20 @@ div.code-content{
 /* Fullscreen protection*/
 .ui-tooltip, .ui-effects-transfer{
 	z-index: 2147483647 !important;
+}
+
+#tabs a span.vmode31x, span.vmode31x, .option-31x{
+	color: darkgreen;
+}
+#tabs a span.vmode30x, span.vmode30x, .option-30x{
+	color: darkred;
+}
+#tabs #activetab a span.vmode31x {
+	color: green;
+}
+#tabs #activetab a span.vmode30x {
+	color: indianred;
+}
+.option-30x, .option-31x{
+	font-weight: bold;
 }

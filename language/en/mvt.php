@@ -63,6 +63,7 @@ $lang = array_merge($lang, array(
 	'MVT_MOD_DELETE_WARN' => 'That will remove the MOD from the <strong>/mods</strong> directory. Are you sure to continue?',
 	'MVT_MOD_DELETE_FAILED' => 'Cannot remove <strong>%s</strong> directory.',
 	'MVT_MOD_FAILED' => 'Connection to the specified URL has failed.',
+	'MVT_MOD_VERSION' => 'MOD version',
 	'MVT_MOD_ALREADY_PRESENT' => 'It seem the MOD you tried to import is already present in the <strong>/mods</strong> directory.',
 	'MVT_CFG_PHP_BINARY_PATH' => 'PHP binary path',
 	'MVT_CFG_PHP_BINARY_PATH_EXPLAIN' => 'Type the PHP command-line interface path.

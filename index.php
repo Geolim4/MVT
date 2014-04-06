@@ -18,22 +18,24 @@ include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
 $template->set_custom_template($phpbb_root_path . 'style', 'mvt');
 $template->assign_var('T_TEMPLATE_PATH', $phpbb_root_path . 'style');
 
-// the acp template is never stored in the database
+// The acp template is never stored in the database
 $user->theme['template_storedb'] = false;
 $user->add_lang('mvt');
 $submit = !empty($_POST['submit']) ? true : false;
 $mode = request_var('mode', 'validation');
-$mod = utf8_normalize_nfc(request_var('mod', '', true));
+$mod = $user_mod = utf8_normalize_nfc(request_var('mod', '', true));
 $file = utf8_normalize_nfc(request_var('file', '', true));
 $tpl_file = 'mvt_body.html';
 $ignored_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'psd');
+$mod_versions = $block_vars = array();
+$s_current_mod_name = '';
 
-//Check up the MOD directory status
+// Check up the MOD directory status
 check_mods_directory();
 // Now search for MOD install files...
 foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 {
-	//Variables variable are so convenient  !!
+	// Variables variable are so convenient  !!
 	${$install_ext . '_mapping'} = glob("mods/*/*." . $install_ext);
 	$temp_sorting = array();
 	if (!empty(${$install_ext . '_mapping'}))
@@ -41,7 +43,7 @@ foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 		foreach (${$install_ext . '_mapping'} AS $key => $value)
 		{
 			$filename = substr(strrchr($value, SLASH), 1);
-			//3.0.x hack
+			// 3.0.x hack
 			if (isset($temp_sorting[str_replace($filename, '', $value)]) && strpos($temp_sorting[str_replace($filename, '', $value)], 'install') !== false )
 			{
 				continue;
@@ -53,7 +55,7 @@ foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 }
 
 $template->assign_vars(array(
-	//Links
+	// Links
 	'PAGE_TITLE'	=> $user->lang['MVT_HOME'],
 	'S_NO_MODS'		=> true,
 	'S_TITLE'		=> '',
@@ -113,7 +115,7 @@ if ($dh)
 			{
 				$vmode = '3.1.x';
 			}
-			//Not file found in the main MOD directory, try subdirectory
+			// Not file found in the main MOD directory, try subdirectory
 			if (empty($vmode))
 			{
 				switch (true)
@@ -147,19 +149,40 @@ if ($dh)
 						$mod_version = $mod_details['version'];
 					break;
 				}
-				//Set a default one if no one was selected
+
+				// Set a default one if no one was selected
 				if (empty($mod) && $mode == 'validation')
 				{
 					$mod = $mod_dir;
 				}
+				if (!isset($mod_versions[$mod_name]))
+				{
+					$block_vars[$mod_name] = array(
+						'S_VMODE'	=> $vmode,
+						'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
+						'U_TITLE'	=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir)),
+						'S_MOD_DIR'	=> $mod_dir,
+						'S_SELECTED'=> $mod == $mod_dir ? true : false,
+					);
+				}
 
-				$template->assign_block_vars('mods_blocks', array(
-					'S_VMODE'	=> $vmode,
-					'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
-					'U_TITLE'	=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir)),
-					'S_MOD_DIR'	=> $mod_dir,
-					'S_SELECTED'=> $mod == $mod_dir ? true : false,
-				));
+				if($user_mod == $mod_dir)
+				{
+					$block_vars[$mod_name] = array(
+						'S_VMODE'	=> $vmode,
+						'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
+						'U_TITLE'	=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir)),
+						'S_MOD_DIR'	=> $mod_dir,
+						'S_SELECTED'=> $mod == $mod_dir ? true : false,
+					);
+				}
+
+				// Store versions of each MODs
+				$mod_versions[$mod_name][$mod_version] = array(
+					'mod_name_version' => $mod_dir,
+					'mod_phpbb_version' => $vmode,
+				);
+
 				if ($mod == $mod_dir)
 				{
 					$template->assign_vars(array(
@@ -168,6 +191,8 @@ if ($dh)
 						'S_CURRENT_MOD' => $mod_dir
 					));
 					$mod_mapping = array();
+					$s_current_mod_name = $mod_name;
+					$s_current_mod_version = $mod_version;
 					$mod_directory = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir);
 					foreach ($mod_directory AS $mod_directory_)
 					{
@@ -187,7 +212,7 @@ if ($dh)
 							'U_TITLE'			=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir, 'file' => $mod_directory_)),
 							'S_SELECTED'		=> $file == $mod_directory_ ? true : false,
 						));
-						//We automatically handle $base_3xx_file if present.
+						// We automatically handle $base_3xx_file if present.
 						if ((strpos($mod_directory_, $base_30x_file) || strpos($mod_directory_, $base_31x_file))|| $file == $mod_directory_)
 						{
 							switch ($file_ext)
@@ -233,8 +258,27 @@ if ($dh)
 			}
 		}
 	}
+
+	foreach($block_vars AS $block_vars_)
+	{
+		$template->assign_block_vars('mods_blocks', $block_vars_);
+	}
+
+	// Display only the selector if we have 2 versions at least !
+	if (isset($mod_versions[$s_current_mod_name]) && sizeof($mod_versions[$s_current_mod_name]) > 1)
+	{
+		foreach(($mod_versions[$s_current_mod_name]) AS $version_id => $mod_versions_)
+		{
+			$template->assign_block_vars('version_selector', array(
+				'VERSION_ID' => $version_id,
+				'VERSION_DIR' => $mod_versions_['mod_name_version'],
+				'PHPBB_VERSION' => $mod_versions_['mod_phpbb_version'],
+				'S_SELECTED' => ($s_current_mod_version == $version_id) ? true : false,
+			));
+		}
+	}
 	closedir($dh);
-	//Error: No valid MOD selected, back to the index.
+	// Error: No valid MOD selected, back to the index.
 	if (empty($geshi) && $mode == 'validation' && !isset($mod_name))
 	{
 		trigger_error('MVT_NO_MODS');
