@@ -354,6 +354,12 @@ div.code-content{
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
 	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
 }
+.spc{
+	display: inline-block;
+	width: 10px;
+	background: url("./images/spc-bg.png") no-repeat scroll left top transparent;
+	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
+}
 /* Fullscreen protection*/
 .ui-tooltip, .ui-effects-transfer{
 	z-index: 2147483647 !important;

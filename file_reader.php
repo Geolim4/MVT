@@ -15,7 +15,7 @@ $phpEx = substr(strrchr(__FILE__, '.'), 1);
 
 include($phpbb_root_path . 'common.' . $phpEx);
 
-$file = utf8_normalize_nfc(request_var('f', '', true));//utf8_normalize_nfc() not working properly here :|
+$file = utf8_normalize_nfc(request_var('f', '', true));
 if (file_exists($phpbb_root_path . $file) && strpos($file, '..') === false && filesize($phpbb_root_path . $file) < 1310720)//10 Mo
 {
 	$file_ext = substr(strrchr($file, '.'), 1);

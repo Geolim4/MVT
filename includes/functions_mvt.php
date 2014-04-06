@@ -405,6 +405,11 @@ function get_remote_file($host, $directory, $filename, &$errstr, &$errno, $port 
 	return $file_info;
 }
 
+function bertix_id()
+{
+	return substr(str_shuffle(sha1(md5(uniqid(time(), true)))), 0, 20);
+}
+
 function stream_copy($src, $dest)
 {
 	$fsrc = @fopen($src,'r');

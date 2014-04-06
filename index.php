@@ -155,7 +155,7 @@ if ($dh)
 
 				$template->assign_block_vars('mods_blocks', array(
 					'S_VMODE'	=> $vmode,
-					'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
+					'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
 					'U_TITLE'	=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir)),
 					'S_MOD_DIR'	=> $mod_dir,
 					'S_SELECTED'=> $mod == $mod_dir ? true : false,
@@ -210,11 +210,17 @@ if ($dh)
 									$file_ext = substr(strrchr($mod_directory_, '.'), 1);
 								break;
 							}
-							$geshi = new GeSHi(file_get_contents($phpbb_root_path .'mods/' . $mod_directory_), $file_ext);
+							
+							$content = file_get_contents($phpbb_root_path .'mods/' . $mod_directory_);
+							$uid = bertix_id();
+							$content = str_replace(' ', "SPC{$uid}", $content);
+							$geshi = new GeSHi($content, $file_ext);
 							$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
+							$content = $geshi->parse_code();
 							$s_current_file = str_replace($mod_dir . SLASH, '', $mod_directory_);
+							$content = str_replace("SPC{$uid}", '<s class="spc"> </s>', $content);
 							$template->assign_vars(array(
-								'S_FILE_CODE_CONTENT'	=> preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $geshi->parse_code()),
+								'S_FILE_CODE_CONTENT'	=> preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $content),
 								'S_CURRENT_FILE' => str_replace($mod_dir . SLASH, '', $mod_directory_),
 								'S_CURRENT_REAL_MOD' => $mod_name,
 								'S_CURRENT_MOD_VERSION' => $mod_version,
