@@ -59,11 +59,10 @@ html.busy, html.busy * {
 }
 #tabs ul li img.mod-delete{
 	cursor: pointer;
-	margin-right: 4px;
-	margin-top: 4px;
 	position: absolute;
-	right: 0;
-	opacity: 0.6;
+	top: 4px;
+	right: 4px;
+	opacity: 0.5;
 }
 #tabs ul li img.mod-delete:hover{
 	opacity: 1;
@@ -81,10 +80,10 @@ html.busy, html.busy * {
 	margin-top: 10px;
 	text-align: center;
 }
-#code-content div::selection, #code-content s.tab::selection, #code-content span::selection{
+#code-content div::selection, #code-content s::selection, #code-content span::selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
 }
-#code-content div::-moz-selection, #code-content s.tab::-moz-selection, #code-content span::-moz-selection{
+#code-content div::-moz-selection, #code-content s::-moz-selection, #code-content span::-moz-selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
 }
 #code-content.no-style-type  ol {
@@ -385,4 +384,12 @@ div.code-content{
 }
 .option-30x, .option-31x{
 	font-weight: bold;
+}
+#breadcrumb
+{
+	display: inline-block; 
+	color: #000; 
+	font-family: Verdana,Helvetica,Arial,sans-serif; 
+	font-weight: bold; 
+	margin-bottom: 5px;
 }

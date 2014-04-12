@@ -249,7 +249,7 @@ if ($dh)
 								'S_CURRENT_FILE' => str_replace($mod_dir . SLASH, '', $mod_directory_),
 								'S_CURRENT_REAL_MOD' => $mod_name,
 								'S_CURRENT_MOD_VERSION' => $mod_version,
-								'PAGE_TITLE'	=> $mod_name . ' » ' . $s_current_file,
+								'S_BREADCRUMB'	=> $mod_name . ' » ' . $s_current_file,
 								'S_CURRENT_FILE_EXT' => substr(strrchr(str_replace($mod_dir . SLASH, '', $mod_directory_), '.'), 1),
 							));
 						}

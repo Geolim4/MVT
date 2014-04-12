@@ -33,6 +33,7 @@
 	</ul>
 </div>
 <p class="clear"></p>
+<span id="breadcrumb">{S_BREADCRUMB}</span>
 <div class="code-content" id="code-content">
 {S_FILE_CODE_CONTENT}
 </div>
@@ -446,7 +447,7 @@ function set_active_file(file, collapse_on_complete){
 			current_file_ext = strrchr(file, '.').substr(1);
 			set_button_status();
 			$('title').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
-			$('#page-header').children('h1').children('a').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
+			$('#breadcrumb').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
 			
 			//Small hack to allow users to use link as shortcut even with hash :)
 			hash_ignore_update = true;
