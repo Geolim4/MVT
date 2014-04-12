@@ -8,6 +8,7 @@
 <div id="tools">
 	<ul>
 		<li id="btn_list_numbers"><a href="#" class="btn" onclick="btn_list_numbers(); return false;" title="{L_MVT_LIST_NUMBERS}" ><img alt="{L_MVT_LIST_NUMBERS}" src="style/images/list-numbers.png" /></a></li>
+		<li id="btn_list_breakline"><a href="#" class="btn" onclick="btn_list_breakline(); return false;" title="{L_MVT_LIST_LINEBREAK}" ><img alt="{L_MVT_LIST_LINEBREAK}" src="style/images/list-linebreak.png" /></a></li>
 		<li id="btn_left_scroll"><a href="#" class="btn" onclick="left_scroll(); return false;" title="{L_MVT_SCROLL_LEFT}" ><img alt="{L_MVT_SCROLL_LEFT}" src="style/images/scroll_left.png" /></a></li>
 		<li id="btn_right_scroll"><a href="#" class="btn" onclick="right_scroll(); return false;" title="{L_MVT_SCROLL_RIGHT}"><img alt="{L_MVT_SCROLL_RIGHT}" src="style/images/scroll_right.png" /></a></li>
 		<li id="btn_top_scroll"><a href="#" class="btn" onclick="top_scroll(); return false;" title="{L_MVT_SCROLL_TOP}"><img alt="{L_MVT_SCROLL_TOP}" src="style/images/scroll_up.png" /></a></li>
@@ -80,6 +81,9 @@ function init(){
 	});
 	if($.cookie(hide_list_cookie_name)){
 		btn_list_numbers();
+	}
+	if($.cookie(breakline_cookie_name)){
+		btn_list_breakline();
 	}
 	$(document).keydown(function(e)
 	{
@@ -185,6 +189,15 @@ function btn_list_numbers(){
 	}else{
 		$.cookie(hide_list_cookie_name, true, {path: '/'});
 		$('#code-content').addClass('no-style-type');
+	}
+}
+function btn_list_breakline(){
+	if($('#code-content').hasClass('breakline')){
+		$.removeCookie(breakline_cookie_name, {path: '/'});
+		$('#code-content').removeClass('breakline');
+	}else{
+		$.cookie(breakline_cookie_name, true, {path: '/'});
+		$('#code-content').addClass('breakline');
 	}
 }
 

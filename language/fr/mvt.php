@@ -80,6 +80,7 @@ $lang = array_merge($lang, array(
 	'MVT_INVALID_PHPBIN' => '<strong class="error">Chemin de l’exécutable PHP invalide!</strong>',
 	'MVT_INTERNAL' => '@Interne',
 	'MVT_LIST_NUMBERS' => 'Afficher/Cacher liste décimale',
+	'MVT_LIST_LINEBREAK' => 'Retour automatique à la ligne',
 	'MVT_PURGE' => 'Purger le bloc-note',
 	'MVT_PURGE_CONFIRM' => 'Êtes-vous sûr de vouloir vider le bloc-note?',
 	'MVT_NO_FILE' => 'Aucun fichier trouvé!',

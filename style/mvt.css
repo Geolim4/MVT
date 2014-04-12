@@ -90,6 +90,12 @@ html.busy, html.busy * {
 #code-content div::-moz-selection, #code-content s::-moz-selection, #code-content span::-moz-selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
 }
+#code-content.breakline{
+	overflow-x: hidden;
+}
+#code-content.breakline li{
+	white-space: normal;
+}
 #code-content.no-style-type  ol {
 	list-style-type: none;
 }

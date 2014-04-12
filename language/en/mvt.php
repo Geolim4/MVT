@@ -80,6 +80,7 @@ $lang = array_merge($lang, array(
 	'MVT_INVALID_PHPBIN' => '<strong class="error">Invalid PHP binary path specified!</strong>',
 	'MVT_INTERNAL' => '@Internal',
 	'MVT_LIST_NUMBERS' => 'Show/Hide decimal list',
+	'MVT_LIST_LINEBREAK' => 'Auto line-break',
 	'MVT_PURGE' => 'Purge notepad',
 	'MVT_PURGE_CONFIRM' => 'Are you sure you want to purge the notepad?',
 	'MVT_NO_FILE' => 'No file found!',
