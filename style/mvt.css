@@ -84,11 +84,14 @@ html.busy, html.busy * {
 	margin-top: 10px;
 	text-align: center;
 }
-#code-content *::selection{
+#code-content *::selection, #code-content s::selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
 	background-image: none;
 }
-#code-content *::-moz-selection{
+#code-content > pre > ol > li *::selection{
+	list-style-type: none;
+}
+#code-content *::-moz-selection, #code-content s::-moz-selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
 	background-image: none;
 }
@@ -96,7 +99,7 @@ html.busy, html.busy * {
 	overflow-x: hidden;
 }
 #code-content.breakline li{
-	white-space: normal;
+	white-space: pre-wrap;
 }
 #code-content.no-style-type  ol {
 	list-style-type: none;
@@ -365,19 +368,20 @@ div.code-content{
 	font: bold 14px "Helvetica Neue", Sans-Serif;
 	box-shadow: 0 0 7px black;
 }
-.tab{
+.tab, .spc{
 	display: inline-block;
+	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
+	line-height: 14px;
+}
+.tab{
 	width: 56px;
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
-	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
 	height: 9px;
 }
 .spc{
-	display: inline-block;
-	width: 10px;
-	background: url("./images/spc-bg.png") no-repeat scroll left top transparent;
-	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
+	background: url("./images/spc-bg.png") no-repeat scroll center top rgba(0, 0, 0, 0);
 	height: 9px;
+	width: 7px;
 }
 /* Fullscreen protection*/
 .ui-tooltip, .ui-effects-transfer{
