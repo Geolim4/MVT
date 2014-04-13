@@ -84,11 +84,13 @@ html.busy, html.busy * {
 	margin-top: 10px;
 	text-align: center;
 }
-#code-content div::selection, #code-content s::selection, #code-content span::selection{
+#code-content *::selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
+	background-image: none;
 }
-#code-content div::-moz-selection, #code-content s::-moz-selection, #code-content span::-moz-selection{
+#code-content *::-moz-selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
+	background-image: none;
 }
 #code-content.breakline{
 	overflow-x: hidden;
@@ -368,12 +370,14 @@ div.code-content{
 	width: 56px;
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
 	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
+	height: 9px;
 }
 .spc{
 	display: inline-block;
 	width: 10px;
 	background: url("./images/spc-bg.png") no-repeat scroll left top transparent;
 	text-decoration: none;/*We use <s> tag as he is the shortest Xhtml valid tag*/
+	height: 9px;
 }
 /* Fullscreen protection*/
 .ui-tooltip, .ui-effects-transfer{
