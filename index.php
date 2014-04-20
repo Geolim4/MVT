@@ -235,21 +235,12 @@ if ($dh)
 									$file_ext = substr(strrchr($mod_directory_, '.'), 1);
 								break;
 							}
-							
-							$content = file_get_contents($phpbb_root_path .'mods/' . $mod_directory_);
-							$uid = bertix_id();
-							$content = str_replace(' ', "SPC{$uid}", $content);
-							$geshi = new GeSHi($content, $file_ext);
-							$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
-							$content = $geshi->parse_code();
 							$s_current_file = str_replace($mod_dir . SLASH, '', $mod_directory_);
-							$content = str_replace("SPC{$uid}", '<s class="spc"> </s>', $content);
 							$template->assign_vars(array(
-								'S_FILE_CODE_CONTENT'	=> preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $content),
 								'S_CURRENT_FILE' => str_replace($mod_dir . SLASH, '', $mod_directory_),
 								'S_CURRENT_REAL_MOD' => $mod_name,
 								'S_CURRENT_MOD_VERSION' => $mod_version,
-								'S_BREADCRUMB'	=> $mod_name . ' » ' . $s_current_file,
+								'S_BREADCRUMB'	=> $user->lang['MVT'] . ' » ' . $mod_name . ' » ' . $s_current_file,
 								'S_CURRENT_FILE_EXT' => substr(strrchr(str_replace($mod_dir . SLASH, '', $mod_directory_), '.'), 1),
 							));
 						}
@@ -279,11 +270,11 @@ if ($dh)
 	}
 	closedir($dh);
 	// Error: No valid MOD selected, back to the index.
-	if (empty($geshi) && $mode == 'validation' && !isset($mod_name))
+	if (empty($s_current_file) && $mode == 'validation' && !isset($mod_name))
 	{
 		trigger_error('MVT_NO_MODS');
 	}
-	if (empty($geshi) && $mode == 'validation')
+	if (empty($s_current_file) && $mode == 'validation')
 	{
 		trigger_error('MVT_NO_MOD');
 	}

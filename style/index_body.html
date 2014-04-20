@@ -1,5 +1,4 @@
 <a name="maincontent"></a>
-<!-- IF S_FILE_CODE_CONTENT -->
 <div id="notepad">
 	<h3><span onclick="$('#notepad').removeClass('reduced');$('#notepad').draggable({axis: null, handle: '#notepad-handle'});reset_notepad_pos();">{L_MVT_NOTEPAD_TITLE}</span><a href="javascript:void(0);" onclick="$('#notepad').toggle(300);" class="button">x</a><a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');$('#notepad').effect('highlight', {color:'#669966'}, 1500);$('#notepad').draggable({axis: 'x', handle: '#notepad-handle'});" class="button">-</a><a id="notepad-handle" href="javascript:void(0);" class="button display-on-reduced" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a></h3>
 	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: 9em;"></textarea>
@@ -36,9 +35,8 @@
 <p class="clear"></p>
 <span id="breadcrumb">{S_BREADCRUMB}</span>
 <div class="code-content" id="code-content">
-{S_FILE_CODE_CONTENT}
+<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>
 </div>
-<!-- ENDIF -->
 <div id="dialogbox">
 	<div></div><br />
 	<textarea class="inputbox text ui-widget-content ui-corner-all" id="user-report" tabindex="3" cols="75" rows="5" name="message" style="height: 90px;width: 470px;resize: none;"></textarea>
@@ -115,6 +113,7 @@ function init(){
 		if(current_file_anchor){
 			set_active_file(current_file_anchor);
 		}else{
+			set_active_file(current_file);
 		}
 	}, 500);
 	$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
@@ -459,8 +458,8 @@ function set_active_file(file, collapse_on_complete){
 			current_file = file;
 			current_file_ext = strrchr(file, '.').substr(1);
 			set_button_status();
-			$('title').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
-			$('#breadcrumb').text('{LA_MVT}: ' + current_real_mod + ' » ' + file);
+			$('title').text('{LA_MVT} | ' + current_real_mod + ' » ' + file);
+			$('#breadcrumb').text('{LA_MVT} » ' + current_real_mod + ' » ' + file);
 			
 			//Small hack to allow users to use link as shortcut even with hash :)
 			hash_ignore_update = true;
