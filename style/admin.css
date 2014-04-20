@@ -1703,3 +1703,9 @@ span.error-main {
 	font-weight: bold;
 	display: none;
 }
+.ins{
+	color: #5BA530;
+}
+.del{
+	color: #B92609;
+}

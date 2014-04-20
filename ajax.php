@@ -103,23 +103,28 @@ switch ($mode)
 	break;
 	
 	case 'diff':
+		//File to compare to
+		$mod_to = utf8_normalize_nfc(request_var('mod_to', '', true));
+		$file_to = utf8_normalize_nfc(request_var('file_to', '', true));
+		$render_mode = request_var('render_mode', ''));
+
 		include($phpbb_root_path . 'includes/diff/diff.' . $phpEx);
 		include($phpbb_root_path . 'includes/diff/engine.' . $phpEx);
 		include($phpbb_root_path . 'includes/diff/renderer.' . $phpEx);
 
-		$from_text = '';
-		$to_text = '';
-		$preserbe_cr = true;
+		if(file_exists($mods_root_path . $mod . SLASH . $file) && file_exists($mods_root_path . $mod_to . SLASH . $file_to))
+		{
+			$from_text = file_get_contents($mods_root_path . $mod . SLASH . $file);
+			$to_text = file_get_contents($mods_root_path . $mod_to . SLASH . $file_to);
+			$preserbe_cr = true;
 
-		// Now the correct renderer
-		$render_class = 'diff_renderer_inline';//inline,unified,side_by_side,raw
-		$diff = new diff($from_text, $to_text, $preserbe_cr);
-		$renderer = new $render_class();
-		echo '<style type="text/css">
-		.ins{color: #5BA530;}
-		.del{color: #B92609;}</style>';
+			// Now the correct renderer
+			$render_class = 'diff_renderer_unified';//inline,unified,side_by_side,raw
+			$diff = new diff($from_text, $to_text, $preserbe_cr);
+			$renderer = new $render_class();
 
-		echo $renderer->get_diff_content($diff);
+			print_r($renderer->get_diff_content($diff));
+		}
 	break;
 	case 'tree_all':
 		if (substr($mod, -1) == SLASH)
