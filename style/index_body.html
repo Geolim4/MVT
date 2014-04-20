@@ -450,7 +450,7 @@ function set_active_file(file, collapse_on_complete){
 		success: function(data, textStts, errThrown) {
 			$("#code-content").html(data);
 			$('html, body').animate({
-				scrollTop: $("#acp").last().offset().top
+				scrollTop: $("#tools").offset().top
 			}, 250);
 			$('#code-content').animate({
 				scrollTop: '-=999999'

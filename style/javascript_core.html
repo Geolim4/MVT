@@ -238,16 +238,25 @@ function add_mod_tab(name, uri, path, vmode){
 function berstick(resize) {
 	var window_top = $(window).scrollTop(), div_top = $('#tools-sticker').offset().top, $el = $('#tools'), $pl = $('#tools-sticker'), $em = $('#menu'), $pm = $('#menu-sticker');
 	if(resize === true && window_top > div_top){
+		$('#menu-sticker').css({'height' : ($(window).height() + 20)});
 		$('#tools').css({'position': 'fixed', 'top': '2px', 'width' : $pl.css('width')});
 		$('#menu').css({'position': 'fixed', 'top': '0px', 'width' : $pm.css('width')});
+		$('#file-tree').css({'max-height' : ($('#content').height() - 370)});
+		$('#code-content').css({'margin-top' : ($('#tools').height())});
 		return;
 	}
 	if (window_top > div_top) {
+		$('#menu-sticker').css({'height' : ($(window).height() + 20)});
 		$('#tools').css({'position': 'fixed', 'top': '2px', 'width' : $el.css('width')});
 		$('#menu').css({'position': 'fixed', 'top': '0px', 'width' : $em.css('width')});
+		$('#file-tree').css({ 'max-height' : ($('#content').height() - 370)});
+		$('#code-content').css({'margin-top' : ($('#tools').height())});
 	} else {
+		$('#menu-sticker').css({'height' : 'auto'});
 		$('#tools').css({'position': '', 'top': '0px', 'width' : "auto"});
 		$('#menu').css({'position': '', 'top': '0px', 'width' : "20%"});
+		$('#file-tree').css({'max-height' : 'inherit'});
+		$('#code-content').css({'margin-top' : 0});
 	}
 }
 
