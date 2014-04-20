@@ -41,6 +41,14 @@ html.busy, html.busy * {
 #page-header{
 	height: 70px;
 }
+#menu-sticker{
+	width: 20%;
+	float: left;
+	height: 1px;
+}
+#menu{
+	clear: left;
+}
 #tabs ul li:first-child{
 	margin-left: 1em !important;
 }
@@ -87,9 +95,6 @@ html.busy, html.busy * {
 #code-content *::selection, #code-content s::selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
 	background-image: none;
-}
-#code-content > pre > ol > li *::selection{
-	list-style-type: none;
 }
 #code-content *::-moz-selection, #code-content s::-moz-selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
