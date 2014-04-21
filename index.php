@@ -15,7 +15,6 @@ include($phpbb_root_path . 'includes/functions_mods.' . $phpEx);
 include($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
 include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
 
-$template->set_custom_template($phpbb_root_path . 'style', 'mvt');
 $template->assign_var('T_TEMPLATE_PATH', $phpbb_root_path . 'style');
 
 // The acp template is never stored in the database

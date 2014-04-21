@@ -17,7 +17,7 @@ var ext_unassociation = {
 	'btn_enc_eol': file_groups['media']
 };
 var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array(), index = '{U_INDEX}';
-
+var services = {};
 function add_mod(){
 	mvt_confirm("{LA_MVT_ADD_MOD}", '{LA_MVT_ADD_MOD_URL}<br /><textarea class="inputbox text ui-widget-content ui-corner-all" id="mod_url" tabindex="3" cols="78" rows="5" name="mod_url" style="height: 90px;width: 720px;resize: none;"></textarea><br /><br />{LA_MVT_MOD_ALTERNATIVE}', 
 		function () {
@@ -173,7 +173,7 @@ function file_encoding(mod, file, encoding){
 			},
 		});
 	}else if(encoding !== false){
-		$('#file-encoding').text(encoding);
+		$('#file-encoding').html(encoding);
 	}
 }
 
@@ -205,7 +205,31 @@ function file_eol(mod, file, eol){
 			},
 		});
 	}else if(eol !== false){
-		$('#file-eol').text(eol);
+		$('#file-eol').html(eol);
+	}
+}
+
+function fullscreen_handler(){
+	var acp_element = document.getElementById("acp");
+	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
+		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
+			$('#btn_fullscreen').children('a').addClass('active');
+		}
+		else {
+			$('#btn_fullscreen').children('a').removeClass('active');
+		}
+	}
+}
+function mvt_service(task_name, task_fn, interval, status){
+	if(status == 'start'){
+		if(typeof(services[task_name]) == 'undefined' && typeof(task_fn) == 'function'){
+			services[task_name] = setInterval(task_fn, interval);
+			return status + 'ed';//Just for debug purpose
+		}
+	}else if (status == 'stop' && typeof(services[task_name]) != 'undefined'){
+		clearInterval(services[task_name]);
+		delete services[task_name];
+		return status + 'ed';//...
 	}
 }
 

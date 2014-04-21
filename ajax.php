@@ -102,11 +102,11 @@ switch ($mode)
 		}
 	break;
 	
-	case 'diff':
+	case 'compare':
 		//File to compare to
 		$mod_to = utf8_normalize_nfc(request_var('mod_to', '', true));
 		$file_to = utf8_normalize_nfc(request_var('file_to', '', true));
-		$render_mode = request_var('render_mode', ''));
+		$render_mode = request_var('render_mode', '');
 
 		include($phpbb_root_path . 'includes/diff/diff.' . $phpEx);
 		include($phpbb_root_path . 'includes/diff/engine.' . $phpEx);
@@ -119,13 +119,13 @@ switch ($mode)
 			$preserbe_cr = true;
 
 			// Now the correct renderer
-			$render_class = 'diff_renderer_unified';//inline,unified,side_by_side,raw
+			$render_class = 'diff_renderer_side_by_side';//inline,unified,side_by_side,raw
 			$diff = new diff($from_text, $to_text, $preserbe_cr);
 			$renderer = new $render_class();
-
-			print_r($renderer->get_diff_content($diff));
+			//$renderer->get_diff_content($diff)
 		}
 	break;
+
 	case 'tree_all':
 		if (substr($mod, -1) == SLASH)
 		{

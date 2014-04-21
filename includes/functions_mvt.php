@@ -528,7 +528,7 @@ function mvt_detect_encoding($str, $encoding_list = 'auto')
 		}
 		else
 		{
-			return "UTF-8 ({$user->lang['MVT_NO_BOM']})";
+			return "UTF-8<span class=\"eol-enc\"> ({$user->lang['MVT_NO_BOM']})</span>";
 		}
 	}
 	else
@@ -548,15 +548,15 @@ function detect_eol($str)
 	$crlf = "\r\n";	// Carriage Return and Line Feed: Windows
 	if (strpos($str, $crlf) !== false)
 	{
-		return 'Dos/Windows (CR+LF)';
+		return 'Dos/Windows<span class="eol-enc"> (CR+LF)</span>';
 	}
 	else if (strpos($str, $lf) !== false)
 	{
-		return 'UNIX (LF)';
+		return 'UNIX<span class="eol-enc"> (LF)</span>';
 	}
 	else if (strpos($str, $cr) !== false)
 	{
-		return 'MAC (CR)';
+		return 'MAC<span class="eol-enc"> (CR)</span>';
 	}
 }
 

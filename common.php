@@ -50,5 +50,7 @@ foreach($directories AS $directory => $dir_chmod)
 }
 //Global routines
 $template = new template();
+$template->set_custom_template($phpbb_root_path . 'style', 'mvt');
+
 $user = new user();
 $_SID = $_EXTRA_URL = '';

@@ -6,6 +6,8 @@
 <div id="tools-sticker"></div>
 <div id="tools">
 	<ul>
+		<li id="btn_enc_eol"><a href="#" class="btn" onclick="return false;"><span id="file-encoding"></span>&nbsp;|&nbsp;<span id="file-eol"></span></a></li>
+		<li class="separator">|</li>
 		<li id="btn_list_numbers"><a href="#" class="btn" onclick="btn_list_numbers(); return false;" title="{L_MVT_LIST_NUMBERS}" ><img alt="{L_MVT_LIST_NUMBERS}" src="style/images/list-numbers.png" /></a></li>
 		<li id="btn_list_breakline"><a href="#" class="btn" onclick="btn_list_breakline(); return false;" title="{L_MVT_LIST_LINEBREAK}" ><img alt="{L_MVT_LIST_LINEBREAK}" src="style/images/list-linebreak.png" /></a></li>
 		<li id="btn_left_scroll"><a href="#" class="btn" onclick="left_scroll(); return false;" title="{L_MVT_SCROLL_LEFT}" ><img alt="{L_MVT_SCROLL_LEFT}" src="style/images/scroll_left.png" /></a></li>
@@ -24,12 +26,11 @@
 		<li id="btn_internal_mesage"><a href="#" class="btn" onclick="internal_mesage(); return false;" id="internal-button" title="{L_MVT_INTERNAL}"><img alt="{L_MVT_INTERNAL}" src="style/images/internal.png" /></a></li>
 		<li id="btn_filename"><a href="#" class="btn" onclick="insert_filename(); return false;" id="filename-button" title="{L_MVT_INSERT_FILENAME}"><img alt="{L_MVT_INSERT_FILENAME}" src="style/images/filename.png" /></a></li>
 		<li class="separator">|</li>
+		<li id="btn_compare"><a href="#" class="btn" onclick="btn_compare(); return false;" id="compare-button" title="{L_MVT_COMPARE}"><img alt="{L_MVT_COMPARE}" src="style/images/compare.png" /></a></li>
 		<li id="btn_filestats"><a href="#" class="btn" onclick="get_filestats(); return false;" id="filestats-button" title="{L_MVT_FILESTATS}"><img alt="{L_MVT_FILESTATS}" src="style/images/filestats.png" /></a></li>
 		<li id="btn_search_engine"><a href="#" class="btn" onclick="search_engine(); return false;" title="{L_MVT_SEARCH_ENGINE}"><img alt="{L_MVT_SEARCH_ENGINE}" src="style/images/{S_CFG_SEARCH_ENGINE_IMG}" /></a></li>
 		<li id="btn_base64_decode"><a href="#" class="btn" onclick="base64_decode(); return false;" title="{L_MVT_BASE64_DECODE}"><img alt="{L_MVT_BASE64_DECODE}" src="style/images/base64.png" /></a></li>
 		<!-- IF S_CFG_SYNTAX --><li id="btn_check_syntax"><a href="#" class="btn" onclick="check_syntax(); return false;" title="{L_MVT_PHP_SYNTAX}"><img alt="{L_MVT_PHP_SYNTAX}" src="style/images/php_syntax.png" /></a></li><!-- ENDIF -->
-		<li class="separator">|</li>
-		<li id="btn_enc_eol"><a href="#" class="btn" onclick="return false;"><span id="file-encoding"></span>&nbsp;|&nbsp;<span id="file-eol"></span></a></li>
 	</ul>
 </div>
 <p class="clear"></p>
@@ -50,20 +51,6 @@
 $(document).ready(function() {
 	init();
 });
-
-function btn_fullscreen(){
-	var acp_element = document.getElementById("acp");
-	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
-		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
-			RunPrefixMethod(document, "CancelFullScreen");
-		}
-		else {
-			RunPrefixMethod(acp_element, "RequestFullScreen");
-		}
-	}else{
-		mvt_info('{LA_MVT_FULLSCREEN_UNSUPPORTED}');
-	}
-}
 
 function init(){
 	 $(function() {
@@ -168,11 +155,58 @@ function init(){
 	}
 	<!-- ENDIF -->
 	<!-- IF S_CFG_EXIT_HANDLER -->
-	setInterval(notepad_report_checker, 1000);
+	mvt_service('notepad_report_checker', notepad_report_checker, 1000, 'start');
 	<!-- ENDIF -->
-	setInterval(reset_file_selected, 250);
+	mvt_service('fullscreen_handler', fullscreen_handler, 500, 'start');
+	mvt_service('reset_file_selected', reset_file_selected, 250, 'start');
+
 	file_encoding(current_mod, current_file, false);
 	file_eol(current_mod, current_file, false);
+}
+
+function btn_compare(mod_to, file_to){
+	if(mod_to && file_to){
+		if(busy){
+			return;
+		}
+		$.ajax({
+			type: 'POST',
+			url: '{U_AJAX}',
+			data: { 'mode': 'compare', 'mod': current_mod, 'file': current_file, 'mod_to': mod_to, 'file_to': file_to},
+			timeout: 5000,
+			dataType  : 'json',
+			beforeSend: function() {
+				busy = true;
+			},
+			complete: function(data, textStts, errThrown) {
+				busy = false;
+			},
+			success: function(data, textStts, errThrown) {
+
+			},
+			error: function(data, textStts, errThrown) {
+
+			},
+		});
+	}else{
+		//Do stuff here
+	}
+}
+
+function btn_fullscreen(){
+	var acp_element = document.getElementById("acp");
+	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
+		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
+			RunPrefixMethod(document, "CancelFullScreen");
+			$('#btn_fullscreen').children('a').removeClass('active');
+		}
+		else {
+			RunPrefixMethod(acp_element, "RequestFullScreen");
+			$('#btn_fullscreen').children('a').addClass('active');
+		}
+	}else{
+		mvt_info('{LA_MVT_FULLSCREEN_UNSUPPORTED}');
+	}
 }
 
 function reset_notepad_pos(){
@@ -185,18 +219,24 @@ function btn_list_numbers(){
 	if($('#code-content').hasClass('no-style-type')){
 		$.removeCookie(hide_list_cookie_name, {path: '/'});
 		$('#code-content').removeClass('no-style-type');
+		$('#btn_list_numbers').children('a').removeClass('active');
 	}else{
 		$.cookie(hide_list_cookie_name, true, {path: '/'});
 		$('#code-content').addClass('no-style-type');
+		$('#btn_list_numbers').children('a').addClass('active');
 	}
 }
 function btn_list_breakline(){
 	if($('#code-content').hasClass('breakline')){
 		$.removeCookie(breakline_cookie_name, {path: '/'});
+		$('#btn_left_scroll, #btn_right_scroll').show();
 		$('#code-content').removeClass('breakline');
+		$('#btn_list_breakline').children('a').removeClass('active');
 	}else{
 		$.cookie(breakline_cookie_name, true, {path: '/'});
+		$('#btn_left_scroll, #btn_right_scroll').hide();
 		$('#code-content').addClass('breakline');
+		$('#btn_list_breakline').children('a').addClass('active');
 	}
 }
 
@@ -396,6 +436,7 @@ function notepad_report_checker(){
 function onbeforeunload_handler (){
 	var message = "{LA_MVT_EXIT_ALERT}",
 	e = e || window.event;
+
 	//IE and Firefox
 	if (e) {
 		e.returnValue = message;
@@ -460,7 +501,7 @@ function set_active_file(file, collapse_on_complete){
 			set_button_status();
 			$('title').text('{LA_MVT} | ' + current_real_mod + ' » ' + file);
 			$('#breadcrumb').text('{LA_MVT} » ' + current_real_mod + ' » ' + file);
-			
+
 			//Small hack to allow users to use link as shortcut even with hash :)
 			hash_ignore_update = true;
 			window.location = '#' + file;
