@@ -16,7 +16,7 @@
 		<li id="btn_down_scroll"><a href="#" class="btn" onclick="down_scroll(); return false;" title="{L_MVT_SCROLL_DOWN}"><img alt="{L_MVT_SCROLL_DOWN}" src="style/images/scroll_down.png" /></a></li>
 		<li class="separator">|</li>
 		<li id="btn_fullscreen"><a href="#" class="btn" onclick="btn_fullscreen(); return false;" title="{L_MVT_FULLSCREEN}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/fullscreen.png" /></a></li>
-		<li id="btn_select_code"><a href="#" class="btn" onclick="selectCode(document.getElementById('code-content'), 'ol'); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
+		<li id="btn_select_code"><a href="#" class="btn" onclick="selectCode(document.getElementById('code-content'), $('#code-content').children().first().prop('tagName')); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
 		<li id="btn_notepad"><a href="#" class="btn" onclick="$('#notepad').show(300); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
 		<li id="btn_purge_notepad"><a href="#" class="btn" onclick="purge_notepad(); return false;" id="notepad-purge" title="{L_MVT_PURGE}"><img alt="{L_MVT_PURGE}" src="style/images/purge.png" /></a></li>
 		<li class="separator">|</li>
@@ -26,7 +26,7 @@
 		<li id="btn_internal_mesage"><a href="#" class="btn" onclick="internal_mesage(); return false;" id="internal-button" title="{L_MVT_INTERNAL}"><img alt="{L_MVT_INTERNAL}" src="style/images/internal.png" /></a></li>
 		<li id="btn_filename"><a href="#" class="btn" onclick="insert_filename(); return false;" id="filename-button" title="{L_MVT_INSERT_FILENAME}"><img alt="{L_MVT_INSERT_FILENAME}" src="style/images/filename.png" /></a></li>
 		<li class="separator">|</li>
-		<li id="btn_compare"><a href="#" class="btn" onclick="btn_compare(); return false;" id="compare-button" title="{L_MVT_COMPARE}"><img alt="{L_MVT_COMPARE}" src="style/images/compare.png" /></a></li>
+		<!-- IF .version_selector --><li id="btn_compare"><a href="#" class="btn" onclick="btn_compare(); return false;" id="compare-button" title="{L_MVT_COMPARE}"><img alt="{L_MVT_COMPARE}" src="style/images/compare.png" /></a></li><!-- ENDIF -->
 		<li id="btn_filestats"><a href="#" class="btn" onclick="get_filestats(); return false;" id="filestats-button" title="{L_MVT_FILESTATS}"><img alt="{L_MVT_FILESTATS}" src="style/images/filestats.png" /></a></li>
 		<li id="btn_search_engine"><a href="#" class="btn" onclick="search_engine(); return false;" title="{L_MVT_SEARCH_ENGINE}"><img alt="{L_MVT_SEARCH_ENGINE}" src="style/images/{S_CFG_SEARCH_ENGINE_IMG}" /></a></li>
 		<li id="btn_base64_decode"><a href="#" class="btn" onclick="base64_decode(); return false;" title="{L_MVT_BASE64_DECODE}"><img alt="{L_MVT_BASE64_DECODE}" src="style/images/base64.png" /></a></li>
@@ -35,6 +35,9 @@
 </div>
 <p class="clear"></p>
 <span id="breadcrumb">{S_BREADCRUMB}</span>
+<span id="version-differentiator"></span>
+
+<p class="clear"></p>
 <div class="code-content" id="code-content">
 <p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>
 </div>
@@ -164,15 +167,22 @@ function init(){
 	file_eol(current_mod, current_file, false);
 }
 
-function btn_compare(mod_to, file_to){
-	if(mod_to && file_to){
+function btn_compare(mod_to, file_to, diff_mode){
+
+	//Reset step if we're already comparing some files...
+	if($('#btn_compare').children('a').hasClass('active')){
+		$('#btn_compare').children('a').removeClass('active');
+		set_active_file(current_file);
+		return;
+	}
+	if(mod_to && file_to && diff_mode){
 		if(busy){
 			return;
 		}
 		$.ajax({
 			type: 'POST',
 			url: '{U_AJAX}',
-			data: { 'mode': 'compare', 'mod': current_mod, 'file': current_file, 'mod_to': mod_to, 'file_to': file_to},
+			data: {'mode': 'compare', 'diff_mode' : diff_mode, 'mod': current_mod, 'file': current_file, 'mod_to': mod_to, 'file_to': file_to},
 			timeout: 5000,
 			dataType  : 'json',
 			beforeSend: function() {
@@ -182,14 +192,34 @@ function btn_compare(mod_to, file_to){
 				busy = false;
 			},
 			success: function(data, textStts, errThrown) {
-
+				if(data['eval']){
+					eval(data['eval']);
+				}else if(data['diff']){
+					$('#code-content').html(data['diff']);
+					$('#btn_compare').children('a').addClass('active');
+					btn_list_numbers(true);
+				}
 			},
 			error: function(data, textStts, errThrown) {
 
 			},
 		});
 	}else{
-		//Do stuff here
+		mvt_confirm("{LA_MVT_COMPARE}", '{LA_MVT_MOD_VERSION_COMPARE}:&nbsp;&nbsp;&nbsp;' +
+			'<select id="mod-version-compare">' +
+			<!-- BEGIN version_selector -->
+			'<option<!-- IF version_selector.S_SELECTED --> selected="seleted"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option>' +
+			<!-- END version_selector -->
+			'</select><br /><br />' +
+			'{LA_MVT_COMPARE_SELECT}:&nbsp;&nbsp;&nbsp;<select id="mod-diff-mode">{S_DIFF_MODES}</select>', 
+			function () {
+				btn_compare($("#mod-version-compare").val(), current_file, $("#mod-diff-mode").val());
+				$("#mod-version-compare, #mod-diff-mode").remove();
+			}, 
+			function () {
+				//Nope
+			}
+		);
 	}
 }
 
@@ -215,8 +245,8 @@ function reset_notepad_pos(){
 	$('#notepad').css('top', '25px');
 }
 
-function btn_list_numbers(){
-	if($('#code-content').hasClass('no-style-type')){
+function btn_list_numbers(force){
+	if($('#code-content').hasClass('no-style-type') && !force){
 		$.removeCookie(hide_list_cookie_name, {path: '/'});
 		$('#code-content').removeClass('no-style-type');
 		$('#btn_list_numbers').children('a').removeClass('active');
@@ -226,8 +256,8 @@ function btn_list_numbers(){
 		$('#btn_list_numbers').children('a').addClass('active');
 	}
 }
-function btn_list_breakline(){
-	if($('#code-content').hasClass('breakline')){
+function btn_list_breakline(force){
+	if($('#code-content').hasClass('breakline') && !force){
 		$.removeCookie(breakline_cookie_name, {path: '/'});
 		$('#btn_left_scroll, #btn_right_scroll').show();
 		$('#code-content').removeClass('breakline');
@@ -340,7 +370,7 @@ function base64_decode(){
 	}else if (/*SelectedCode.substr(SelectedCode.length - 2) != '==' ||*/ !/^[a-zA-Z0-9=]+$/.test(SelectedCode)){
 		alert('{LA_MVT_INVALID_BASE64}');
 	}else{
-		mvt_info('{L_INFORMATION}', base64_decoder(SelectedCode));
+		mvt_info('{LA_INFORMATION}', base64_decoder(SelectedCode));
 	}
 }
 
@@ -380,7 +410,7 @@ function expand_all(){
 	$.ajax({
 		type: 'POST',
 		url: '{U_AJAX}',
-		data: {'mod' : '{S_CURRENT_MOD}', 'mode' : 'tree_all'},
+		data: {'mod' : current_mod, 'mode' : 'tree_all'},
 		timeout: 5000,
 		dataType  : 'json',
 		beforeSend: function() {
@@ -466,6 +496,44 @@ function exit_handler(url){
 	return false;
 }
 
+function version_differentiator(){
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mode' : 'differentiator', 'mod' : current_mod, 'mod_versions' : current_mod_versions, 'file' : current_file},
+		timeout: 5000,
+		dataType  : 'json',
+		beforeSend: function() {
+
+		},
+		complete: function(data, textStts, errThrown) {
+
+		},
+		success: function(data, textStts, errThrown) {
+			var version_differentiator = '', separator = '&nbsp;&bull;&nbsp;', i = 0;
+			if(data['diff']){
+				for(version in data['diff']){
+					if(version == current_mod_version){
+						continue;
+					}
+					if(data['diff'][version] === true){
+						version_differentiator += ((i ? separator : '' ) + version + ': <span class="success">{LA_MVT_FILE_UNMODIFIED}</span>');
+					}else if(data['diff'][version] === false){
+						version_differentiator += ((i ? separator : '' ) + version + ': <span class="error">{LA_MVT_FILE_MODIFIED}</span>');
+					}else{
+						version_differentiator += ((i ? separator : '' ) + version + ': <span class="error">{LA_MVT_FILE_MISSING}</span>');
+					}
+					i++;
+				}
+				$('#version-differentiator').html(version_differentiator);
+			}
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
 function set_active_file(file, collapse_on_complete){
 	if(busy){
 		return;
@@ -473,7 +541,7 @@ function set_active_file(file, collapse_on_complete){
 	$.ajax({
 		type: 'POST',
 		url: '{U_AJAX}',
-		data: {'mod' : '{S_CURRENT_MOD}', 'file' : file},
+		data: {'mod' : current_mod, 'file' : file},
 		timeout: 5000,
 		beforeSend: function() {
 			$('html, body').addClass('busy');
@@ -501,6 +569,10 @@ function set_active_file(file, collapse_on_complete){
 			set_button_status();
 			$('title').text('{LA_MVT} | ' + current_real_mod + ' » ' + file);
 			$('#breadcrumb').text('{LA_MVT} » ' + current_real_mod + ' » ' + file);
+			$('#btn_compare').children('a').removeClass('active');
+			<!-- IF .version_selector -->
+			version_differentiator();
+			<!-- ENDIF -->
 
 			//Small hack to allow users to use link as shortcut even with hash :)
 			hash_ignore_update = true;

@@ -53,6 +53,13 @@ foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 	}
 }
 
+
+$diff_modes = '';
+foreach($user->lang['MVT_COMPARE_MODE'] AS $diff_mode => $diff_mode_name)
+{
+	$diff_modes .= '<option value="' . $diff_mode . '">' . $diff_mode_name . '</option>';
+}
+
 $template->assign_vars(array(
 	// Links
 	'PAGE_TITLE'	=> $user->lang['MVT_HOME'],
@@ -64,6 +71,7 @@ $template->assign_vars(array(
 	'U_CONFIG'		=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mode' => 'config')),
 	'U_AJAX'		=> append_sid($phpbb_root_path . 'ajax.' . $phpEx, array()),
 	'U_GIT_REPOSITORY' => MVT_GIT_REPOSITORY,
+	'S_DIFF_MODES' => $diff_modes,
 ));
 
 foreach (explode(',', MVT_SUPPORTED_VERSIONS) AS $supported_versions)
@@ -347,6 +355,7 @@ if ($mode == 'config')
 	{
 		$language .= '<option value="' . $iso . '"' . (($config['mvt_lang'] == $iso) ? ' selected="selected"' : '' ) . '>' . $lang . '</option>';
 	}
+
 	$template->assign_var('S_CFG_LANG', $language);
 }
 

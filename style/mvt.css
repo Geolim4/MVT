@@ -160,6 +160,9 @@ html.busy, html.busy * {
 	margin-left: 10px;
 	margin-right: 10px;
 }
+#tools ul li.separator:visible:first-child{
+	display: none;
+}
 #tools ul li a.btn {
 	background: #cedce7; /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
@@ -452,7 +455,7 @@ div.code-content{
 .option-30x, .option-31x{
 	font-weight: bold;
 }
-#breadcrumb
+#breadcrumb, #version-differentiator
 {
 	display: inline-block; 
 	color: #000; 
@@ -460,7 +463,10 @@ div.code-content{
 	font-weight: bold; 
 	margin-bottom: 5px;
 }
-
+#version-differentiator {
+	float: right;
+	font-weight: normal; 
+}
 /* Diff */
 
 #diff_content {

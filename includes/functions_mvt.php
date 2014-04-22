@@ -531,9 +531,13 @@ function mvt_detect_encoding($str, $encoding_list = 'auto')
 			return "UTF-8<span class=\"eol-enc\"> ({$user->lang['MVT_NO_BOM']})</span>";
 		}
 	}
-	else
+	else if($encoding)
 	{
 		return $encoding;
+	}
+	else
+	{
+		return "BIN<span class=\"eol-enc\"> ({$user->lang['MVT_BINARY']})</span>";
 	}
 }
 
@@ -558,6 +562,21 @@ function detect_eol($str)
 	{
 		return 'MAC<span class="eol-enc"> (CR)</span>';
 	}
+}
+
+function mvt_syntaxify($content, $file_ext = 'txt')
+{
+	$uid = bertix_id();
+
+	$content = str_replace(' ', "SPC{$uid}", $content);
+
+	$geshi = new GeSHi($content, $file_ext);
+	$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
+
+	$content = $geshi->parse_code();
+	$content = str_replace("SPC{$uid}", '<s class="spc"> </s>', $content);
+
+	return  preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $content);
 }
 
 /**

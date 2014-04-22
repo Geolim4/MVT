@@ -48,14 +48,11 @@ switch ($mode)
 					$file_ext = 'javascript';
 				break;
 			}
-			$uid = bertix_id();
-			$content = file_get_contents($mods_root_path . $mod . SLASH . $file);
-			$content = str_replace(' ', "SPC{$uid}", $content);
-			$geshi = new GeSHi($content, $file_ext);
-			$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
-			$content = $geshi->parse_code();
-			$content = str_replace("SPC{$uid}", '<s class="spc"> </s>', $content);
-			echo preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $content);
+
+			//Do the sorcery
+			$content = mvt_syntaxify(file_get_contents($mods_root_path . $mod . SLASH . $file), $file_ext);
+
+			echo $content;
 
 		}
 		else if (in_array(substr(strrchr($file, '.'), 1), $picture_exts))
@@ -101,12 +98,40 @@ switch ($mode)
 			}
 		}
 	break;
-	
+
+	case 'differentiator':
+		$mod_versions = utf8_normalize_nfc(request_var('mod_versions', array('' => ''), true));
+		$diff_result = array();
+		foreach($mod_versions AS $mod_version => $mod_path)
+		{
+			if(file_exists($mods_root_path . $mod_path . SLASH . $file))
+			{
+				if(sha1_file($mods_root_path . $mod . SLASH . $file) == sha1_file($mods_root_path . $mod_path . SLASH . $file))
+				{
+					$diff_result[$mod_version] = true;
+				}
+				else
+				{
+					$diff_result[$mod_version] = false;
+				}
+			}
+			else
+			{
+				$diff_result[$mod_version] = null;
+			}
+		}
+		echo json_encode(array(
+				'diff' => $diff_result,
+				'status' => true,
+			)
+		);
+	break;
+
 	case 'compare':
 		//File to compare to
 		$mod_to = utf8_normalize_nfc(request_var('mod_to', '', true));
 		$file_to = utf8_normalize_nfc(request_var('file_to', '', true));
-		$render_mode = request_var('render_mode', '');
+		$diff_mode = request_var('diff_mode', '');
 
 		include($phpbb_root_path . 'includes/diff/diff.' . $phpEx);
 		include($phpbb_root_path . 'includes/diff/engine.' . $phpEx);
@@ -114,15 +139,48 @@ switch ($mode)
 
 		if(file_exists($mods_root_path . $mod . SLASH . $file) && file_exists($mods_root_path . $mod_to . SLASH . $file_to))
 		{
-			$from_text = file_get_contents($mods_root_path . $mod . SLASH . $file);
-			$to_text = file_get_contents($mods_root_path . $mod_to . SLASH . $file_to);
-			$preserbe_cr = true;
+			if(sha1_file($mods_root_path . $mod . SLASH . $file) == sha1_file($mods_root_path . $mod_to . SLASH . $file_to))
+			{
+				echo json_encode(array(
+						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_IDENTICAL_FILES'] . '")',
+						'status' => true,
+					)
+				);
+			}
+			else
+			{
+				$file_ext = substr(strrchr($file, '.'), 1);
+				$from_text = file_get_contents($mods_root_path . $mod . SLASH . $file);
+				$to_text = file_get_contents($mods_root_path . $mod_to . SLASH . $file_to);
+				$preserbe_cr = true;
 
-			// Now the correct renderer
-			$render_class = 'diff_renderer_side_by_side';//inline,unified,side_by_side,raw
-			$diff = new diff($from_text, $to_text, $preserbe_cr);
-			$renderer = new $render_class();
-			//$renderer->get_diff_content($diff)
+				// Now the correct renderer
+				if(class_exists("diff_renderer_{$diff_mode}"))
+				{
+					$render_class = "diff_renderer_{$diff_mode}";
+				}
+				else
+				{
+					$render_class = 'diff_renderer_side_by_side';
+				}
+				$diff = new diff($from_text, $to_text, $preserbe_cr);
+				$renderer = new $render_class();
+				$file_diff = $renderer->get_diff_content($diff);
+
+				echo json_encode(array(
+						'diff' => $file_diff,
+						'status' => true,
+					)
+				);
+			}
+		}
+		else if(!file_exists($mods_root_path . $mod_to . SLASH . $file_to))
+		{
+			echo json_encode(array(
+					'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_NO_FILE_TO_COMPARE'] . '")',
+					'status' => true,
+				)
+			);
 		}
 	break;
 
