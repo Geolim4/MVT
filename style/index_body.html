@@ -187,6 +187,7 @@ function btn_compare(mod_to, file_to, diff_mode){
 			dataType  : 'json',
 			beforeSend: function() {
 				busy = true;
+				$("#code-content").html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
 			},
 			complete: function(data, textStts, errThrown) {
 				busy = false;
@@ -208,7 +209,7 @@ function btn_compare(mod_to, file_to, diff_mode){
 		mvt_confirm("{LA_MVT_COMPARE}", '{LA_MVT_MOD_VERSION_COMPARE}:&nbsp;&nbsp;&nbsp;' +
 			'<select id="mod-version-compare">' +
 			<!-- BEGIN version_selector -->
-			'<option<!-- IF version_selector.S_SELECTED --> selected="seleted"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option>' +
+			<!-- IF S_CURRENT_MOD_VERSION != version_selector.VERSION_ID -->'<option<!-- IF version_selector.S_SELECTED --> selected="seleted"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option>' + <!-- ENDIF -->
 			<!-- END version_selector -->
 			'</select><br /><br />' +
 			'{LA_MVT_COMPARE_SELECT}:&nbsp;&nbsp;&nbsp;<select id="mod-diff-mode">{S_DIFF_MODES}</select>', 
