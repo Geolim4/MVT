@@ -195,6 +195,9 @@ function btn_compare(mod_to, file_to, diff_mode){
 			success: function(data, textStts, errThrown) {
 				if(data['eval']){
 					eval(data['eval']);
+					setTimeout(function(){
+						set_active_file(current_file);
+					}, 750);
 				}else if(data['diff']){
 					$('#code-content').html(data['diff']);
 					$('#btn_compare').children('a').addClass('active');
