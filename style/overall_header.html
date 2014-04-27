@@ -3,9 +3,6 @@
 <head>
 
 <meta http-equiv="Content-Type" content="text/html; charset={S_CONTENT_ENCODING}" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<meta http-equiv="Content-Language" content="{S_USER_LANG}" />
-<meta http-equiv="imagetoolbar" content="no" />
 <meta name="robots" content="noindex">
 
 <!-- IF META -->{META}<!-- ENDIF -->
@@ -14,11 +11,11 @@
 <link href="style/admin.css" rel="stylesheet" type="text/css" media="screen" />
 <link href="style/mvt.css" rel="stylesheet" type="text/css" media="screen" />
 <link href="style/jquery/css/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="style/jquery/css/jqueryFileTree.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="style/jquery/css/jquery-filetree.css" rel="stylesheet" type="text/css" media="screen" />
 <script src="style/jquery/js/jquery-1.9.1.js" type="text/javascript"></script>
 <script src="style/jquery/js/jquery-autosize.js" type="text/javascript"></script>
 <script src="style/jquery/js/jquery-cookie.js" type="text/javascript"></script>
-<script src="style/jquery/js/jqueryFileTree.js" type="text/javascript"></script>
+<script src="style/jquery/js/jquery-filetree.js" type="text/javascript"></script>
 <script src="style/jquery/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
 <!--[if gte IE 9]>
   <style type="text/css">
@@ -285,15 +282,15 @@ function switch_menu()
 						<form action="" method="GET" id="version-form">
 							<span>{L_MVT_MOD_VERSION}:&nbsp;</span>
 							<select name="mod" onchange="if(this.options[this.selectedIndex].value != -1){ document.forms['version-form'].submit() }">
-								<!-- BEGIN version_selector --><option<!-- IF version_selector.S_SELECTED --> selected="seleted"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option><!-- END version_selector -->
+								<!-- BEGIN version_selector --><option<!-- IF version_selector.S_SELECTED --> selected="selected"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option><!-- END version_selector -->
 							</select>
 						</form>
 					</div>
 					<div class="clear"></div>
 				<!-- ENDIF -->
 					<!-- IF not S_USER_NOTICE and not S_IN_CONFIG -->
-					<div id="previous_file"><a href="javascript:previous_file();"><img src="style/images/previous_file.png"></a></div>
-					<div id="next_file"><a href="javascript:next_file();"><img src="style/images/next_file.png"></a></div>
+					<div id="previous_file"><a href="javascript:previous_file();"><img src="style/images/previous_file.png" alt="{L_PREVIOUS}"></a></div>
+					<div id="next_file"><a href="javascript:next_file();"><img src="style/images/next_file.png" alt="{L_NEXT}"></a></div>
 					<div id="toggle">
 						<a id="toggle-handle" accesskey="m" title="{L_MVT_TOGGLE}" onclick="switch_menu(); return false;" href="#"></a>
 					</div>
@@ -303,7 +300,13 @@ function switch_menu()
 					<div id="menu">
 						<h3>{L_MVT_FILE_BROWSER}: <span class="small">{S_CURRENT_MOD_NAME}</span></h3>
 						<div id="file-tree" class="demo"></div>
-						<p id="tree-tools"><a href="javascript:expand_all()">{L_MVT_EXPAND_ALL}</a>&nbsp;&bull;&nbsp;<a href="javascript:collapse_all(0)">{L_MVT_COLLAPSE_ALL}</a></p>
+						<div id="tree-tools">
+							<p>
+								<a href="javascript:expand_all()">{L_MVT_EXPAND_ALL}</a>&nbsp;&bull;&nbsp;
+								<a href="javascript:collapse_all(0)">{L_MVT_COLLAPSE_ALL}</a>&nbsp;&bull;&nbsp;
+								<a href="javascript:file_tree_filter()">{L_MVT_FILTER}&nbsp;<em id="filter-count"></em></a>
+							</p>
+						</div>
 					</div>
 					<!-- ENDIF -->
 					<div id="main"<!-- IF S_IN_CONFIG --> style="width: 94%;"<!-- ENDIF -->>

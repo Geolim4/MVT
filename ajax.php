@@ -189,9 +189,10 @@ switch ($mode)
 		{
 			$mod = substr($mod, 0, -1);
 		}
-		$file_mapping = directory_to_array($phpbb_root_path . 'mods/' . $mod , true, true, false);
+		$file_mapping = directory_to_array($mods_root_path . $mod , true, true, false);
 		foreach ($file_mapping AS &$file_)
 		{
+			$file_ = str_replace($mods_root_path, '', $file_);
 			$file_ .= SLASH;
 		}
 		header('Content-Type: application/json; charset=UTF-8');

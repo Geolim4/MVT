@@ -60,12 +60,27 @@ foreach($user->lang['MVT_COMPARE_MODE'] AS $diff_mode => $diff_mode_name)
 	$diff_modes .= '<option value="' . $diff_mode . '">' . $diff_mode_name . '</option>';
 }
 
+foreach($user->lang['MVT_COMPARE_SORT'] AS $optgroup_label => $file_exts)
+{
+	$template->assign_block_vars('compare_sort', array(
+		'OPTGROUP_LABEL' => $optgroup_label,
+	));
+	if(!empty($file_exts) && is_array($file_exts))
+	{
+		foreach($file_exts AS $ext_code => $ext_name)
+		{
+			$template->assign_block_vars('compare_sort.ext', array(
+				'EXT_CODE' => $ext_code,
+				'EXT_NAME' => $ext_name,
+			));
+		}
+	}
+}
 $template->assign_vars(array(
 	// Links
 	'PAGE_TITLE'	=> $user->lang['MVT_HOME'],
 	'S_NO_MODS'		=> true,
 	'S_TITLE'		=> '',
-	'U_MODS_PATH'	=> $phpbb_root_path . 'mods/',
 	'U_INDEX'		=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mode' => 'validation')),
 	'U_FILE_TREE'	=> append_sid($phpbb_root_path . 'file_tree.' . $phpEx, array()),
 	'U_CONFIG'		=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mode' => 'config')),

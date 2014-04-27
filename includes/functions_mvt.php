@@ -23,8 +23,9 @@ if (!defined('IN_PHPBB_MVT'))
 * @param bool $listDirs		Include directories on listing
 * @param bool $listFiles		Include files on listing
 * @param regex $exclude		Exclude paths that matches this regex
+* @param array $ext_group	Include only file which have this extension
 */
-function directory_to_array($directory, $recursive = true, $list_dirs = false, $list_files = true, $exclude = '') 
+function directory_to_array($directory, $recursive = true, $list_dirs = false, $list_files = true, $exclude = '', $ext_group = array()) 
 {
 	$array_items = array();
 	$skip_by_exclude = false;
@@ -49,7 +50,7 @@ function directory_to_array($directory, $recursive = true, $list_dirs = false, $
 				{
 					if ($recursive ) 
 					{
-						$array_items = array_merge($array_items, directory_to_array($directory. '/' . $file, $recursive, $list_dirs, $list_files, $exclude));
+						$array_items = array_merge($array_items, directory_to_array($directory. '/' . $file, $recursive, $list_dirs, $list_files, $exclude, $ext_group));
 					}
 					if ($list_dirs )
 					{
@@ -59,8 +60,12 @@ function directory_to_array($directory, $recursive = true, $list_dirs = false, $
 				} 
 				else 
 				{
-					if ($list_files )
+					if ($list_files)
 					{
+						if(!empty($ext_group) && !in_array(substr(strrchr($file, '.'), 1), $ext_group))
+						{
+							continue;
+						}
 						$file = $directory . '/' . $file;
 						$array_items[] = $file;
 					}

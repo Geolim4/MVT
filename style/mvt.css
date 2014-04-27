@@ -113,10 +113,12 @@ html.busy, html.busy * {
 	padding-left: 5px;
 }
 
-#dialogbox{
+#dialogbox, #filterbox{
 	display: none;
 }
-
+#filterbox div:first-child{
+	margin-top: 15%;
+}
 #file-tree {
 	max-height: 800px;
 	overflow: auto;
@@ -125,8 +127,19 @@ html.busy, html.busy * {
 	margin-top: 20px;
 	font-weight: bold;
 	float: left;
+	opacity: 0.3;
+	transition: opacity 0.2s ease-in-out;
 }
-
+#menu:hover #tree-tools {
+	opacity: 1;
+}
+#tree-tools div.filter select{
+	border: medium none;
+	display: block;
+	padding-top: 0;
+	width: 100%;
+	background: transparent;
+}
 #tools {
 	border-radius: 2px;
 	box-shadow: 0 1px 4px 2px;
@@ -476,6 +489,21 @@ div.code-content{
 #version-differentiator {
 	float: right;
 	font-weight: normal; 
+}
+.f-left{
+	float: left;
+}
+.f-right{
+	float: right;
+}
+.d-inline{
+	display: inline;
+}
+.d-inline-block{
+	display: inline-block;
+}
+.d-block{
+	display: block;
 }
 /* Diff */
 

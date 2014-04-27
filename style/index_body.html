@@ -1,6 +1,10 @@
-<a name="maincontent"></a>
 <div id="notepad">
-	<h3><span onclick="$('#notepad').removeClass('reduced');$('#notepad').draggable({axis: null, handle: '#notepad-handle'});reset_notepad_pos();">{L_MVT_NOTEPAD_TITLE}</span><a href="javascript:void(0);" onclick="$('#notepad').toggle(300);" class="button">x</a><a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');$('#notepad').effect('highlight', {color:'#669966'}, 1500);$('#notepad').draggable({axis: 'x', handle: '#notepad-handle'});" class="button">-</a><a id="notepad-handle" href="javascript:void(0);" class="button display-on-reduced" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a></h3>
+	<h3>
+		<span onclick="$('#notepad').removeClass('reduced');$('#notepad').draggable({axis: null, handle: '#notepad-handle'});reset_notepad_pos();">{L_MVT_NOTEPAD_TITLE}</span>
+		<a href="javascript:void(0);" onclick="$('#notepad').toggle(300);$('#btn_notepad').children('a').removeClass('active');" class="button">x</a>
+		<a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');$('#notepad').effect('highlight', {color:'#669966'}, 1500);$('#notepad').draggable({axis: 'x', handle: '#notepad-handle'});" class="button">-</a>
+		<a id="notepad-handle" href="javascript:void(0);" class="button display-on-reduced" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a>
+	</h3>
 	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: 9em;"></textarea>
 </div>
 <div id="tools-sticker"></div>
@@ -17,7 +21,7 @@
 		<li class="separator">|</li>
 		<li id="btn_fullscreen"><a href="#" class="btn" onclick="btn_fullscreen(); return false;" title="{L_MVT_FULLSCREEN}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/fullscreen.png" /></a></li>
 		<li id="btn_select_code"><a href="#" class="btn" onclick="selectCode(document.getElementById('code-content'), $('#code-content').children().first().prop('tagName')); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
-		<li id="btn_notepad"><a href="#" class="btn" onclick="$('#notepad').show(300); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
+		<li id="btn_notepad"><a href="#" class="btn" onclick="$('#notepad').show(300); $(this).addClass('active'); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
 		<li id="btn_purge_notepad"><a href="#" class="btn" onclick="purge_notepad(); return false;" id="notepad-purge" title="{L_MVT_PURGE}"><img alt="{L_MVT_PURGE}" src="style/images/purge.png" /></a></li>
 		<li class="separator">|</li>
 		<li id="btn_report_notice"><a href="#" class="btn uppercase" onclick="report_code('[color=blue][ {L_MVT_TAG_NOTICE} ][/color]'); return false;" title="{L_MVT_TAG_NOTICE}"><strong style="color: blue;">[&nbsp;{L_MVT_TAG_NOTICE}&nbsp;]</strong></a></li>
@@ -47,6 +51,28 @@
 </div>
 <div id="infobox"><div></div></div>
 <div id="confirmbox"><div></div></div>
+<div id="filterbox">
+	<div class="d-inline-block"></div>
+	<div class="f-right">
+		<select name="filter-select" id="filter-select" multiple="multiple" size="10" onchange="tree_count_filters(this.id)">
+			<!-- IF .version_selector -->
+			<optgroup label="File updated">
+				<!-- BEGIN version_selector -->
+					<!-- IF S_CURRENT_MOD_VERSION != version_selector.VERSION_ID -->
+						<option value="version-{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option><!-- ENDIF -->
+				<!-- END version_selector -->
+			</optgroup>
+			<!-- ENDIF -->
+			<!-- BEGIN compare_sort -->
+				<optgroup label="{compare_sort.OPTGROUP_LABEL}"> 
+				<!-- BEGIN ext -->
+					<option value="{compare_sort.ext.EXT_CODE}">{compare_sort.ext.EXT_NAME}</option>
+				<!-- END compare_sort -->
+				</optgroup>
+			<!-- END compare_sort -->
+		</select>
+	</div>
+</div>
 
 <!-- INCLUDE javascript_core.html -->
 <script type="text/javascript">
@@ -83,10 +109,11 @@ function init(){
 	set_button_status();
 	for (key in current_path_anchor){
 		expanded_folders += current_path_anchor[key] + '/';
-		current_tree_path[key] = '{U_MODS_PATH}{S_CURRENT_MOD}/' + expanded_folders;
+		current_tree_path[key] = '{S_CURRENT_MOD}/' + expanded_folders;
 	}
 	$('#file-tree').fileTree({
-			root:'{U_MODS_PATH}{S_CURRENT_MOD}/',
+			root:'{S_CURRENT_MOD}/',
+			options: tree_filter,
 			multiFolder: true,
 			script: '{U_FILE_TREE}',
 			loadMessage : 'Wait...',
@@ -95,7 +122,7 @@ function init(){
 			expandedFolders: current_tree_path,
 		},
 		function(file) {
-			set_active_file(file.replace('{U_MODS_PATH}{S_CURRENT_MOD}/', ''));
+			set_active_file(file.replace('{S_CURRENT_MOD}/', ''));
 		}
 	);
 	//Wait for Jquery fileTree finish the job
@@ -163,6 +190,7 @@ function init(){
 	mvt_service('fullscreen_handler', fullscreen_handler, 500, 'start');
 	mvt_service('reset_file_selected', reset_file_selected, 250, 'start');
 
+	tree_count_filters('filter-select');
 	file_encoding(current_mod, current_file, false);
 	file_eol(current_mod, current_file, false);
 }
@@ -212,7 +240,7 @@ function btn_compare(mod_to, file_to, diff_mode){
 		mvt_confirm("{LA_MVT_COMPARE}", '{LA_MVT_MOD_VERSION_COMPARE}:&nbsp;&nbsp;&nbsp;' +
 			'<select id="mod-version-compare">' +
 			<!-- BEGIN version_selector -->
-			<!-- IF S_CURRENT_MOD_VERSION != version_selector.VERSION_ID -->'<option<!-- IF version_selector.S_SELECTED --> selected="seleted"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option>' + <!-- ENDIF -->
+			<!-- IF S_CURRENT_MOD_VERSION != version_selector.VERSION_ID -->'<option<!-- IF version_selector.S_SELECTED --> selected="selected"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option>' + <!-- ENDIF -->
 			<!-- END version_selector -->
 			'</select><br /><br />' +
 			'{LA_MVT_COMPARE_SELECT}:&nbsp;&nbsp;&nbsp;<select id="mod-diff-mode">{S_DIFF_MODES}</select>', 
@@ -378,6 +406,29 @@ function base64_decode(){
 	}
 }
 
+function tree_count_filters(selector_id){
+
+	if($('#' + selector_id).children().children('option:selected').length){
+		$('#filter-count').text('(' + $('#' + selector_id).children().children('option:selected').length + ')');
+	}else{
+		$('#filter-count').text('');
+	}
+}
+function file_tree_filter(confirm){
+	if(!confirm){
+		mvt_confirm("{LA_MVT_FILTER}", "{LA_MVT_FILTER_EXPLAIN}", 
+			function () {
+				file_tree_filter(true);
+			}, 
+			function () {
+			}, false, '#filterbox'
+		);
+	}else{
+		tree_filter = $('#filter-select').val();
+		collapse_all(true);
+	}
+}
+
 function collapse_all(force_collaspe){
 	if(menu_state == 'hidden' && !force_collaspe){
 		return;
@@ -387,10 +438,11 @@ function collapse_all(force_collaspe){
 	current_tree_path = new Array(), expanded_folders = '';
 	for (key in current_path_anchor){
 		expanded_folders += current_path_anchor[key] + '/';
-		current_tree_path[key] = '{U_MODS_PATH}{S_CURRENT_MOD}/' + expanded_folders;
+		current_tree_path[key] = '{S_CURRENT_MOD}/' + expanded_folders;
 	}
 	$('#file-tree').fileTree({
-			root:'{U_MODS_PATH}{S_CURRENT_MOD}/',
+			root:'{S_CURRENT_MOD}/',
+			options: tree_filter,
 			multiFolder: true,
 			script: '{U_FILE_TREE}',
 			loadMessage : 'Wait...',
@@ -399,7 +451,7 @@ function collapse_all(force_collaspe){
 			expandedFolders: current_tree_path,
 		},
 		function(file) {
-			set_active_file(file.replace('{U_MODS_PATH}{S_CURRENT_MOD}/', ''));
+			set_active_file(file.replace('{S_CURRENT_MOD}/', ''));
 		}
 	);
 	$('html, body').animate({
@@ -425,7 +477,8 @@ function expand_all(){
 		},
 		success: function(data, textStts, errThrown) {
 			$('#file-tree').fileTree({
-					root:'{U_MODS_PATH}{S_CURRENT_MOD}/',
+					root:'{S_CURRENT_MOD}/',
+					options: tree_filter,
 					multiFolder: true,
 					script: '{U_FILE_TREE}',
 					loadMessage : 'Wait...',
@@ -434,7 +487,7 @@ function expand_all(){
 					expandedFolders: data,
 				},
 				function(file) {
-					set_active_file(file.replace('{U_MODS_PATH}{S_CURRENT_MOD}/', ''));
+					set_active_file(file.replace('{S_CURRENT_MOD}/', ''));
 				}
 			);
 		},
@@ -492,6 +545,7 @@ function exit_handler(url){
 			}, 
 			function () {
 				$('#notepad').show(300);
+				$('#btn_notepad').children('a').addClass('active');
 			}
 		);
 	}else{
@@ -546,7 +600,7 @@ function set_active_file(file, collapse_on_complete){
 		type: 'POST',
 		url: '{U_AJAX}',
 		data: {'mod' : current_mod, 'file' : file},
-		timeout: 5000,
+		timeout: 10000,
 		beforeSend: function() {
 			$('html, body').addClass('busy');
 			busy = true;
