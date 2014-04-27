@@ -395,6 +395,7 @@ span.tree-external{
 	display: inline-block;
 	height: 16px;
 	width: 16px;
+	cursor: alias;
 }
 div.code-content{
 	background-color: #FFFAFA;
