@@ -108,6 +108,10 @@ if (file_exists($mods_root_path . $dir) && strpos($dir, '..') === false)
 	{
 		echo "<ul class=\"jqueryFileTree\" style=\"display: none;\">{$echo}</ul>";
 	}
+	else
+	{
+		echo $user->lang['MVT_NO_FILE'];
+	}
 }
 else
 {

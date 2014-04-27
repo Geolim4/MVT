@@ -407,13 +407,13 @@ function base64_decode(){
 }
 
 function tree_count_filters(selector_id){
-
 	if($('#' + selector_id).children().children('option:selected').length){
 		$('#filter-count').text('(' + $('#' + selector_id).children().children('option:selected').length + ')');
 	}else{
 		$('#filter-count').text('');
 	}
 }
+
 function file_tree_filter(confirm){
 	if(!confirm){
 		mvt_confirm("{LA_MVT_FILTER}", "{LA_MVT_FILTER_EXPLAIN}", 
@@ -421,7 +421,14 @@ function file_tree_filter(confirm){
 				file_tree_filter(true);
 			}, 
 			function () {
-			}, false, '#filterbox'
+			}, 
+			false, '#filterbox', false, false,
+			function () {
+				$("#filter-select").children().children('option').each(function(index) {
+					this.selected = false;
+				});
+				tree_count_filters('filter-select');
+			}
 		);
 	}else{
 		tree_filter = $('#filter-select').val();

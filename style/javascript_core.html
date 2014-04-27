@@ -87,9 +87,15 @@ function mvt_info(boxtitle, boxmsg, on_ok, custom_width){
 	}
 }
 
-function mvt_confirm(boxtitle, boxmsg, on_confirm, on_cancel, alert_icon, boxid, close_before, custom_width){
+function mvt_confirm(boxtitle, boxmsg, on_confirm, on_cancel, alert_icon, boxid, close_before, custom_width, on_reset){
 
-	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_CONTINUE}';
+	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_CONTINUE}', rwBtn = '{LA_RESET}';
+
+	if(typeof(on_reset) == "function"){
+		btns[rwBtn] = function () {
+			on_reset();
+		};
+	}
 	btns[cwBtn] = function () {
 		if(close_before){
 			$(this).dialog('close');
