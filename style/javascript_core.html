@@ -17,9 +17,12 @@ var ext_unassociation = {
 	'btn_search_engine': file_groups['media'],
 	'btn_compare': file_groups['media']
 };
-var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array(), index = '{U_INDEX}';
-var services = {};
+var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array(), index = '{U_INDEX}', services = {};
+
 function add_mod(){
+	if(busy){
+		return;
+	}
 	mvt_confirm("{LA_MVT_ADD_MOD}", '{LA_MVT_ADD_MOD_URL}<br /><textarea class="inputbox text ui-widget-content ui-corner-all" id="mod_url" tabindex="3" cols="78" rows="5" name="mod_url" style="height: 90px;width: 720px;resize: none;"></textarea><br /><br />{LA_MVT_MOD_ALTERNATIVE}', 
 		function () {
 			var mod_url = $('#mod_url').val();
@@ -27,7 +30,7 @@ function add_mod(){
 				return;
 			}
 			mods_ary = mod_url.split("\n");
-			content_status(false);
+			content_status(false, true);
 			for(mod in mods_ary){
 				if(mods_ary[mod]){
 					$.ajax({
@@ -38,10 +41,10 @@ function add_mod(){
 						async: false,
 						dataType  : 'json',
 						beforeSend: function() {
-							
+							busy = true;
 						},
 						complete: function(data, textStts, errThrown) {
-
+							busy = false;
 						},
 						success: function(data, textStts, errThrown) {
 							if(data['errmsg']){
@@ -65,6 +68,32 @@ function add_mod(){
 		function () {
 		}, false, '', true, '750px'
 	);
+}
+
+function add_mod_tab(name, uri, path, vmode){
+	if(!$("a[href='" + uri + "']").html())
+	{
+		switch(vmode){
+			case '3.0.x':
+				var vmode_class = 'vmode30x';
+			break;
+
+			case '3.1.x':
+				var vmode_class = 'vmode31x';
+			break;
+
+			default:
+				var vmode_class = 'vmodeunknown';
+			break;
+		}
+		$("#tabs").children("ul").append('<li class="mods-tab"><a class="mods-links" href="' + uri + '"><span class="' + vmode_class + '">' + name + '&nbsp;&nbsp;&nbsp;</span></a><img alt="" onclick="delete_mod(\'' + path + '\'); return false;" class="mod-delete" src="style/images/mod_delete.png" /></li>');
+		<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
+		$('#tabs').find("a.mods-links").click(function(){
+			exit_handler(this.href);
+			return false;
+		});
+		<!-- ENDIF -->
+	}
 }
 
 function mvt_info(boxtitle, boxmsg, on_ok, custom_width){
@@ -139,14 +168,16 @@ function mvt_confirm(boxtitle, boxmsg, on_confirm, on_cancel, alert_icon, boxid,
 	}
 }
 
-function content_status(status){
+function content_status(status, show_load){
 	if(status){
 		$('#tabs').children('ul').children('li.add-mod').children('a').children('span').children('img').attr('src', 'style/images/file_new.gif');
-		$('div.disable-content').hide();
+		$('#disable-content').hide();
 		$('#acp').children('div.panel').css('position', '');
 	}else{
-		$('#tabs').children('ul').children('li.add-mod').children('a').children('span').children('img').attr('src', 'style/images/mod_loading.gif');
-		$('div.disable-content').show();
+		if(show_load){
+			$('#tabs').children('ul').children('li.add-mod').children('a').children('span').children('img').attr('src', 'style/images/mod_loading.gif');
+		}
+		$('#disable-content').show();
 		$('#acp').children('div.panel').css('position', 'relative');
 	}
 
@@ -237,32 +268,6 @@ function mvt_service(task_name, task_fn, interval, status){
 		clearInterval(services[task_name]);
 		delete services[task_name];
 		return status + 'ed';//...
-	}
-}
-
-function add_mod_tab(name, uri, path, vmode){
-	if(!$("a[href='" + uri + "']").html())
-	{
-		switch(vmode){
-			case '3.0.x':
-				var vmode_class = 'vmode30x';
-			break;
-
-			case '3.1.x':
-				var vmode_class = 'vmode31x';
-			break;
-
-			default:
-				var vmode_class = 'vmodeunknown';
-			break;
-		}
-		$("#tabs").children("ul").append('<li class="mods-tab"><a class="mods-links" href="' + uri + '"><span class="' + vmode_class + '">' + name + '&nbsp;&nbsp;&nbsp;</span></a><img alt="" onclick="delete_mod(\'' + path + '\'); return false;" class="mod-delete" src="style/images/mod_delete.png" /></li>');
-		<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
-		$('#tabs').find("a.mods-links").click(function(){
-			exit_handler(this.href);
-			return false;
-		});
-		<!-- ENDIF -->
 	}
 }
 

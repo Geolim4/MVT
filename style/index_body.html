@@ -49,6 +49,20 @@
 	<div></div><br />
 	<textarea class="inputbox text ui-widget-content ui-corner-all" id="user-report" tabindex="3" cols="75" rows="5" name="message" style="height: 90px;width: 470px;resize: none;"></textarea>
 </div>
+<div id="dzcontent" style="display: none;"></div>
+<div id="dzbox" style="display: none;">
+	<div class="dz-preview dz-file-preview" id="dz-container">
+		<div class="dz-details">
+			<div class="dz-filename"><span data-dz-name></span><span class="dz-size" data-dz-size></span></div>
+			<img data-dz-thumbnail />
+		</div>
+		<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+		<div class="dz-success-mark success"><span></span></div>
+		<div class="dz-error-mark error"><span></span></div>
+		<div class="dz-error-message"><span data-dz-errormessage></span></div>
+		<hr />
+	</div>
+</div>
 <div id="infobox"><div></div></div>
 <div id="confirmbox"><div></div></div>
 <div id="filterbox">
@@ -64,7 +78,7 @@
 			</optgroup>
 			<!-- ENDIF -->
 			<!-- BEGIN compare_sort -->
-				<optgroup label="{compare_sort.OPTGROUP_LABEL}"> 
+				<optgroup label="{compare_sort.OPTGROUP_LABEL}">
 				<!-- BEGIN ext -->
 					<option value="{compare_sort.ext.EXT_CODE}">{compare_sort.ext.EXT_NAME}</option>
 				<!-- END compare_sort -->
@@ -73,7 +87,6 @@
 		</select>
 	</div>
 </div>
-
 <!-- INCLUDE javascript_core.html -->
 <script type="text/javascript">
 // <![CDATA[
@@ -183,6 +196,7 @@ function init(){
 			}
 		}, 100);
 	}
+
 	<!-- ENDIF -->
 	<!-- IF S_CFG_EXIT_HANDLER -->
 	mvt_service('notepad_report_checker', notepad_report_checker, 1000, 'start');
@@ -190,9 +204,65 @@ function init(){
 	mvt_service('fullscreen_handler', fullscreen_handler, 500, 'start');
 	mvt_service('reset_file_selected', reset_file_selected, 250, 'start');
 
+	set_dropzone();
 	tree_count_filters('filter-select');
 	file_encoding(current_mod, current_file, false);
 	file_eol(current_mod, current_file, false);
+}
+
+function set_dropzone (){
+	$("body").dropzone({
+		url: "{U_AJAX_UPLOAD}" ,
+		autoProcessQueue: true,
+		paramName: "file",
+		uploadMultiple: false,
+		previewsContainer: '#dzcontent',
+		previewTemplate: $('#dzbox').html(),
+		acceptedFiles: '.zip',
+		maxFilesize: 5, // MB
+		fallback: function(){
+			alert('{LA_MVT_OLD_BROWSER}');
+		},
+		accept: function(file, done) {
+			busy = true;
+			content_status(false, true);
+			done();
+		},
+		error: function(file, errorMessage ) {
+			mvt_info('{LA_INFORMATION}', errorMessage);
+			content_status(true);
+			busy = false;
+		},
+		dragend: function(event) {
+			content_status(true);
+		},
+		dragleave: function(event) {
+			content_status(true);
+		},
+		dragover: function(event) {
+			content_status(false);
+			//Remove any active popup.
+			$('body').children('div.ui-dialog:visible').remove();
+		},
+		uploadprogress: function(file, progress, bytesSent) {},
+		success: function(file, data) {
+			if(data['eval']){
+				eval(data['eval']);
+			}
+			content_status(true);
+			busy = false;
+		},
+		dictDefaultMessage: '{LA_DICT_DEFAULT_MESSAGE}',
+		dictFallbackMessage: '{LA_DICT_FALLBACK_MESSAGE}',
+		dictFallbackText: '{LA_DICT_FALLBACK_TEXT}',
+		dictInvalidFileType: '{LA_DICT_INVALID_FILETYPE}',
+		dictFileTooBig: '{LA_DICT_FILE_TOO_BIG}',
+		dictResponseError: '{LA_DICT_RESPONSE_ERROR}',
+		dictCancelUpload: '{LA_DICT_CANCEL_UPLOAD}',
+		dictCancelUploadConfirmation: '{LA_DICT_CANCEL_UPLOAD_CONFIRMATION}',
+		dictRemoveFile: '{LA_DICT_REMOVE_FILE}',
+		dictMaxFilesExceeded: '{LA_DICT_MAX_FILES_EXCEEDED}',
+	});
 }
 
 function btn_compare(mod_to, file_to, diff_mode){
@@ -243,11 +313,11 @@ function btn_compare(mod_to, file_to, diff_mode){
 			<!-- IF S_CURRENT_MOD_VERSION != version_selector.VERSION_ID -->'<option<!-- IF version_selector.S_SELECTED --> selected="selected"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option>' + <!-- ENDIF -->
 			<!-- END version_selector -->
 			'</select><br /><br />' +
-			'{LA_MVT_COMPARE_SELECT}:&nbsp;&nbsp;&nbsp;<select id="mod-diff-mode">{S_DIFF_MODES}</select>', 
+			'{LA_MVT_COMPARE_SELECT}:&nbsp;&nbsp;&nbsp;<select id="mod-diff-mode">{S_DIFF_MODES}</select>',
 			function () {
 				btn_compare($("#mod-version-compare").val(), current_file, $("#mod-diff-mode").val());
 				$("#mod-version-compare, #mod-diff-mode").remove();
-			}, 
+			},
 			function () {
 				//Nope
 			}
@@ -416,12 +486,17 @@ function tree_count_filters(selector_id){
 
 function file_tree_filter(confirm){
 	if(!confirm){
-		mvt_confirm("{LA_MVT_FILTER}", "{LA_MVT_FILTER_EXPLAIN}", 
+		mvt_confirm("{LA_MVT_FILTER}", "{LA_MVT_FILTER_EXPLAIN}",
 			function () {
 				file_tree_filter(true);
-			}, 
+			},
 			function () {
-			}, 
+				$("#filter-select").children().children('option').each(function(index) {
+					this.selected = false;
+				});
+				tree_count_filters('filter-select');
+				file_tree_filter(true);
+			},
 			false, '#filterbox', false, false,
 			function () {
 				$("#filter-select").children().children('option').each(function(index) {
@@ -545,11 +620,11 @@ function set_onbeforeunload_handler(handler){
 
 function exit_handler(url){
 	if($('#notepad-report').val()){
-		mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}", 
+		mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}",
 			function () {
 				window.onbeforeunload = false;
 				window.location.href = url;
-			}, 
+			},
 			function () {
 				$('#notepad').show(300);
 				$('#btn_notepad').children('a').addClass('active');
@@ -694,7 +769,7 @@ function report_code(err_code){
 		return;
 	}
 
-	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_DESCRIBE}", 
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_DESCRIBE}",
 		function () {
 			$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
 				function () {
@@ -703,17 +778,17 @@ function report_code(err_code){
 					$('#user-report').val('');
 				}
 			);
-		}, 
+		},
 		function () {
 		}, false, '#dialogbox'
 	);
 }
 
 function purge_notepad(){
-	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_PURGE_CONFIRM}", 
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_PURGE_CONFIRM}",
 		function () {
 			$('#notepad-report').val('').trigger('autosize.resize');
-		}, 
+		},
 		function () {
 		}, true
 	);
@@ -784,7 +859,7 @@ function delete_mod(mod_path){
 			async: false,
 			dataType  : 'json',
 			beforeSend: function() {
-				
+
 			},
 			complete: function(data, textStts, errThrown) {
 
@@ -807,7 +882,7 @@ function delete_mod(mod_path){
 
 function internal_mesage(){
 	var SelectedCode = getSelectedCode();
-	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_INTERNAL_EXPLAIN}", 
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_INTERNAL_EXPLAIN}",
 		function () {
 			if(!$('#user-report').val())
 			{
@@ -821,7 +896,7 @@ function internal_mesage(){
 					$('#user-report').val('');
 				}
 			);
-		}, 
+		},
 		function () {
 		}, false, '#dialogbox'
 	);

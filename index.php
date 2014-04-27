@@ -76,6 +76,7 @@ foreach($user->lang['MVT_COMPARE_SORT'] AS $optgroup_label => $file_exts)
 		}
 	}
 }
+
 $template->assign_vars(array(
 	// Links
 	'PAGE_TITLE'	=> $user->lang['MVT_HOME'],
@@ -85,6 +86,7 @@ $template->assign_vars(array(
 	'U_FILE_TREE'	=> append_sid($phpbb_root_path . 'file_tree.' . $phpEx, array()),
 	'U_CONFIG'		=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mode' => 'config')),
 	'U_AJAX'		=> append_sid($phpbb_root_path . 'ajax.' . $phpEx, array()),
+	'U_AJAX_UPLOAD'	=> append_sid($phpbb_root_path . 'ajax.' . $phpEx, array('mode' => 'upload_mod')),
 	'U_GIT_REPOSITORY' => MVT_GIT_REPOSITORY,
 	'S_DIFF_MODES' => $diff_modes,
 ));

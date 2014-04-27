@@ -77,7 +77,7 @@ $lang = array_merge($lang, array(
 	'MVT_INSERT_FILENAME' => 'Insert filename',
 	'MVT_FILE_EOL' => 'File EOL: %s',
 	'MVT_FILE_ENCODING' => 'File encoding: %s',
-	'MVT_FILTER' => 'Apply filtrer',
+	'MVT_FILTER' => 'Apply filters',
 	'MVT_FILTER_EXPLAIN' => 'Select one or more options to applies accurate filters:',
 	'MVT_EXIT_HANDLER' => 'Exit alert handler',
 	'MVT_FILE_MISSING' => 'File missing',
@@ -92,7 +92,7 @@ $lang = array_merge($lang, array(
 	'MVT_NO_XML' => 'Any valid XML file found!',
 	'MVT_NO_MOD' => 'The specified MOD does not exists in <strong>/mods</strong> directory.',
 	'MVT_NO_MODS' => 'Any MOD found inside <strong>/mods</strong> directory.',
-	'MVT_MOD_ALTERNATIVE' => 'You can also unzip a MOD inside the <strong>/mods</strong> directory.',
+	'MVT_MOD_ALTERNATIVE' => 'You can also unzip a MOD inside the <strong>/mods</strong> directory or drag’n’drop the file on the current page.',
 	'MVT_MOD_DELETED' => 'The MOD has been deleted.',
 	'MVT_MOD_DELETE_WARN' => 'That will remove the MOD from the <strong>/mods</strong> directory. Are you sure to continue?',
 	'MVT_MOD_DELETE_FAILED' => 'Cannot remove <strong>%s</strong> directory.',
@@ -132,6 +132,7 @@ $lang = array_merge($lang, array(
 	'MVT_ADD_TO_REPORT' => 'Add to report',
 	'MVT_HOME'	=> 'Home',
 	'MVT_FILE_BROWSER' => 'File browser',
+	'MVT_OLD_BROWSER'  => 'Your browser does not support the drag and drop!',
 	'MVT_OPEN_NOTEPAD' => 'Open validation notepad',
 	'MVT_PHP_SYNTAX' => 'PHP syntax checking',
 	'MVT_OK' => 'Ok',
@@ -160,4 +161,18 @@ $lang = array_merge($lang, array(
 	'MVT_CFG_SEARCH_ENGINE_URL_EXPLAIN' => 'Type the search engine address as using the <em>%CODE%</em> var which will be replaced by the code you are looking for.',
 	'MVT_CFG_SEARCH_ENGINE_IMG' => 'Search engine image filename',
 	'MVT_EXIT_ALERT' => 'Your validation notepad is not empty, if you leave without saving it, you will lose those datas !',
+));
+
+//dropzone.js
+$lang = array_merge($lang, array(
+	'DICT_DEFAULT_MESSAGE' => 'Drop files here to upload',
+	'DICT_FALLBACK_MESSAGE' => 'Your browser does not support drag’n’drop file uploads.',
+	'DICT_FALLBACK_TEXT' => 'Please use the fallback form below to upload your files like in the olden days.',
+	'DICT_INVALID_FILETYPE' => 'You can’t upload files of this type.',
+	'DICT_FILE_TOO_BIG' => 'File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.',
+	'DICT_RESPONSE_ERROR' => 'Server responded with {{statusCode}} code.',
+	'DICT_CANCEL_UPLOAD' => 'Cancel upload',
+	'DICT_CANCEL_UPLOAD_CONFIRMATION' => 'Are you sure you want to cancel this upload?',
+	'DICT_REMOVE_FILE' => 'Remove file',
+	'DICT_MAX_FILES_EXCEEDED' => 'You can not upload any more files.',
 ));

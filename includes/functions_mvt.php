@@ -415,25 +415,41 @@ function bertix_id()
 	return substr(str_shuffle(sha1(md5(uniqid(time(), true)))), 0, 20);
 }
 
-function stream_copy($src, $dest)
+function stream_copy($src, $dest, $meta_data = array())
 {
-	$fsrc = @fopen($src,'r');
+	$fsrc = fopen($src, 'rb');
+	$filename = $length = false;
+
 	if(!$fsrc)
 	{
 		return false;
 	}
-	$meta_data = stream_get_meta_data($fsrc);
-	$filename = substr(strrchr($meta_data["uri"], '/'), 1);
-	$array_name = preg_grep("#([0-9a-zA-Z_-])*\.zip#", $meta_data['wrapper_data']);
-	preg_match("#([0-9a-zA-Z\._-]*\.zip)#", current($array_name), $matche);
-	if($matche)
+	if(empty($meta_data))
 	{
-		$filename = $matche[1];
+		$meta_data = stream_get_meta_data($fsrc);
 	}
-	$fdest = fopen($dest . $filename, 'w+');
-	$length = stream_copy_to_stream($fsrc, $fdest);
+	if (isset($meta_data["uri"], $meta_data['wrapper_data']))
+	{
+		$filename = substr(strrchr($meta_data["uri"], '/'), 1);
+		if(is_array($meta_data['wrapper_data']))
+		{
+			$array_name = preg_grep("#([0-9a-zA-Z_-])*\.zip#", $meta_data['wrapper_data']);
+		}
+		else
+		{
+			$array_name = array($meta_data['wrapper_data']);
+		}
+
+		preg_match("#([0-9a-zA-Z\._-]*\.zip)#", current($array_name), $matche);
+		if($matche)
+		{
+			$filename = $matche[1];
+		}
+		$fdest = fopen($dest . $filename, 'w+b');
+		$length = stream_copy_to_stream($fsrc, $fdest);
+		fclose($fdest);
+	}
 	fclose($fsrc);
-	fclose($fdest);
 	return array('filename' => $filename, 'length' => $length);
 } 
 
@@ -446,7 +462,7 @@ function destroy_dir($dir)
 { 
 		if (!is_dir($dir) || is_link($dir)) 
 		{
-			return unlink($dir); 
+			return @unlink($dir); 
 		}
 		foreach (scandir($dir) as $file) 
 		{ 
@@ -522,7 +538,7 @@ function mvt_detect_encoding($str, $encoding_list = 'auto')
 	global $user;
 
 	//Limit to 32768 to prevent unexpected CPU overload
-	$encoding = mb_detect_encoding(utf8_substr($str, 0, 32768), $encoding_list);
+	$encoding = @mb_detect_encoding(utf8_substr($str, 0, 32768), $encoding_list);
 	if (stripos($encoding, 'UTF-8') !== false)
 	{
 		$utf8_bom = chr(0xEF) . chr(0xBB) . chr(0xBF);

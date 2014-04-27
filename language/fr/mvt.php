@@ -92,7 +92,7 @@ $lang = array_merge($lang, array(
 	'MVT_NO_XML' => 'Aucun fichier XML valide trouvé!',
 	'MVT_NO_MOD' => 'Le MOD spécifié n’existe pas dans le dossier <strong>/mods</strong>.',
 	'MVT_NO_MODS' => 'Aucun MOD trouvé dans le dossier <strong>/mods</strong>.',
-	'MVT_MOD_ALTERNATIVE' => 'Vous pouvez aussi extraire un MOD dans le dossier <strong>/mods</strong>.',
+	'MVT_MOD_ALTERNATIVE' => 'Vous pouvez aussi extraire un MOD dans le dossier <strong>/mods</strong> ou glisser-déposer le fichier la page actuelle.',
 	'MVT_MOD_DELETED' => 'Le MOD a été supprimé.',
 	'MVT_MOD_DELETE_WARN' => 'Cela va supprimer le MOD du dossier <strong>/mods</strong>. Êtes-vous sûr de vouloir continuer?',
 	'MVT_MOD_DELETE_FAILED' => 'Impossible de supprimer le dossier <strong>%s</strong>.',
@@ -132,6 +132,7 @@ $lang = array_merge($lang, array(
 	'MVT_ADD_TO_REPORT' => 'Ajouter au rapport',
 	'MVT_HOME'	=> 'Accueil',
 	'MVT_FILE_BROWSER' => 'Explorateur de fichier',
+	'MVT_OLD_BROWSER'  => 'Votre navigateur ne supporte pas la fonctionnalité glisser-déposer !',
 	'MVT_OPEN_NOTEPAD' => 'Ouvrir le bloc-note de validation',
 	'MVT_PHP_SYNTAX' => 'Vérification de syntaxe PHP',
 	'MVT_OK' => 'Ok',
@@ -160,4 +161,18 @@ $lang = array_merge($lang, array(
 	'MVT_CFG_SEARCH_ENGINE_URL_EXPLAIN' => 'Entrez l’adresse du moteur de recherche en utilisant la variable <em>%CODE%</em> qui seras remplacée par le code à rechercher',
 	'MVT_CFG_SEARCH_ENGINE_IMG' => 'Nom du fichier image du moteur de recherche',
 	'MVT_EXIT_ALERT' => 'Votre bloc-note de validation n’est pas vide, si vous quittez sans le sauvegarder, vous allez perdre toutes ces données!',
+));
+
+//dropzone.js
+$lang = array_merge($lang, array(
+	'DICT_DEFAULT_MESSAGE' => 'Glisser les fichiers ici pour uploader',
+	'DICT_FALLBACK_MESSAGE' => 'Votre navigateur ne supporte pas la fonctionnalité glisser-déposer !',
+	'DICT_FALLBACK_TEXT' => 'Merci d’utiliser le formulaire de recours ci-dessous pour télécharger vos fichiers comme dans les anciens temps ...',
+	'DICT_INVALID_FILETYPE' => 'Vous ne pouvez pas uploader de fichier de ce type.',
+	'DICT_FILE_TOO_BIG' => 'Fichier trop gros ({{filesize}}MiB). Taille de fichier maximum: {{maxFilesize}}MiB.',
+	'DICT_RESPONSE_ERROR' => 'Le serveur a renvoyé un code {{statusCode}}.',
+	'DICT_CANCEL_UPLOAD' => 'Annuler l’upload',
+	'DICT_CANCEL_UPLOAD_CONFIRMATION' => 'Êtes-vous sûr de vouloir annuler l’upload?',
+	'DICT_REMOVE_FILE' => 'Supprimer le fichier',
+	'DICT_MAX_FILES_EXCEEDED' => 'Vous ne pouvez plus ajouter de fichiers.',
 ));

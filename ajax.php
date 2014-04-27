@@ -25,6 +25,7 @@ $mod = utf8_normalize_nfc(request_var('mod', '', true));
 $url = utf8_normalize_nfc(request_var('url', '', true));
 $file = utf8_normalize_nfc(request_var('file', '', true));
 $mode = request_var('mode', 'geshi');
+$meta_data = array();
 
 switch ($mode)
 {
@@ -199,12 +200,33 @@ switch ($mode)
 		echo json_encode($file_mapping);
 	break;
 
+	case 'upload_mod':
+		// We have to "micro-sleep" to avoid a file confusion in some 
+		// browsers when a lot of file are dropped in one time (multiple upload with xhr2)
+		usleep(mt_rand(5000, 500000));
+
+		if(empty($_FILES['file']))
+		{
+			header('Content-Type: application/json; charset=UTF-8');
+			echo json_encode(array(
+				'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_MOD_FAILED'] . '")',
+				'status' => false,
+			));
+		}
+		else
+		{
+			$url = $_FILES['file']['tmp_name'];
+			$meta_data["uri"] = $_FILES['file']['tmp_name'];
+			$meta_data['wrapper_data'] = $_FILES['file']['name'];
+		}
+
 	case 'add_mod':
 		include($phpbb_root_path . 'includes/functions_compress.' . $phpEx);
 		include($phpbb_root_path . 'includes/functions_mods.' . $phpEx);
 		include($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
 
-		$stream = stream_copy($url, $phpbb_root_path . 'mods/');
+		$stream = stream_copy($url, $phpbb_root_path . 'mods/', $meta_data);
+
 		if ($stream)
 		{	
 			if (substr(strrchr($stream['filename'], '.'), 1) == 'zip')
@@ -310,8 +332,13 @@ switch ($mode)
 					}
 					else
 					{
+						if($mod_dir)
+						{
+							// This is not a phpBB MOD remove that dir.
+							destroy_dir($mod_dir . SLASH);
+						}
 						$json = array(
-							'status' => false, 
+							'status' =>  $stream['filename'], 
 							'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_NO_XML'] . '")'
 						);
 					}
@@ -326,7 +353,10 @@ switch ($mode)
 			}
 			else
 			{
-				unlink($phpbb_root_path . 'mods/' . $stream['filename']);
+				if($stream['filename'])
+				{
+					@unlink($phpbb_root_path . 'mods/' . $stream['filename']);
+				}
 				$json = array(
 					'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('AVATAR_DISALLOWED_EXTENSION', substr(strrchr($stream['filename'], '.'), 1)) . '")',
 					'status' => false,

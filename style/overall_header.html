@@ -17,6 +17,7 @@
 <script src="style/jquery/js/jquery-cookie.js" type="text/javascript"></script>
 <script src="style/jquery/js/jquery-filetree.js" type="text/javascript"></script>
 <script src="style/jquery/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
+<script src="style/jquery/js/jquery-dropzone.js" type="text/javascript"></script>
 <!--[if gte IE 9]>
   <style type="text/css">
     .gradient {
@@ -275,7 +276,7 @@ function switch_menu()
 		<div id="acp">
 		<div class="panel">
 			<span class="corners-top"><span></span></span>
-				<div class="disable-content"></div>
+				<div id="disable-content"></div>
 				<div id="content">
 				<!-- IF .version_selector -->
 					<div id="version-selector">
@@ -307,6 +308,7 @@ function switch_menu()
 								<a href="javascript:file_tree_filter()">{L_MVT_FILTER}&nbsp;<em id="filter-count"></em></a>
 							</p>
 						</div>
+						<div id="dropzone"></div>
 					</div>
 					<!-- ENDIF -->
 					<div id="main"<!-- IF S_IN_CONFIG --> style="width: 94%;"<!-- ENDIF -->>
