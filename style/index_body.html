@@ -492,9 +492,6 @@ function file_tree_filter(confirm){
 				file_tree_filter(true);
 			},
 			function () {
-				$("#filter-select").children().children('option').each(function(index) {
-					this.selected = false;
-				});
 				tree_count_filters('filter-select');
 				file_tree_filter(true);
 			},
