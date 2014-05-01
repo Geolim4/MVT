@@ -102,7 +102,7 @@ function set_default_template_vars()
 function mvt_get_config()
 {
 	global $phpbb_root_path, $phpEx;
-	$config_file = $phpbb_root_path . 'includes/config.json';
+	$config_file = $phpbb_root_path . 'bin/config.json';
 
 	if(file_exists($config_file))
 	{
@@ -113,7 +113,7 @@ function mvt_get_config()
 function mvt_set_config($name, $value = '')
 {
 	global $phpbb_root_path, $phpEx, $config;
-	$config_file = $phpbb_root_path . 'includes/config.json';
+	$config_file = $phpbb_root_path . 'bin/config.json';
 	$config[$name] = $value;
 	$cfg = fopen($config_file, 'wb');
 	fwrite($cfg, json_encode($config)); // We need to be sure that we do not remove unupdated config values!!
@@ -460,26 +460,26 @@ function strongify($str)
 
 function destroy_dir($dir) 
 { 
-		if (!is_dir($dir) || is_link($dir)) 
+	if (!is_dir($dir) || is_link($dir)) 
+	{
+		return @unlink($dir); 
+	}
+	foreach (scandir($dir) as $file) 
+	{ 
+		if ($file == '.' || $file == '..')
 		{
-			return @unlink($dir); 
+			continue; 
 		}
-		foreach (scandir($dir) as $file) 
+		if (!destroy_dir($dir . DIRECTORY_SEPARATOR . $file)) 
 		{ 
-			if ($file == '.' || $file == '..')
+			chmod($dir . DIRECTORY_SEPARATOR . $file, 0777); 
+			if (!destroy_dir($dir . DIRECTORY_SEPARATOR . $file))
 			{
-				continue; 
+				return false; 
 			}
-			if (!destroy_dir($dir . DIRECTORY_SEPARATOR . $file)) 
-			{ 
-				chmod($dir . DIRECTORY_SEPARATOR . $file, 0777); 
-				if (!destroy_dir($dir . DIRECTORY_SEPARATOR . $file))
-				{
-					return false; 
-				}
-			}; 
-		} 
-		return rmdir($dir); 
+		}; 
+	} 
+	return rmdir($dir); 
 } 
 
 function recurse_copy($src, $dst) 
@@ -625,5 +625,59 @@ function to_utf8($string)
 	else 
 	{
 		return iconv('CP1252', 'UTF-8', $string);
+	}
+}
+
+class mvt_sha1
+{
+	public $xml = null;
+	public $cached = array();
+	public $max_record = 2500;
+	public $default_array = array(
+		'desc' => null,
+		'status' => null,
+		'name' => null
+	);
+
+	public function __construct($sha1_list_file, $cache_now = true)
+	{
+		if(file_exists($sha1_list_file))
+		{
+			$this->xml = simplexml_load_file($sha1_list_file);
+			if($cache_now)
+			{
+				$this->_cache();
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function get($sha1, $filename = false)
+	{
+		if(isset($this->cached[$sha1]) && (!$filename || trim($this->cached[$sha1]->name) == trim($filename)))
+		{
+			return (object) $this->cached[$sha1];
+		}
+		else
+		{
+			return (object) ($this->default_array += array($sha1 => false));
+		}
+	}
+
+	
+	private function _cache()
+	{
+		$i = 0;
+		foreach($this->xml AS $sha1_data)
+		{
+			$this->cached[(string) $sha1_data] = $sha1_data->attributes();
+			if(++$i > $this->max_record)
+			{
+				break;
+			}
+		}
 	}
 }

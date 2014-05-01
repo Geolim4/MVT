@@ -1,5 +1,5 @@
 *~
 /cache/*.php
-/includes/config.json
+/bin/config.json
 /mods/*/*
 *.nppsession

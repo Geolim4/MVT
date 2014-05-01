@@ -42,8 +42,8 @@
 <span id="version-differentiator"></span>
 
 <p class="clear"></p>
-<div class="code-content" id="code-content">
-<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>
+<div id="code-content">
+	<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>
 </div>
 <div id="dialogbox">
 	<div></div><br />
@@ -200,9 +200,10 @@ function init(){
 	<!-- ENDIF -->
 	<!-- IF S_CFG_EXIT_HANDLER -->
 	mvt_service('notepad_report_checker', notepad_report_checker, 1000, 'start');
+
 	<!-- ENDIF -->
 	mvt_service('fullscreen_handler', fullscreen_handler, 500, 'start');
-	mvt_service('reset_file_selected', reset_file_selected, 250, 'start');
+	mvt_service('reset_file_selected', reset_file_selected, 500, 'start');
 
 	set_dropzone();
 	tree_count_filters('filter-select');
@@ -285,7 +286,7 @@ function btn_compare(mod_to, file_to, diff_mode){
 			dataType  : 'json',
 			beforeSend: function() {
 				busy = true;
-				$("#code-content").html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
+				$("#code-content").removeClass('safe unsafe deprecated').html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
 			},
 			complete: function(data, textStts, errThrown) {
 				busy = false;
@@ -588,6 +589,7 @@ function reset_file_selected(delay){
 	setTimeout(function() {
 		$(".tree-selected").removeClass("tree-selected");
 		$("a[href='#" + current_file + "']").addClass("tree-selected");
+		$('#code-content').removeClass('safe unsafe deprecated').addClass($('a.tree-selected').data('status'));
 		$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
 		setTimeout(function() {
 		}, 500);
@@ -686,11 +688,10 @@ function set_active_file(file, collapse_on_complete){
 		beforeSend: function() {
 			$('html, body').addClass('busy');
 			busy = true;
-			$("#code-content").html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
+			$("#code-content").removeClass('safe unsafe deprecated').html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
 		},
 		complete: function(data, textStts, errThrown) {
 			$('html, body').removeClass('busy');
-			$('#code-content').find("a").attr("onclick", "window.open(this.href); return false;");
 			if(collapse_on_complete){
 				collapse_all();
 			}

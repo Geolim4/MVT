@@ -373,11 +373,6 @@ html.busy, html.busy * {
 	text-transform: uppercase;
 }
 
-a.tree-selected{
-	background-color: #FFFFFF;
-	font-weight: bold;
-}
-
 #disable-content {
 	display: none;
 	height: 100%;
@@ -405,7 +400,7 @@ span.tree-external{
 	width: 16px;
 	cursor: alias;
 }
-div.code-content{
+#code-content{
 	background-color: #FFFAFA;
 	border: 1px solid #808080;
 	border-radius: 5px;
@@ -667,4 +662,22 @@ letter-spacing: 10px;
 border: 1px solid #000;
 margin-left: 0.5em;
 vertical-align: baseline;
+}
+#code-content.unsafe, #code-content.deprecated, #code-content.safe{
+	transition: background 250ms ease-in;
+}
+ul.jqueryFileTree a.unsafe, #code-content.unsafe{
+	background-color: #FEE8E8;
+}
+
+ul.jqueryFileTree a.deprecated, #code-content.deprecated{
+	background-color: #FEEBCE;
+}
+
+ul.jqueryFileTree a.safe, #code-content.safe{
+	background-color: #E9FEE8;
+}
+ul.jqueryFileTree a.tree-selected{
+	background-color: #FFFFFF;
+	font-weight: bold;
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+	<!-- Different available status: safe/deprecated/unsafe -->
+	<sha1 name="safe_file.txt" desc="Is a known and safe file :)" status="safe">7c2327e8c5465979344135ad7fda70e04100c234</sha1>
+	<sha1 name="deprecated_file.txt" desc="Is a known and deprecated file :/" status="deprecated">55a16ca8ccd51b2bd13a34ec11945a5bfde8ca86</sha1>
+	<sha1 name="unsafe_file.txt" desc="Is a known and safe file :(" status="unsafe">da86262a120b6c0f7f1def93389e846a190b9bd5</sha1>
+
+
+<!-- 
+	BEGIN: phpBB Official SHA1 file list 
+-->
+
+	<!-- 3.0.x MODX files -->
+	<sha1 name="modx.prosilver.en.xsl" desc="phpBB main MODx File" status="safe">074f93a00b268a1b132226902389aa615bf1dbda</sha1>
+	<sha1 name="modx.prosilver.en.xsl" desc="phpBB main MODx File" status="safe">e5d5dd2df0707b32f17c1560d233c969a119cffc</sha1>
+	<sha1 name="license.txt" desc="phpBB main GNU/GPL license File" status="safe">b47456e2c1f38c40346ff00db976a2badf36b5e3</sha1>
+	<sha1 name="license.txt" desc="phpBB main GNU/GPL license File" status="safe">05aa99cfe0b4b4928d65e67f5ac487c0291056c3</sha1>
+	<sha1 name="license.txt" desc="phpBB main GNU/GPL license File" status="safe">7ecbd605447c221cb27f24102f4e71922fc7c25f</sha1>
+	
+	<!-- UMIL FILES -->
+	<sha1 name="file.php" desc="phpBB UMIL core file" status="safe">95a51614f79950bafa3165837811596741169cb2</sha1>
+	<sha1 name="umil.php" desc="phpBB UMIL core file" status="safe">a41835ed46702d922b332c78686dfb70c011be48</sha1>
+	<sha1 name="umil_auto.php" desc="phpBB UMIL core file" status="safe">f3d0cb97411c86f10183a889f857f82fcc963088</sha1>
+	<sha1 name="umil_frontend.php" desc="phpBB UMIL core file" status="safe">4aea368177f76575cd2711f346c85b5689f924eb</sha1>
+
+<!-- 
+	END: phpBB Official SHA1 file list 
+-->
+
+</root>

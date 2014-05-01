@@ -69,6 +69,7 @@ if(jQuery) (function($){
 							   }
 							});
 						}
+						$('a.safe, a.unsafe, a.deprecated').tooltip();
 						//End phpBB addition
 					});
 				}
