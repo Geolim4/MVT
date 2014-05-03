@@ -3,7 +3,7 @@
 	<!-- Different available status: safe/deprecated/unsafe -->
 	<sha1 name="safe_file.txt" desc="Is a known and safe file :)" status="safe">7c2327e8c5465979344135ad7fda70e04100c234</sha1>
 	<sha1 name="deprecated_file.txt" desc="Is a known and deprecated file :/" status="deprecated">55a16ca8ccd51b2bd13a34ec11945a5bfde8ca86</sha1>
-	<sha1 name="unsafe_file.txt" desc="Is a known and safe file :(" status="unsafe">da86262a120b6c0f7f1def93389e846a190b9bd5</sha1>
+	<sha1 name="unsafe_file.txt" desc="Is a known and unsafe file :(" status="unsafe">da86262a120b6c0f7f1def93389e846a190b9bd5</sha1>
 
 
 <!-- 
