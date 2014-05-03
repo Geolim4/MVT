@@ -151,8 +151,8 @@ switch ($mode)
 			else
 			{
 				$file_ext = substr(strrchr($file, '.'), 1);
-				$from_text = file_get_contents($mods_root_path . $mod . SLASH . $file);
-				$to_text = file_get_contents($mods_root_path . $mod_to . SLASH . $file_to);
+				$from_text = file_get_contents($mods_root_path . $mod_to . SLASH . $file_to);
+				$to_text = file_get_contents($mods_root_path . $mod . SLASH . $file);
 				$preserbe_cr = true;
 
 				// Now the correct renderer
