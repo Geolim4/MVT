@@ -587,15 +587,15 @@ function detect_eol($str)
 
 function mvt_syntaxify($content, $file_ext = 'txt')
 {
-	$uid = bertix_id();
+	$uid = trim(bertix_id()) . '_';
 
-	$content = str_replace(' ', "SPC{$uid}", $content);
+	$content = str_replace(' ', 'SPC' . $uid, $content);
 
 	$geshi = new GeSHi($content, $file_ext);
 	$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
 
 	$content = $geshi->parse_code();
-	$content = str_replace("SPC{$uid}", '<s class="spc"> </s>', $content);
+	$content = str_replace('SPC' . $uid, '<s class="spc"> </s>', $content);
 
 	return  preg_replace("#(\\t)#siU", '<s class="tab">\\1</s>', $content);
 }
