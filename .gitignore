@@ -2,4 +2,5 @@
 /cache/*.php
 /bin/config.json
 /mods/*/*
+/auto-cleaner/default-mods/*/*
 *.nppsession
