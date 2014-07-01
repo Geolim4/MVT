@@ -48,6 +48,14 @@ switch ($mode)
 				case 'json':
 					$file_ext = 'javascript';
 				break;
+				
+				case 'as':
+					$file_ext = 'actionscript';
+				break;
+				
+				case 'as3':
+					$file_ext = 'actionscript3';
+				break;
 			}
 
 			//Do the sorcery
