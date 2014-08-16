@@ -56,6 +56,14 @@ switch ($mode)
 				case 'as3':
 					$file_ext = 'actionscript3';
 				break;
+
+				case 'dist':
+					$file_ext = 'xml';
+				break;
+
+				case 'sh':
+					$file_ext = 'bash';
+				break;
 			}
 
 			//Do the sorcery

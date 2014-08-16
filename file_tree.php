@@ -102,7 +102,9 @@ if (file_exists($mods_root_path . $dir) && strpos($dir, '..') === false)
 				$desc = $sha1->get(sha1_file($mods_root_path . $dir . $file))->desc;
 				$file_path = substr(strstr(str_replace($mods_root_path , '', $dir . $file), '/'), 1);
 				$ext = preg_replace('/^.*\./', '', $file);
-				$echo .= "<li title=\"{$desc}\" class=\"file ext_{$ext}\"><a data-status=\"{$status}\" class=\"tree-link {$status}\" href=\"#$file_path\" rel=\"" . htmlentities($dir . $file) . "\">" . htmlentities($file) . "&nbsp;&nbsp;<span class=\"tree-external\"></span></a></li>";
+				$echo .= "<li title=\"{$desc}\" class=\"file ext_{$ext}\">
+							<a data-status=\"{$status}\" class=\"tree-link {$status}\" href=\"#$file_path\" rel=\"" . htmlentities($dir . $file) . "\">" . htmlentities($file) . "&nbsp;&nbsp;<span class=\"tree-external\"></span></a>
+						</li>";
 			}
 		}
 	}

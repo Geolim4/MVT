@@ -1,23 +1,22 @@
+<!-- // Core -->
 <script type="text/javascript">
 //<![CDATA[
-var current_file = '{S_CURRENT_FILE}', current_file_ext = '{S_CURRENT_FILE_EXT}', current_mod = '{S_CURRENT_MOD}', current_mod_version = '{S_CURRENT_MOD_VERSION}', current_real_mod = '{S_CURRENT_REAL_MOD}';
-var current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
-var current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
-var current_tree_path = new Array(), expanded_folders = '', tree_filter = {};
-var current_mod_versions = {<!-- BEGIN version_selector --><!-- IF version_selector.S_ROW_COUNT > 0 -->, <!-- ENDIF -->'{version_selector.VERSION_ID}' : '{version_selector.VERSION_DIR}'<!-- END version_selector -->};
-var hash_ignore_update = false, hide_list_cookie_name = 'mvt_hide_list', breakline_cookie_name = 'mvt_breakline',  vendor_prefix = ["webkit", "moz", "ms", "o", ""];
-var file_groups = {
-	'media': ['png', 'gif', 'jpeg', 'jpg', 'bmp', 'svg']
-};
-var ext_association = {
-	'btn_check_syntax': ['php'], 
-	'btn_base64_decode' : ['php', 'js', 'html', 'txt', 'xml']
-}; 
-var ext_unassociation = {
-	'btn_search_engine': file_groups['media'],
-	'btn_compare': file_groups['media']
-};
-var busy = false, ctrlDown = false, ctrlKey = 17, mods_ary = new Array(), index = '{U_INDEX}', services = {};
+var mvt_debug = false;
+$(document).ready(function() {
+	core_init();
+});
+function core_init(){
+	if(typeof(init) === 'function'){
+		init();
+	}
+	$('select').each(function(){
+		$(this).chosen({
+			width: ($(this).data('width') ? $(this).data('width') : ($(this).width() + 20) + 'px'),
+			disable_search_threshold: 10,
+			placeholder_text_multiple: '{LA_MVT_SELECT_SOME_OPTIONS}'
+		});
+	});
+}
 
 function add_mod(){
 	if(busy){
@@ -252,9 +251,11 @@ function fullscreen_handler(){
 	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
 		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
 			$('#btn_fullscreen').children('a').addClass('active');
+			$('#code-content').css({'max-height': ($(document).height() - $("#code-content").offset().top)});
 		}
 		else {
 			$('#btn_fullscreen').children('a').removeClass('active');
+			$('#code-content').css({'height': ''});
 		}
 	}
 }
@@ -276,22 +277,27 @@ function berstick(resize) {
 	if(resize === true && window_top > div_top){
 		$('#menu-sticker').css({'height' : ($(window).height() + 20)});
 		$('#tools').css({'position': 'fixed', 'top': '2px', 'width' : $pl.css('width')});
-		$('#menu').css({'position': 'fixed', 'top': '0px', 'width' : $pm.css('width')});
-		$('#file-tree').css({'max-height' : ($('#content').height() - 370)});
+		var from_left = $('#tools').width() + $("#tools").offset().left + units_parser($("#tools").css('padding-left')) + units_parser($("#tools").css('padding-right'));
+		$('#left-tools').css({'position': 'fixed', 'top': '0px', 'margin-top': 0, 'margin-left': '3px', 'left': from_left});
+		$('#menu').css({'position': 'fixed', 'top': '0px', 'width' : $pm.css('width'), 'max-height': ($(window).height() * 0.8)});
+		$('#file-tree').css({'max-height' : ($(window).height() * 0.7)});
 		$('#code-content').css({'margin-top' : ($('#tools').height())});
 		return;
 	}
 	if (window_top > div_top) {
 		$('#menu-sticker').css({'height' : ($(window).height() + 20)});
 		$('#tools').css({'position': 'fixed', 'top': '2px', 'width' : $el.css('width')});
-		$('#menu').css({'position': 'fixed', 'top': '0px', 'width' : $em.css('width')});
-		$('#file-tree').css({ 'max-height' : ($('#content').height() - 370)});
+		var from_left = $('#tools').width() + $("#tools").offset().left + units_parser($("#tools").css('padding-left')) + units_parser($("#tools").css('padding-right'));
+		$('#left-tools').css({'position': 'fixed', 'top': '0px', 'margin-top': 0, 'margin-left': '3px', 'left': from_left});
+		$('#menu').css({'position': 'fixed', 'top': '0px', 'width' : $em.css('width'), 'max-height': ($(window).height() * 0.8)});
+		$('#file-tree').css({'max-height' : ($(window).height() * 0.7)});
 		$('#code-content').css({'margin-top' : ($('#tools').height())});
 	} else {
 		$('#menu-sticker').css({'height' : 'auto'});
-		$('#tools').css({'position': '', 'top': '0px', 'width' : "auto"});
-		$('#menu').css({'position': '', 'top': '0px', 'width' : "20%"});
-		$('#file-tree').css({'max-height' : 'inherit'});
+		$('#tools').css({'position': '', 'top': '0px', 'width' : ""});
+		$('#left-tools').css({'position': '', 'top': '0px', 'right': '0px', 'margin-top': '', 'margin-left': ''});
+		$('#menu').css({'position': '', 'top': '0px', 'width' : "20%", 'max-height': ($(window).height())});
+		$('#file-tree').css({'max-height' : ($(window).height() * 0.7)});
 		$('#code-content').css({'margin-top' : 0});
 	}
 }
@@ -336,7 +342,9 @@ function insert_text(text, spaces, form_name)
 		textarea.value = textarea.value + text;
 	}
 }
-
+function units_parser(str){
+	return parseFloat(str.replace('px', '').replace('%', '').replace('em', '').replace('pt', ''));
+}
 function strrchr(haystack, needle) {
 	//http://phpjs.org/functions
 	var pos = 0;
@@ -408,6 +416,43 @@ function RunPrefixMethod(obj, method) {
 		}
 		p++;
 	}
+}
+
+function mvt_log(msg, errno){
+	if(mvt_debug){
+		switch(errno){
+			case 'error':
+				console.error('MVT error:' + errno);
+			break;
+			case 'warning':
+				console.warn('MVT warning:' + errno);
+			break;
+			case 'warning':
+				console.error('MVT warning:' + errno);
+			break;
+			case 'log':
+			default:
+				console.log('MVT notice:' + errno);
+			break;
+		}
+	}
+}
+function url_auto_updater(){
+	if(get_guery_params(window.location.href.split('#')[0])['mod'] !== current_mod && !busy){
+		ajax_location(window.location.href.split('#')[0]);
+	}
+}
+function get_guery_params(qs) {
+	qs = qs.split("+").join(" ");
+
+	var params = {}, tokens,
+		re = /[?&]([^=]+)=([^&]*)/g;
+
+	while (tokens = re.exec(qs)) {
+		params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+	}
+
+	return params;
 }
 // ]]>
 </script>

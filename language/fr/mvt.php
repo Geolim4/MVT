@@ -38,6 +38,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
 	'MVT'	=> 'MVT',
 	'MVT_BINARY' => 'Binaire',
+	'MVT_BREADCRUMB_ARROW'	=> '»',
 	'MVT_LANG' => 'fr',
 	'MVT_DATE_FORMAT' => 'd M Y, H:i',
 	'MVT_CFG_PHP_SYNTAX' => 'Vérificateur de syntaxe PHP',
@@ -142,6 +143,7 @@ $lang = array_merge($lang, array(
 	'MVT_SETTINGS_SAVED' => 'Paramètres sauvegardés.',
 	'MVT_NEW_TAB' => 'Ouvrir les liens des MODs dans un nouvel onglet',
 	'MVT_SELECT_ERROR' => 'Merci de sélectionner une portion de code',
+	'MVT_SELECT_SOME_OPTIONS' => 'Sélectionner une/des options',
 	'MVT_SCROLL_DOWN' => 'Descendre',
 	'MVT_SCROLL_TOP' => 'Monter',
 	'MVT_SCROLL_LEFT' => 'Défiler à gauche',

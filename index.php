@@ -375,7 +375,7 @@ if ($mode == 'config')
 
 	$template->assign_var('S_CFG_LANG', $language);
 }
-
+$ajax_nav = request_var('ajax_nav', false);
 $template->assign_vars(array(
 	//Config
 	'S_CFG_VERSION' => MVT_VERSION,
@@ -391,8 +391,12 @@ $template->assign_vars(array(
 	//Misc
 	'L_MVT_SEARCH_ENGINE' => $user->lang('MVT_SEARCH_ENGINE', $config['mvt_search_engine']),
 	'S_DEMO_MODE' => MVT_DEMO_MODE,
+	'S_AJAX_NAVIGATION' => $ajax_nav 
 ));
-
+if ($ajax_nav )
+{
+	header('Content-Type: text/html; charset=utf-8');
+}
 $template->set_filenames(array(
 	'index'	=> 'mvt_body.html',
 ));

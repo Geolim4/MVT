@@ -1,0 +1,915 @@
+<script type="text/javascript">
+// <![CDATA[
+function init(){
+	 $(function() {
+		$('.btn').tooltip({
+			 show: {
+				delay: 400
+			},
+			position: {
+				my: "center bottom-30",
+				at: "center bottom",
+			},
+		});
+	});
+
+	if($.cookie(hide_list_cookie_name)){
+		btn_list_numbers();
+	}
+	if($.cookie(breakline_cookie_name)){
+		btn_list_breakline();
+	}
+	$(document).keydown(function(e)
+	{
+		if (e.keyCode == ctrlKey) ctrlDown = true;
+	}).keyup(function(e)
+	{
+		if (e.keyCode == ctrlKey) ctrlDown = false;
+	});
+	set_button_status();
+	for (key in current_path_anchor){
+		expanded_folders += current_path_anchor[key] + '/';
+		current_tree_path[key] = current_mod + '/' + expanded_folders;
+	}
+	$('#file-tree').fileTree({
+			root:current_mod + '/',
+			options: tree_filter,
+			multiFolder: true,
+			script: '{U_FILE_TREE}',
+			loadMessage : 'Wait...',
+			expandSpeed : 300,
+			collapseSpeed : 150,
+			expandedFolders: current_tree_path,
+		},
+		function(file) {
+			set_active_file(file.attr('rel').replace(current_mod + '/', ''));
+		}
+	);
+	//Wait for Jquery fileTree finish the job
+	setTimeout(function() {
+		if(current_file_anchor){
+			set_active_file(current_file_anchor);
+		}else{
+			set_active_file(current_file);
+		}
+	}, 500);
+	$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
+	$(function () {
+		$(window).scroll(berstick);
+		berstick();
+	});
+	$(window).resize(function() {
+		berstick(true);
+		reset_notepad_pos();
+	});
+	$('html, body').animate({
+		scrollTop: $("#acp").last().offset().top
+	}, 250);
+	<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
+	$('#tabs').find("a.mods-links").click(function(){
+		exit_handler(this.href);
+		return false;
+	});
+	if ("onhashchange" in window) { // event supported?
+		window.onhashchange = function () {
+			if(hash_ignore_update){
+				hash_ignore_update = false;
+				return;
+			}
+			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+			if(current_file_anchor){
+				set_active_file(current_file_anchor, true);
+			}else{
+				set_active_file('{S_CURRENT_FILE}', true);
+			}
+		}
+	}else { // event not supported:
+		var storedHash = window.location.hash;
+		window.setInterval(function () {
+			if (window.location.hash != storedHash) {
+				if(hash_ignore_update){
+					hash_ignore_update = false;
+					return;
+				}
+				current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+				current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+				if(current_file_anchor){
+					set_active_file(current_file_anchor);
+				}else{
+					set_active_file('{S_CURRENT_FILE}');
+				}
+			}
+		}, 100);
+	}
+
+	<!-- ENDIF -->
+	<!-- IF S_CFG_EXIT_HANDLER -->
+	mvt_service('notepad_report_checker', notepad_report_checker, 1000, 'start');
+
+	<!-- ENDIF -->
+	mvt_service('fullscreen_handler', fullscreen_handler, 500, 'start');
+	mvt_service('reset_file_selected', reset_file_selected, 500, 'start');
+	mvt_service('url_auto_updater', url_auto_updater, 500, 'start');
+
+	set_dropzone();
+	tree_count_filters('filter-select');
+	file_encoding(current_mod, current_file, false);
+	file_eol(current_mod, current_file, false);
+}
+
+function set_dropzone (){
+	$("body").dropzone({
+		url: "{U_AJAX_UPLOAD}" ,
+		autoProcessQueue: true,
+		paramName: "file",
+		uploadMultiple: false,
+		previewsContainer: '#dzcontent',
+		previewTemplate: $('#dzbox').html(),
+		acceptedFiles: '.zip',
+		maxFilesize: 5, // MB
+		fallback: function(){
+			alert('{LA_MVT_OLD_BROWSER}');
+		},
+		accept: function(file, done) {
+			busy = true;
+			content_status(false, true);
+			done();
+		},
+		error: function(file, errorMessage ) {
+			mvt_info('{LA_INFORMATION}', errorMessage);
+			content_status(true);
+			busy = false;
+		},
+		dragend: function(event) {
+			content_status(true);
+		},
+		dragleave: function(event) {
+			content_status(true);
+		},
+		dragover: function(event) {
+			content_status(false);
+			//Remove any active popup.
+			$('body').children('div.ui-dialog:visible').remove();
+		},
+		uploadprogress: function(file, progress, bytesSent) {},
+		success: function(file, data) {
+			if(data['eval']){
+				eval(data['eval']);
+			}
+			content_status(true);
+			busy = false;
+		},
+		dictDefaultMessage: '{LA_DICT_DEFAULT_MESSAGE}',
+		dictFallbackMessage: '{LA_DICT_FALLBACK_MESSAGE}',
+		dictFallbackText: '{LA_DICT_FALLBACK_TEXT}',
+		dictInvalidFileType: '{LA_DICT_INVALID_FILETYPE}',
+		dictFileTooBig: '{LA_DICT_FILE_TOO_BIG}',
+		dictResponseError: '{LA_DICT_RESPONSE_ERROR}',
+		dictCancelUpload: '{LA_DICT_CANCEL_UPLOAD}',
+		dictCancelUploadConfirmation: '{LA_DICT_CANCEL_UPLOAD_CONFIRMATION}',
+		dictRemoveFile: '{LA_DICT_REMOVE_FILE}',
+		dictMaxFilesExceeded: '{LA_DICT_MAX_FILES_EXCEEDED}',
+	});
+}
+
+function btn_compare(mod_to, file_to, diff_mode){
+
+	//Reset step if we're already comparing some files...
+	if($('#btn_compare').children('a').hasClass('active')){
+		$('#btn_compare').children('a').removeClass('active');
+		set_active_file(current_file);
+		return;
+	}
+	if(mod_to && file_to && diff_mode){
+		if(busy){
+			return;
+		}
+		$.ajax({
+			type: 'POST',
+			url: '{U_AJAX}',
+			data: {'mode': 'compare', 'diff_mode' : diff_mode, 'mod': current_mod, 'file': current_file, 'mod_to': mod_to, 'file_to': file_to},
+			timeout: 5000,
+			dataType  : 'json',
+			beforeSend: function() {
+				busy = true;
+				$("#code-content").removeClass('safe unsafe deprecated').html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
+			},
+			complete: function(data, textStts, errThrown) {
+				busy = false;
+			},
+			success: function(data, textStts, errThrown) {
+				if(data['eval']){
+					eval(data['eval']);
+					setTimeout(function(){
+						set_active_file(current_file);
+					}, 750);
+				}else if(data['diff']){
+					$('#code-content').html(data['diff']);
+					$('#btn_compare').children('a').addClass('active');
+					btn_list_numbers(true);
+				}
+			},
+			error: function(data, textStts, errThrown) {
+
+			},
+		});
+	}else{
+		mvt_confirm("{LA_MVT_COMPARE}", '{LA_MVT_MOD_VERSION_COMPARE}:&nbsp;&nbsp;&nbsp;' +
+			'<select id="mod-version-compare">' +
+			<!-- BEGIN version_selector -->
+			<!-- IF S_CURRENT_MOD_VERSION != version_selector.VERSION_ID -->'<option<!-- IF version_selector.S_SELECTED --> selected="selected"<!-- ENDIF --> value="{version_selector.VERSION_DIR}" class="option-<!-- IF version_selector.PHPBB_VERSION == '3.0.x' -->30x<!-- ELSE IF version_selector.PHPBB_VERSION == '3.1.x' -->31x<!-- ENDIF -->">{version_selector.VERSION_ID}</option>' + <!-- ENDIF -->
+			<!-- END version_selector -->
+			'</select><br /><br />' +
+			'{LA_MVT_COMPARE_SELECT}:&nbsp;&nbsp;&nbsp;<select id="mod-diff-mode">{S_DIFF_MODES}</select>',
+			function () {
+				btn_compare($("#mod-version-compare").val(), current_file, $("#mod-diff-mode").val());
+				$("#mod-version-compare, #mod-diff-mode").remove();
+			},
+			function () {
+				//Nope
+			}
+		);
+	}
+}
+
+function btn_fullscreen(){
+	var acp_element = document.getElementById("acp");
+	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
+		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
+			RunPrefixMethod(document, "CancelFullScreen");
+			$('#btn_fullscreen').children('a').removeClass('active');
+		}
+		else {
+			RunPrefixMethod(acp_element, "RequestFullScreen");
+			$('#btn_fullscreen').children('a').addClass('active');
+		}
+	}else{
+		mvt_info('{LA_MVT_FULLSCREEN_UNSUPPORTED}');
+	}
+}
+
+function reset_notepad_pos(){
+	var pos = $(window).width() - $('#notepad').width() - 50;
+	$('#notepad').css('left', pos + 'px');
+	$('#notepad').css('top', '25px');
+}
+
+function btn_list_numbers(force){
+	if($('#code-content').hasClass('no-style-type') && !force){
+		$.removeCookie(hide_list_cookie_name, {path: '/'});
+		$('#code-content').removeClass('no-style-type');
+		$('#btn_list_numbers').children('a').removeClass('active');
+	}else{
+		$.cookie(hide_list_cookie_name, true, {path: '/'});
+		$('#code-content').addClass('no-style-type');
+		$('#btn_list_numbers').children('a').addClass('active');
+	}
+}
+function btn_list_breakline(force){
+	if($('#code-content').hasClass('breakline') && !force){
+		$.removeCookie(breakline_cookie_name, {path: '/'});
+		$('#btn_left_scroll, #btn_right_scroll').show();
+		$('#code-content').removeClass('breakline');
+		$('#btn_list_breakline').children('a').removeClass('active');
+	}else{
+		$.cookie(breakline_cookie_name, true, {path: '/'});
+		$('#btn_left_scroll, #btn_right_scroll').hide();
+		$('#code-content').addClass('breakline');
+		$('#btn_list_breakline').children('a').addClass('active');
+	}
+}
+
+function left_scroll(){
+	var scroll_value = ctrlDown ? '-=9999' : '-=150';
+	$('#code-content').animate({
+		scrollLeft: scroll_value
+	}, 150);
+}
+
+function right_scroll(){
+	var scroll_value = ctrlDown ? '+=9999' : '+=150';
+	$('#code-content').animate({
+		scrollLeft: scroll_value
+	}, 150);
+}
+
+function top_scroll(){
+	var scroll_value = ctrlDown ? '-=9999' : '-=300';
+	$('#code-content').animate({
+		scrollTop: scroll_value
+	}, 150);
+}
+
+function down_scroll(){
+	var scroll_value = ctrlDown ? '+=9999' : '+=300';
+	$('#code-content').animate({
+		scrollTop: scroll_value
+	}, 150);
+}
+
+function previous_file(){
+	var file_found = false, break_traversing = false;
+	//Hide the current button
+	$('#previous_file').hide();
+	//Re-enable the opposite button
+	$('#next_file').show();
+
+	$($("a.tree-link").get().reverse()).each(function() {
+		if(break_traversing){
+			//If a previous file is found then re-enable the current button
+			$('#previous_file').show();
+			return;
+		}else if(file_found){
+			window.location.hash = $(this).attr('href');
+			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+			set_active_file(current_file_anchor);
+			break_traversing =  true;
+		}
+		else
+		{
+			if($(this).hasClass("tree-selected")){
+				file_found = true;
+			}
+		}
+	});
+}
+
+function next_file(){
+	var file_found = false, break_traversing = false;
+	//Hide the current button
+	$('#next_file').hide();
+	//Re-enable the opposite button
+	$('#previous_file').show();
+
+	$("a.tree-link").each(function() {
+		if(break_traversing){
+			//If a next file is found then re-enable the current button
+			$('#next_file').show();
+			return;
+		}else if(file_found){
+			window.location.hash = $(this).attr('href');
+			current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+			current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+			set_active_file(current_file_anchor);
+			break_traversing =  true;
+		}
+		else
+		{
+			if($(this).hasClass("tree-selected")){
+				file_found = true;
+			}
+		}
+	});
+}
+
+function search_engine(){
+	var SelectedCode = getSelectedCode(), engine_url = "{S_CFG_SEARCH_ENGINE_URL}";
+	if(!SelectedCode){
+		alert('{LA_MVT_SELECT_ERROR}');
+	}else{
+		window.open(engine_url.replace('%CODE%', SelectedCode.substr(0, 120)));
+	}
+}
+
+function base64_decode(){
+	var SelectedCode = getSelectedCode();
+	if(!SelectedCode){
+		alert('{LA_MVT_SELECT_ERROR}');
+	}else if (/*SelectedCode.substr(SelectedCode.length - 2) != '==' ||*/ !/^[a-zA-Z0-9=]+$/.test(SelectedCode)){
+		alert('{LA_MVT_INVALID_BASE64}');
+	}else{
+		mvt_info('{LA_INFORMATION}', base64_decoder(SelectedCode));
+	}
+}
+
+function tree_count_filters(selector_id){
+	if($('#' + selector_id).children().children('option:selected').length){
+		$('#filter-count').text('(' + $('#' + selector_id).children().children('option:selected').length + ')');
+	}else{
+		$('#filter-count').text('');
+	}
+}
+
+function file_tree_filter(confirm){
+	if(!confirm){
+		mvt_confirm("{LA_MVT_FILTER}", "{LA_MVT_FILTER_EXPLAIN}",
+			function () {
+				file_tree_filter(true);
+			},
+			function () {
+				tree_count_filters('filter-select');
+				file_tree_filter(true);
+			},
+			false, '#filterbox', false, false,
+			function () {
+				$("#filter-select").children().children('option').each(function(index) {
+					this.selected = false;
+				}).trigger("chosen:updated");
+				tree_count_filters('filter-select');
+			}
+		);
+	}else{
+		tree_filter = $('#filter-select').val();
+		collapse_all(true);
+	}
+}
+
+function collapse_all(force_collaspe){
+	if(menu_state == 'hidden' && !force_collaspe){
+		return;
+	}
+	current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
+	current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
+	current_tree_path = new Array(), expanded_folders = '';
+	for (key in current_path_anchor){
+		expanded_folders += current_path_anchor[key] + '/';
+		current_tree_path[key] = current_mod + '/' + expanded_folders;
+	}
+	$('#file-tree').fileTree({
+			root:current_mod + '/',
+			options: tree_filter,
+			multiFolder: true,
+			script: '{U_FILE_TREE}',
+			loadMessage : 'Wait...',
+			expandSpeed : 300,
+			collapseSpeed : 150,
+			expandedFolders: current_tree_path,
+		},
+		function(file) {
+			set_active_file(file.attr('rel').replace(current_mod + '/', ''));
+		}
+	);
+	$(t).find('#file-tree li a.tree-link').each(function(e, t) {
+		bind_file_events(t)
+	});
+	$('html, body').animate({
+		scrollTop: $("#tabs").offset().top
+	}, 800);
+}
+
+function expand_all(){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : current_mod, 'mode' : 'tree_all'},
+		timeout: 5000,
+		dataType  : 'json',
+		beforeSend: function() {
+			busy = true;
+		},
+		complete: function(data, textStts, errThrown) {
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			$('#file-tree').fileTree({
+					root:current_mod + '/',
+					options: tree_filter,
+					multiFolder: true,
+					script: '{U_FILE_TREE}',
+					loadMessage : 'Wait...',
+					expandSpeed : 300,
+					collapseSpeed : 150,
+					expandedFolders: data,
+				},
+				function(file) {
+					set_active_file(file.attr('rel').replace(current_mod + '/', ''));
+				}
+			);
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function bind_file_events(file){
+	$(file).tooltip();
+	$(file).contextmenu({
+		menu: [
+			{title: "Mark as", children: [
+					{title: "Checked", uiIcon: "ui-icon-copy", action: function(event, ui) {
+							
+						} 
+					},
+					{title: "New", uiIcon: "ui-icon-copy", action: function(event, ui) {
+							
+						} 
+					},
+					{title: "Prioritized", uiIcon: "ui-icon-copy", action: function(event, ui) {
+							
+						} 
+					},
+					{title: "Suspicious", uiIcon: "ui-icon-copy", action: function(event, ui) {
+							
+						} 
+					},
+				]
+			},
+			{title: "----"},
+			{title: "Download", uiIcon: "ui-icon-copy", action: function(event, ui){
+
+				 }, disabled: false
+			},
+			{title: "View in editor", uiIcon: "ui-icon-copy", action: function(event, ui){
+
+				 }, disabled: false
+			},
+			{title: "View in plain text", uiIcon: "ui-icon-copy", action: function(event, ui){
+
+				 }, disabled: false
+			},
+			{title: "----"},
+			{title: "More", children: [
+					{title: "Delete file", action: function(event, ui) {
+							alert("action callback sub1");
+						} 
+					},
+					{title: "Get file statistics", action: function(event, ui) {
+							alert("action callback sub1");
+						} 
+					},
+					{title: "Get file encoding", action: function(event, ui) {
+							alert("action callback sub1");
+						} 
+					},
+				]
+			}
+		]
+	});
+}
+function reset_file_selected(delay){
+	if(delay){
+		var timedelay = delay;
+	} else {
+		var timedelay = 250;
+	}
+	setTimeout(function() {
+		$(".tree-selected").removeClass("tree-selected");
+		$("a[href='#" + current_file + "']").addClass("tree-selected");
+		$('#code-content').removeClass('safe unsafe deprecated').addClass($('a.tree-selected').data('status'));
+		$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
+		setTimeout(function() {
+		}, 500);
+	}, timedelay);
+}
+
+function notepad_report_checker(){
+	if($('#notepad-report').val()){
+		window.onbeforeunload = onbeforeunload_handler;
+	}else{
+		window.onbeforeunload = false;
+	}
+}
+
+function onbeforeunload_handler (){
+	var message = "{LA_MVT_EXIT_ALERT}",
+	e = e || window.event;
+
+	//IE and Firefox
+	if (e) {
+		e.returnValue = message;
+	}
+	// Safari
+	return message;
+}
+
+function set_onbeforeunload_handler(handler){
+	window.onbeforeunload = handler;
+}
+
+function exit_handler(url){
+	if($('#notepad-report').val()){
+		mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}",
+			function () {
+				window.onbeforeunload = false;
+				ajax_location(url);
+			},
+			function () {
+				$('#notepad').show(300);
+				$('#btn_notepad').children('a').addClass('active');
+			}
+		);
+	}else{
+		ajax_location(url);
+	}
+	return false;
+}
+function ajax_location(url){
+	var comp = new RegExp(location.host);
+	var url_param = get_guery_params(url);
+	if(comp.test(url)){
+		busy = true;
+		/*
+		if uncomment the above line, html5 nonsupported browers won't change the url but will display the ajax content;
+		if commented, html5 nonsupported browers will reload the page to the specified link.
+		*/
+		//get the link location that was clicked
+		pageurl = url;
+		//to get the ajax content and display in div with id 'content'
+		$( "#page-body" ).load( url + "&ajax_nav=1", function() {
+			// Finally, re-init js
+			$('#file-tree').fileTree({
+					root: current_mod + '/',
+					options: tree_filter,
+					multiFolder: true,
+					script: '{U_FILE_TREE}',
+					loadMessage : 'Wait...',
+					expandSpeed : 300,
+					collapseSpeed : 150,
+					expandedFolders: current_tree_path,
+				},
+				function(file) {
+					set_active_file(file.attr('rel').replace(current_mod + '/', ''));
+				}
+			);
+			busy = false;
+			set_active_file(current_file);
+			// Re-handle binding
+			$('#tabs').find("a.mods-links").click(function(){
+				exit_handler(this.href);
+				return false;
+			});
+		});
+		//to change the browser URL to the given link location
+		if(pageurl != window.location){
+			window.history.pushState({path:pageurl}, '',pageurl);
+		}
+
+	}else{
+		alert('external');
+	}
+
+    //stop refreshing to the page given in
+    return false;
+}
+function version_differentiator(){
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mode' : 'differentiator', 'mod' : current_mod, 'mod_versions' : current_mod_versions, 'file' : current_file},
+		timeout: 5000,
+		dataType  : 'json',
+		beforeSend: function() {
+
+		},
+		complete: function(data, textStts, errThrown) {
+
+		},
+		success: function(data, textStts, errThrown) {
+			var version_differentiator = '', separator = '&nbsp;&bull;&nbsp;', i = 0;
+			if(data['diff']){
+				for(version in data['diff']){
+					if(version == current_mod_version){
+						continue;
+					}
+					if(data['diff'][version] === true){
+						version_differentiator += ((i ? separator : '' ) + version + ': <span class="success">{LA_MVT_FILE_UNMODIFIED}</span>');
+					}else if(data['diff'][version] === false){
+						version_differentiator += ((i ? separator : '' ) + version + ': <span class="error">{LA_MVT_FILE_MODIFIED}</span>');
+					}else{
+						version_differentiator += ((i ? separator : '' ) + version + ': <span class="error">{LA_MVT_FILE_MISSING}</span>');
+					}
+					i++;
+				}
+				$('#version-differentiator').html(version_differentiator);
+			}
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function set_active_file(file, collapse_on_complete){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : current_mod, 'file' : file},
+		timeout: 10000,
+		beforeSend: function() {
+			$('html, body').addClass('busy');
+			busy = true;
+			$("#code-content").removeClass('safe unsafe deprecated').html('<p class="loading"><img alt="{LA_MVT_LOADING}" src="style/images/loading.gif"></p>');
+		},
+		complete: function(data, textStts, errThrown) {
+			$('html, body').removeClass('busy');
+			if(collapse_on_complete){
+				collapse_all();
+			}
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			$("#code-content").html(data);
+			$('html, body').animate({
+				scrollTop: $("#tools").offset().top
+			}, 250);
+			$('#code-content').animate({
+				scrollTop: '-=999999'
+			}, 300);
+			current_file = file;
+			current_file_ext = strrchr(file, '.').substr(1);
+			set_button_status();
+			$('title').text('{LA_MVT} | ' + current_real_mod + ' {LA_MVT_BREADCRUMB_ARROW} ' + file);
+			$('#breadcrumb').text('{LA_MVT} {LA_MVT_BREADCRUMB_ARROW} ' + current_real_mod + ' {LA_MVT_BREADCRUMB_ARROW} ' + file);
+			$('#btn_compare').children('a').removeClass('active');
+			<!-- IF .version_selector -->
+			version_differentiator();
+			<!-- ENDIF -->
+
+			//Small hack to allow users to use link as shortcut even with hash :)
+			hash_ignore_update = true;
+			window.location = '#' + file;
+			file_encoding(current_mod, current_file, false);
+			file_eol(current_mod, current_file, false);
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function set_button_status(){
+	for(key in ext_association){
+		if(typeof(ext_association[key]) != 'undefined'){
+			dance: for(subkey in ext_association[key]){
+				$('#' + key).hide();
+				if(ext_association[key][subkey] == current_file_ext){
+					$('#' + key).show();
+					break dance;
+				}
+			}
+		}
+	}
+	for(key in ext_unassociation){
+		if(typeof(ext_unassociation[key]) != 'undefined'){
+			inbad : for(subkey in ext_unassociation[key]){
+				$('#' + key).show();
+				if(ext_unassociation[key][subkey] == current_file_ext){
+					$('#' + key).hide();
+					break inbad;
+				}
+			}
+		}
+	}
+}
+
+function insert_filename(){
+	$("#btn_filename").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+		function () {
+			$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+			$('#notepad-report').val($('#notepad-report').val() + "[b][size=110]" + current_file + "[/size][/b]\n").trigger('autosize.resize');
+		}
+	);
+}
+
+function report_code(err_code){
+	var SelectedCode = getSelectedCode();
+	var btns = {}, cwBtn = '{LA_MVT_CANCEL}', awBtn = '{LA_MVT_ADD_TO_REPORT}';
+	if(!SelectedCode)
+	{
+		alert('{LA_MVT_SELECT_ERROR}');
+		return;
+	}
+
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_DESCRIBE}",
+		function () {
+			$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+				function () {
+					$('#notepad-report').val($('#notepad-report').val() + "[b]" + err_code + "[/b]\n[code]" + SelectedCode + "[/code]" + $('#user-report').val() + "\n\n").trigger('autosize.resize');
+					$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+					$('#user-report').val('');
+				}
+			);
+		},
+		function () {
+		}, false, '#dialogbox'
+	);
+}
+
+function purge_notepad(){
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_PURGE_CONFIRM}",
+		function () {
+			$('#notepad-report').val('').trigger('autosize.resize');
+		},
+		function () {
+		}, true
+	);
+}
+
+function get_filestats(){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : current_mod, 'file' : current_file, 'mode' : 'filestats'},
+		timeout: 5000,
+		dataType  : 'json',
+		beforeSend: function() {
+			busy = true;
+		},
+		complete: function(data, textStts, errThrown) {
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			if(data['errmsg']){
+				alert(data['errmsg']);
+			}
+			if(data['eval']){
+				eval(data['eval']);
+			}
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function check_syntax(){
+	if(busy){
+		return;
+	}
+	$.ajax({
+		type: 'POST',
+		url: '{U_AJAX}',
+		data: {'mod' : current_mod, 'file' : current_file, 'mode' : 'syntax'},
+		timeout: 5000,
+		beforeSend: function() {
+			busy = true;
+		},
+		complete: function(data, textStts, errThrown) {
+			busy = false;
+		},
+		success: function(data, textStts, errThrown) {
+			mvt_info("{LA_MVT_INFORMATION}", data, function(){});
+		},
+		error: function(data, textStts, errThrown) {
+
+		},
+	});
+}
+
+function delete_mod(mod_path){
+	window.mod_to_delete = mod_path;
+	var on_confirm = function(){
+		$.ajax({
+			type: 'POST',
+			url: '{U_AJAX}',
+			data: {'mod' : mod_to_delete, 'mode' : 'delete_mod'},
+			timeout: 30000,
+			async: false,
+			dataType  : 'json',
+			beforeSend: function() {
+
+			},
+			complete: function(data, textStts, errThrown) {
+
+			},
+			success: function(data, textStts, errThrown) {
+				if(data['errmsg']){
+					alert(data['errmsg']);
+				}
+				if(data['eval']){
+					eval(data['eval']);
+				}
+			},
+			error: function(data, textStts, errThrown) {
+
+			},
+		});
+	};
+	mvt_confirm('{LA_CONFIRM}', '{LA_MVT_MOD_DELETE_WARN}', on_confirm, function(){});
+}
+
+function internal_mesage(){
+	var SelectedCode = getSelectedCode();
+	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_INTERNAL_EXPLAIN}",
+		function () {
+			if(!$('#user-report').val())
+			{
+				alert('{LA_MVT_EMPTY_MESSAGE}');
+				return;
+			}
+			$('#notepad-report').val($('#notepad-report').val() + "[quote][size=120][b]{LA_MVT_INTERNAL}:[/b][/size]" + ((SelectedCode) ? "\n\n[b][size=110]" + current_file + "[/size][/b][code]" + SelectedCode + "[/code]" : '') + "\n\n" + $('#user-report').val() + "[/quote]\n").trigger('autosize.resize');
+			$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
+				function () {
+					$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
+					$('#user-report').val('');
+				}
+			);
+		},
+		function () {
+		}, false, '#dialogbox'
+	);
+}
+// ]]>
+</script>

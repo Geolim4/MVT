@@ -667,10 +667,6 @@ legend {
 	vertical-align: middle;
 }
 
-/* Hide from macIE \*/
-legend { top: -1.2em; }
-/* end */
-
 * html legend {
 	margin: 0 0 -10px -7px;
 	line-height: 1em;
