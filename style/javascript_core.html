@@ -2,13 +2,7 @@
 <script type="text/javascript">
 //<![CDATA[
 var mvt_debug = false;
-$(document).ready(function() {
-	core_init();
-});
 function core_init(){
-	if(typeof(init) === 'function'){
-		init();
-	}
 	$('select').each(function(){
 		$(this).chosen({
 			width: ($(this).data('width') ? $(this).data('width') : ($(this).width() + 20) + 'px'),

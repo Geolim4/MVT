@@ -167,7 +167,7 @@ if ($dh)
 					break;
 
 					case '3.1.x':
-						$mod_details = json_decode(file_get_contents($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_31x_file), true);
+						$mod_details = json_decode(file_get_contents($phpbb_root_path . 'mods/' . $mod_dir . SLASH . $base_31x_file), true);
 						$mod_name = $mod_details['extra']['display-name'];
 						$mod_name_versioned = "$mod_name {$mod_details['version']}";
 						$mod_version = $mod_details['version'];
@@ -177,8 +177,9 @@ if ($dh)
 				// Set a default one if no one was selected
 				if (empty($mod) && $mode == 'validation')
 				{
-					$mod = $mod_dir;
+					redirect( append_sid(generate_board_url() . "/index.$phpEx", "mod={$mod_dir}"));
 				}
+
 				if (!isset($mod_versions[$mod_name]))
 				{
 					$block_vars[$mod_name] = array(
@@ -391,7 +392,8 @@ $template->assign_vars(array(
 	//Misc
 	'L_MVT_SEARCH_ENGINE' => $user->lang('MVT_SEARCH_ENGINE', $config['mvt_search_engine']),
 	'S_DEMO_MODE' => MVT_DEMO_MODE,
-	'S_AJAX_NAVIGATION' => $ajax_nav 
+	'S_AJAX_NAVIGATION' => $ajax_nav,
+	'U_FILE_READER' => append_sid('file_reader.' . $phpEx, array('m' => '%m%', 'f' => '%f%'), false)
 ));
 if ($ajax_nav )
 {

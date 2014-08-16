@@ -16,7 +16,10 @@ $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
 
 $file = utf8_normalize_nfc(request_var('f', '', true));
-if (file_exists($phpbb_root_path . $file) && strpos($file, '..') === false && filesize($phpbb_root_path . $file) < 1310720)//10 Mo
+$mod = utf8_normalize_nfc(request_var('m', '', true));
+$download = request_var('d', false);
+
+if (file_exists($mods_root_path . $mod . SLASH . $file) && strpos($file, '..') === false && filesize($mods_root_path . $mod . SLASH . $file) < 1310720)//10 Mo
 {
 	$file_ext = substr(strrchr($file, '.'), 1);
 
@@ -42,8 +45,12 @@ if (file_exists($phpbb_root_path . $file) && strpos($file, '..') === false && fi
 			$ctype = "text/plain"; 
 		break;
 	}
+	if ($download)
+	{
+		header("Content-disposition: attachment; filename=" . basename($file));
+	}
 
 	header('Content-type: ' . $ctype);
-	readfile($phpbb_root_path . $file);
+	readfile($mods_root_path . $mod . SLASH . $file);
 }
 exit_handler();

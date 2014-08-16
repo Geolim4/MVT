@@ -94,7 +94,14 @@ if(jQuery) (function($){
 							h($(this));
 						}
 						return false;
+					}).
+					//Start phpBB addition
+					each(function(e, t) {
+						if($(t).hasClass('tree-link ')){
+							bind_file_events(t);
+						}
 					});
+					//End phpBB addition
 					// Prevent A from triggering the # on non-click events
 					if( o.folderEvent.toLowerCase != 'click' ) $(t).find('LI A').bind('click', function() { return false; });
 				}
@@ -103,11 +110,6 @@ if(jQuery) (function($){
 				// Get the initial file list
 				showTree($(this), o.root);
 			});
-			setTimeout(function() {
-				$('#file-tree a.tree-link').each(function(e, t) {
-					bind_file_events(t)
-				});
-			}, o.expandedFolders.length * 25);
 		}
 	});
 	

@@ -1,0 +1,8 @@
+## Browser cache control - Expire headers  
+<IfModule mod_expires.c>  
+	ExpiresActive On  
+	ExpiresDefault "access plus 7200 seconds"  
+	ExpiresByType text/css              "access plus 1 week"  
+	ExpiresByType application/javascript    "access plus 1 week"  
+	ExpiresByType application/x-javascript  "access plus 1 week"  
+</IfModule>  

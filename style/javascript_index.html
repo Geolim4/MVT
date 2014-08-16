@@ -1,16 +1,14 @@
 <script type="text/javascript">
 // <![CDATA[
 function init(){
-	 $(function() {
-		$('.btn').tooltip({
-			 show: {
-				delay: 400
-			},
-			position: {
-				my: "center bottom-30",
-				at: "center bottom",
-			},
-		});
+	$('.btn').tooltip({
+		 show: {
+			delay: 400
+		},
+		position: {
+			my: "center bottom-30",
+			at: "center bottom",
+		},
 	});
 
 	if($.cookie(hide_list_cookie_name)){
@@ -441,7 +439,7 @@ function collapse_all(force_collaspe){
 			set_active_file(file.attr('rel').replace(current_mod + '/', ''));
 		}
 	);
-	$(t).find('#file-tree li a.tree-link').each(function(e, t) {
+	$('#file-tree li a.tree-link').each(function(e, t) {
 		bind_file_events(t)
 	});
 	$('html, body').animate({
@@ -491,51 +489,80 @@ function bind_file_events(file){
 	$(file).tooltip();
 	$(file).contextmenu({
 		menu: [
-			{title: "Mark as", children: [
-					{title: "Checked", uiIcon: "ui-icon-copy", action: function(event, ui) {
+			{title: "{LA_MVT_CONTEXTMENU_MARK_AS}", children: [
+					{title: "{LA_MVT_CONTEXTMENU_MARK_AS_CHECKED}", uiIcon: "ui-icon-copy", action: function(event, ui) {
 							
-						} 
+						}, disabled: true
 					},
-					{title: "New", uiIcon: "ui-icon-copy", action: function(event, ui) {
+					{title: "{LA_MVT_CONTEXTMENU_MARK_AS_NEW}", uiIcon: "ui-icon-copy", action: function(event, ui) {
 							
-						} 
+						}, disabled: true
 					},
-					{title: "Prioritized", uiIcon: "ui-icon-copy", action: function(event, ui) {
+					{title: "{LA_MVT_CONTEXTMENU_MARK_AS_PRIORITIZED}", uiIcon: "ui-icon-copy", action: function(event, ui) {
 							
-						} 
+						}, disabled: true
 					},
-					{title: "Suspicious", uiIcon: "ui-icon-copy", action: function(event, ui) {
+					{title: "{LA_MVT_CONTEXTMENU_MARK_AS_SUSPICIOUS}", uiIcon: "ui-icon-copy", action: function(event, ui) {
 							
-						} 
+						}, disabled: true
 					},
 				]
 			},
 			{title: "----"},
-			{title: "Download", uiIcon: "ui-icon-copy", action: function(event, ui){
-
+			{title: "{LA_MVT_CONTEXTMENU_DOWNLOAD}", uiIcon: "ui-icon-copy", action: function(event, ui){
+					popup(file_reader.replace('%m%', current_mod).replace('%f%', $(file).data('file')) + '&d=1', 760, 570, $(file).text());
 				 }, disabled: false
 			},
-			{title: "View in editor", uiIcon: "ui-icon-copy", action: function(event, ui){
-
+			{title: "{LA_MVT_CONTEXTMENU_NEW_TAB}", uiIcon: "ui-icon-copy", action: function(event, ui){
+					window.open($(file).attr('href'));
 				 }, disabled: false
 			},
-			{title: "View in plain text", uiIcon: "ui-icon-copy", action: function(event, ui){
-
+			{title: "{LA_MVT_CONTEXTMENU_EDITOR}", uiIcon: "ui-icon-copy", action: function(event, ui){
+					set_active_file($(file).data('file'));
+				 }, disabled: false
+			},
+			{title: "{LA_MVT_CONTEXTMENU_PLAIN_TEXT}", uiIcon: "ui-icon-copy", action: function(event, ui){
+					popup(file_reader.replace('%m%', current_mod).replace('%f%', $(file).data('file')), 760, 570, $(file).text());
 				 }, disabled: false
 			},
 			{title: "----"},
-			{title: "More", children: [
-					{title: "Delete file", action: function(event, ui) {
-							alert("action callback sub1");
+			{title: "{LA_MVT_CONTEXTMENU_MORE}", children: [
+					{title: "{LA_MVT_CONTEXTMENU_DELETE}", action: function(event, ui) {
+							mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}",
+								function () {
+									$.ajax({
+										type: 'POST',
+										url: '{U_AJAX}',
+										data: {'mod' : current_mod, 'file' : $(file).data('file'), 'mode' : 'delete_file'},
+										timeout: 5000,
+										dataType: 'json',
+										beforeSend: function() {
+											busy = true;
+										},
+										complete: function(data, textStts, errThrown) {
+											busy = false;
+										},
+										success: function(data, textStts, errThrown) {
+											if(data['eval']){
+												eval(data['eval']);
+											}
+											if(data['status']){
+												$(file).parent().remove();
+											}
+										},
+										error: function(data, textStts, errThrown) {
+										},
+									});
+								},
+								function () {}
+							);
 						} 
 					},
-					{title: "Get file statistics", action: function(event, ui) {
-							alert("action callback sub1");
-						} 
+					{title: "{LA_MVT_CONTEXTMENU_STATS}", action: function(event, ui) {
+						}, disabled: true
 					},
-					{title: "Get file encoding", action: function(event, ui) {
-							alert("action callback sub1");
-						} 
+					{title: "{LA_MVT_CONTEXTMENU_ENCODING}", action: function(event, ui) {
+						}, disabled: true
 					},
 				]
 			}
@@ -552,7 +579,6 @@ function reset_file_selected(delay){
 		$(".tree-selected").removeClass("tree-selected");
 		$("a[href='#" + current_file + "']").addClass("tree-selected");
 		$('#code-content').removeClass('safe unsafe deprecated').addClass($('a.tree-selected').data('status'));
-		$('ul.jqueryFileTree').find("a").children('span.tree-external').attr("onclick", "window.open(this.parentNode.href);");
 		setTimeout(function() {
 		}, 500);
 	}, timedelay);
@@ -634,6 +660,8 @@ function ajax_location(url){
 				exit_handler(this.href);
 				return false;
 			});
+			// Reload core
+			core_init();
 		});
 		//to change the browser URL to the given link location
 		if(pageurl != window.location){
@@ -911,5 +939,8 @@ function internal_mesage(){
 		}, false, '#dialogbox'
 	);
 }
+
+core_init();
+init();
 // ]]>
 </script>

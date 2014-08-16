@@ -36,6 +36,15 @@ $config['mvt_search_engine_url']	= isset($config['mvt_search_engine_url'])	? $co
 $config['mvt_tab_str_len']			= isset($config['mvt_tab_str_len'])			? $config['mvt_tab_str_len']		: 25;
 $config['mvt_exit_handler']			= isset($config['mvt_exit_handler'])		? $config['mvt_exit_handler']		: true;
 
+//Only the first one is important, other will be auto-set automatically
+$config['force_server_vars']		= isset($config['force_server_vars'])		? $config['force_server_vars']		: false;
+$config['server_protocol']			= isset($config['server_protocol'])			? $config['server_protocol']		: false;
+$config['cookie_secure']			= isset($config['cookie_secure'])			? $config['cookie_secure']			: false;
+$config['server_name']				= isset($config['server_name'])				? $config['server_name']			: false;
+$config['server_port']				= isset($config['server_port'])				? $config['server_port']			: false;
+$config['script_path']				= isset($config['script_path'])				? $config['script_path']			: false;
+$config['cookie_secure']			= isset($config['cookie_secure'])			? $config['cookie_secure']			: false;
+
 $directories = array('cache' => 0600, 'mods' => 0700);
 //Check directories
 foreach($directories AS $directory => $dir_chmod)

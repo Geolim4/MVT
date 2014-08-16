@@ -80,6 +80,8 @@ $lang = array_merge($lang, array(
 	'MVT_FILE_ENCODING' => 'Encodage du fichier: %s',
 	'MVT_FILTER' => 'Filtrer',
 	'MVT_FILTER_EXPLAIN' => 'Sélectionnez une ou plusieurs options pour appliquer des filtres précis :',
+	'MVT_FILE_DELETE_FAILED' => 'Impossible de supprimer le fichier <strong>%s</strong>.',
+	'MVT_FILE_DELETED' => 'Le fichier a été supprimé.',
 	'MVT_EXIT_HANDLER' => 'Avertisseur d’abandon',
 	'MVT_FILE_MISSING' => 'Fichier inexistant',
 	'MVT_FILE_MODIFIED' => 'Fichier modifié',
@@ -164,7 +166,22 @@ $lang = array_merge($lang, array(
 	'MVT_CFG_SEARCH_ENGINE_IMG' => 'Nom du fichier image du moteur de recherche',
 	'MVT_EXIT_ALERT' => 'Votre bloc-note de validation n’est pas vide, si vous quittez sans le sauvegarder, vous allez perdre toutes ces données!',
 ));
-
+// Context menu
+$lang = array_merge($lang, array(
+	'MVT_CONTEXTMENU_MARK_AS' => 'Marquer comme',
+	'MVT_CONTEXTMENU_MARK_AS_CHECKED' => 'Vérifié',
+	'MVT_CONTEXTMENU_MARK_AS_PRIORITIZED' => 'Prioritaire',
+	'MVT_CONTEXTMENU_MARK_AS_NEW' => 'Nouveau',
+	'MVT_CONTEXTMENU_MARK_AS_SUSPICIOUS' => 'Suspect',
+	'MVT_CONTEXTMENU_NEW_TAB' => 'Ouvrir dans une nouvelle fenêtre',
+	'MVT_CONTEXTMENU_EDITOR' => 'Voir dans l’éditeur',
+	'MVT_CONTEXTMENU_PLAIN_TEXT' => 'Voir texte brut',
+	'MVT_CONTEXTMENU_DOWNLOAD' => 'Télécharger',
+	'MVT_CONTEXTMENU_MORE' => 'Plus',
+	'MVT_CONTEXTMENU_DELETE' => 'Supprimer',
+	'MVT_CONTEXTMENU_STATS' => 'Voir les statistiques',
+	'MVT_CONTEXTMENU_ENCODING' => 'Voir l’encodage',
+));
 //dropzone.js
 $lang = array_merge($lang, array(
 	'DICT_DEFAULT_MESSAGE' => 'Glisser les fichiers ici pour uploader',

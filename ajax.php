@@ -27,6 +27,12 @@ $file = utf8_normalize_nfc(request_var('file', '', true));
 $mode = request_var('mode', 'geshi');
 $meta_data = array();
 
+// Security
+if (strpos($mod, '..') !== false || strpos($mod, '..') !== false)
+{
+	exit_handler();
+}
+
 switch ($mode)
 {
 	case 'geshi':
@@ -76,19 +82,19 @@ switch ($mode)
 		{
 			if (substr(strrchr($file, '.'), 1) == 'svg')
 			{
-				echo '<object type="image/svg+xml" data="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '"></object>';
+				echo '<object type="image/svg+xml" data="' . "{$phpbb_root_path}file_reader.{$phpEx}?m=" . $mod . "&amp;f=" . $file . '"></object>';
 			}
 			else if (substr(strrchr($file, '.'), 1) == 'swf')
 			{
-				echo '<object type="application/x-shockwave-flash" data="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">
-					<param name="movie" value="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">
-					<param name="loop" value="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">
-					alt : <a href="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '">test.swf</a>
+				echo '<object type="application/x-shockwave-flash" data="' . "{$phpbb_root_path}file_reader.{$phpEx}?m=" . $mod . "&amp;f=" . $file . '">
+					<param name="movie" value="' . "{$phpbb_root_path}file_reader.{$phpEx}?m=" . $mod . "&amp;f=" . $file . '">
+					<param name="loop" value="' . "{$phpbb_root_path}file_reader.{$phpEx}?m=" . $mod . "&amp;f=" . $file . '">
+					alt : <a href="' . "{$phpbb_root_path}file_reader.{$phpEx}?m=" . $mod . "&amp;f=" . $file . '">test.swf</a>
 				</object>';
 			}
 			else
 			{
-				echo '<img alt="' . $file . '" src="' . "{$phpbb_root_path}file_reader.{$phpEx}?f=mods/" . $mod . SLASH . $file . '" />';
+				echo '<img alt="' . $file . '" src="' . "{$phpbb_root_path}file_reader.{$phpEx}?m=" . $mod . "&amp;f=" . $file . '" />';
 			}
 		}
 		else
@@ -414,7 +420,7 @@ switch ($mode)
 	break;
 	
 	case 'delete_mod':
-		if ($mod && strpos($mod, '..') === false)
+		if ($mod)
 		{
 			header('Content-Type: application/json; charset=UTF-8');
 			if (destroy_dir($mods_root_path . $mod . SLASH))
@@ -429,6 +435,28 @@ switch ($mode)
 			{
 				echo json_encode(array(
 						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_MOD_DELETE_FAILED', $mod) . '")',
+						'status' => false,
+					)
+				);
+			}
+		}
+	break;
+
+	case 'delete_file':
+		if ($mod && $file && file_exists($mods_root_path . $mod . SLASH . $file))
+		{
+			if (@unlink($mods_root_path . $mod . SLASH . $file))
+			{
+				echo json_encode(array(
+						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_FILE_DELETED'] . '", function(){ })',
+						'status' => true,
+					)
+				);
+			}
+			else
+			{
+				echo json_encode(array(
+						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED', $mod) . '")',
 						'status' => false,
 					)
 				);

@@ -151,7 +151,7 @@ html.busy, html.busy * {
 }
 #tools, #left-tools {
 	border-radius: 2px;
-	box-shadow: 0 1px 4px 2px;
+	box-shadow: 0 2px 2px 1px;
 	min-height: 23px;
 	height: auto;
 	margin-top: -2px;
@@ -475,15 +475,15 @@ span.tree-external{
 .tab{
 	width: 56px;
 	background: url("./images/tab-bg.png") no-repeat scroll left top transparent;
-	height: 9px;
+	height: 11px;
 }
 .spc{
 	background: url("./images/spc-bg.png") no-repeat scroll center top rgba(0, 0, 0, 0);
-	height: 9px;
+	height: 11px;
 	width: 7px;
 }
 /* Fullscreen protection*/
-.ui-tooltip, .ui-effects-transfer{
+.ui-tooltip, .ui-effects-transfer, .ui-menu{
 	z-index: 2147483647 !important;
 }
 
