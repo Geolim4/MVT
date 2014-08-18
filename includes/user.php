@@ -14,7 +14,7 @@ if (!defined('IN_PHPBB_MVT'))
 	exit;
 }
 
-class user
+class user extends mvt_session
 {
 	public $languages = array();
 	public $lang = array();
@@ -34,6 +34,8 @@ class user
 		$this->load_language();
 		$this->host = $this->extract_current_hostname();
 		$this->page = $this->extract_current_page($phpbb_root_path);
+
+		$this->session_start();
 	}
 
 	public function get_languages()
@@ -529,5 +531,68 @@ class user
 
 		// It may be still no valid host, but for sure only a hostname (we may further expand on the cookie domain... if set)
 		return $host;
+	}
+}
+
+class mvt_session
+{
+	protected $session;
+
+	public function __construct()
+	{
+	}
+
+	protected function session_started()
+	{
+		if (php_sapi_name() !== 'cli') 
+		{
+			if (version_compare(phpversion(), '5.4.0', '>=')) 
+			{
+				return session_status() === PHP_SESSION_ACTIVE ? TRUE : FALSE;
+			} 
+			else 
+			{
+				return session_id() === '' ? FALSE : TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+	protected function session_start()
+	{
+		if ($this->session_started() === FALSE) 
+		{
+			session_start();
+		}
+		$this->session = &$_SESSION;
+
+		if(!isset($this->session['notepad_draft']))
+		{
+			$this->session['notepad_draft'] = '';
+		}
+	}
+
+	public function save_notepad_draft($data)
+	{
+		$this->session['_notepad_draft'] = utf8_substr($data, 0, MVT_DRAFT_MAX_SIZE);
+	}
+
+	public function get_notepad_draft()
+	{
+		return $this->session['_notepad_draft'];
+	}
+
+	public function save_file_validation_status($mod, $file, $status)
+	{
+		$this->session['_validation_status'][(string) $mod][(string) $file] = (int) $status;
+	}
+
+	public function get_file_validation_status($mod, $file)
+	{
+		if(!empty($this->session['_validation_status'][$mod][$file]))
+		{
+			return $this->session['_file_validation_status'][$mod][$file];
+		}
+		return false;
 	}
 }
