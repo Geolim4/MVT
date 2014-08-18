@@ -11,9 +11,8 @@ define('IN_PHPBB_MVT', true);
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
-include($phpbb_root_path . 'includes/functions_mods.' . $phpEx);
-include($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
 include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
+$mods_root_path = $phpbb_root_path . MODS_ROOT_PATH;
 
 $template->assign_var('T_TEMPLATE_PATH', $phpbb_root_path . 'style');
 
@@ -35,7 +34,7 @@ check_mods_directory();
 foreach (explode(',', BASE_INSTALL_FILE_EXT) AS $install_ext)
 {
 	// Variables variable are so convenient  !!
-	${$install_ext . '_mapping'} = glob("mods/*/*." . $install_ext);
+	${$install_ext . '_mapping'} = glob(MODS_ROOT_PATH . "*/*." . $install_ext);
 	$temp_sorting = array();
 	if (!empty(${$install_ext . '_mapping'}))
 	{
@@ -108,21 +107,21 @@ if ($dh)
 		$base_30x_file = BASE_30X_FILE; 
 		$base_31x_file = BASE_31X_FILE;
 
-		if (is_dir($phpbb_root_path .'mods/' . $mod_dir) && !in_array($mod_dir, array('.', '..')))
+		if (is_dir($mods_root_path . $mod_dir) && !in_array($mod_dir, array('.', '..')))
 		{
-			$mod_subfolder = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir . SLASH, false, true, true);
+			$mod_subfolder = directory_to_array($mods_root_path . $mod_dir . SLASH, false, true, true);
 
-			if (isset($xml_mapping['mods/' . $mod_dir . SLASH]))
+			if (isset($xml_mapping[MODS_ROOT_PATH . $mod_dir . SLASH]))
 			{
-				$base_30x_file = $xml_mapping['mods/' . $mod_dir . SLASH];
+				$base_30x_file = $xml_mapping[MODS_ROOT_PATH . $mod_dir . SLASH];
 			}
 			else
 			{
 				$base_30x_file = 'install_mod.xml';
 			}
-			if (isset($json_mapping['mods/' . $mod_dir . SLASH]))
+			if (isset($json_mapping[MODS_ROOT_PATH . $mod_dir . SLASH]))
 			{
-				$base_31x_file = $json_mapping['mods/' . $mod_dir . SLASH];
+				$base_31x_file = $json_mapping[MODS_ROOT_PATH . $mod_dir . SLASH];
 			}
 			else
 			{
@@ -131,11 +130,11 @@ if ($dh)
 
 			$mod_name = $mod_dir;
 
-			if (file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file))
+			if (file_exists($mods_root_path . $mod_dir . SLASH . $base_30x_file))
 			{
 				$vmode = '3.0.x';
 			}
-			else if (file_exists($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_31x_file))
+			else if (file_exists($mods_root_path . $mod_dir . SLASH . $base_31x_file))
 			{
 				$vmode = '3.1.x';
 			}
@@ -159,14 +158,14 @@ if ($dh)
 				{
 					case '3.0.x':
 						$parser = new parser('xml');
-						$parser->set_file($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file);
+						$parser->set_file($mods_root_path . $mod_dir . SLASH . $base_30x_file);
 						$mod_details = $parser->get_details();
 						$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
 						$mod_version = $mod_details['MOD_VERSION'];
 					break;
 
 					case '3.1.x':
-						$mod_details = json_decode(file_get_contents($phpbb_root_path . 'mods/' . $mod_dir . SLASH . $base_31x_file), true);
+						$mod_details = json_decode(file_get_contents($mods_root_path . $mod_dir . SLASH . $base_31x_file), true);
 						$mod_name = $mod_details['extra']['display-name'];
 						$mod_version = $mod_details['version'];
 					break;
@@ -218,10 +217,10 @@ if ($dh)
 					$mod_mapping = array();
 					$s_current_mod_name = $mod_name;
 					$s_current_mod_version = $mod_version;
-					$mod_directory = directory_to_array($phpbb_root_path . 'mods/' . $mod_dir);
+					$mod_directory = directory_to_array($mods_root_path . $mod_dir);
 					foreach ($mod_directory AS $mod_directory_)
 					{
-						$mod_directory_ = str_replace($phpbb_root_path .'mods/', '', $mod_directory_);
+						$mod_directory_ = str_replace($mods_root_path, '', $mod_directory_);
 						$file_ext = substr(strrchr($mod_directory_, '.'), 1);
 						if (in_array($file_ext, $ignored_exts))
 						{

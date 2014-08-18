@@ -528,7 +528,7 @@ function bind_file_events(file){
 			{title: "----"},
 			{title: "{LA_MVT_CONTEXTMENU_MORE}", children: [
 					{title: "{LA_MVT_CONTEXTMENU_DELETE}", action: function(event, ui) {
-							mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}",
+							mvt_confirm("{LA_MVT_INFORMATION}", "{LA_CONFIRM_OPERATION}",
 								function () {
 									$.ajax({
 										type: 'POST',
@@ -574,12 +574,12 @@ function bind_dir_events(dir){
 	$(dir).contextmenu({
 		menu: [
 			{title: "{LA_MVT_CONTEXTMENU_DELETE}", action: function(event, ui) {
-					mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}",
+					mvt_confirm("{LA_MVT_INFORMATION}", "{LA_CONFIRM_OPERATION}",
 						function () {
 							$.ajax({
 								type: 'POST',
 								url: '{U_AJAX}',
-								data: {'mod' : current_mod, 'file' : $(dir).attr('rel'), 'mode' : 'delete_dir'},
+								data: {'mod' : current_mod, 'file' : $(dir).attr('rel').replace(current_mod + '/', ''), 'mode' : 'delete_dir'},
 								timeout: 5000,
 								dataType: 'json',
 								beforeSend: function() {

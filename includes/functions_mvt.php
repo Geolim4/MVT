@@ -681,3 +681,28 @@ class mvt_sha1
 		}
 	}
 }
+function is_protected_file($mod_dir, $file)
+{
+	global $phpbb_root_path;
+	$mods_root_path = $phpbb_root_path . 'mods/';
+
+	if (in_array(substr(strrchr($file, '.'), 1), explode(',', BASE_INSTALL_FILE_EXT)))
+	{
+		$file_ext = substr(strrchr($file, '.'), 1);
+		if($file_ext == 'xml')
+		{
+			$parser = new parser('xml');
+			$parser->set_file($mods_root_path . $mod_dir . SLASH . $file);
+			$mod_details = $parser->get_details();
+			$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
+			$mod_version = $mod_details['MOD_VERSION'];
+		}
+		else if($file_ext == 'json')
+		{
+			$mod_details = json_decode(file_get_contents($mods_root_path . $mod_dir . SLASH . $file), true);
+			$mod_name = $mod_details['extra']['display-name'];
+			$mod_version = $mod_details['version'];
+		}
+	}
+	return (!empty($mod_details) && !empty($mod_name) && !empty($mod_version));
+}

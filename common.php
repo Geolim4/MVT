@@ -14,6 +14,8 @@ require($phpbb_root_path . 'includes/template.' . $phpEx);
 require($phpbb_root_path . 'includes/functions_template.' . $phpEx);
 require($phpbb_root_path . 'includes/user.' . $phpEx);
 require($phpbb_root_path . 'includes/utf/utf_tools.' . $phpEx);
+require($phpbb_root_path . 'includes/functions_mods.' . $phpEx);
+require($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
 
 // Set PHP error handler to ours
 set_error_handler(defined('PHPBB_MSG_HANDLER') ? PHPBB_MSG_HANDLER : 'mvt_msg_handler');

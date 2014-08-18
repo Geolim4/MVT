@@ -446,10 +446,51 @@ switch ($mode)
 	case 'delete_file':
 		if ($mod && $file && file_exists($mods_root_path . $mod . SLASH . $file))
 		{
-			if (@unlink($mods_root_path . $mod . SLASH . $file))
+			if (is_protected_file($mod, $file))
 			{
 				echo json_encode(array(
-						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_FILE_DELETED'] . '", function(){ })',
+						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED_PROTECTED', $file) . '")',
+						'status' => false,
+					)
+				);
+			}
+			else
+			{
+				if (@unlink($mods_root_path . $mod . SLASH . $file))
+				{
+					echo json_encode(array(
+							'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_FILE_DELETED'] . '", function(){ })',
+							'status' => true,
+						)
+					);
+				}
+				else
+				{
+					echo json_encode(array(
+							'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED', $file) . '")',
+							'status' => false,
+						)
+					);
+				}
+			}
+		}
+		else
+		{
+			echo json_encode(array(
+					'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED', $mod) . '")',
+					'status' => false,
+				)
+			);
+		}
+	break;
+
+	case 'delete_dir':
+		if ($mod && $file && is_dir($mods_root_path . $mod . SLASH . $file))
+		{
+			if (destroy_dir($mods_root_path . $mod . SLASH . $file))
+			{
+				echo json_encode(array(
+						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_DIR_DELETED'] . '", function(){ })',
 						'status' => true,
 					)
 				);
@@ -457,11 +498,19 @@ switch ($mode)
 			else
 			{
 				echo json_encode(array(
-						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED', $mod) . '")',
+						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_DIR_DELETE_FAILED', $file) . '")',
 						'status' => false,
 					)
 				);
 			}
+		}
+		else
+		{
+			echo json_encode(array(
+					'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_DIR_DELETE_FAILED', $file) . '")',
+					'status' => false,
+				)
+			);
 		}
 	break;
 
