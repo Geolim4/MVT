@@ -64,6 +64,7 @@ switch ($mode)
 				break;
 
 				case 'dist':
+				case 'xsl':
 					$file_ext = 'xml';
 				break;
 
