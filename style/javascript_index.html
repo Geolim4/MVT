@@ -569,6 +569,45 @@ function bind_file_events(file){
 		]
 	});
 }
+
+function bind_dir_events(dir){
+	$(dir).contextmenu({
+		menu: [
+			{title: "{LA_MVT_CONTEXTMENU_DELETE}", action: function(event, ui) {
+					mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}",
+						function () {
+							$.ajax({
+								type: 'POST',
+								url: '{U_AJAX}',
+								data: {'mod' : current_mod, 'file' : $(dir).attr('rel'), 'mode' : 'delete_dir'},
+								timeout: 5000,
+								dataType: 'json',
+								beforeSend: function() {
+									busy = true;
+								},
+								complete: function(data, textStts, errThrown) {
+									busy = false;
+								},
+								success: function(data, textStts, errThrown) {
+									if(data['eval']){
+										eval(data['eval']);
+									}
+									if(data['status']){
+										$(dir).parent().remove();
+									}
+								},
+								error: function(data, textStts, errThrown) {
+								},
+							});
+						},
+						function () {}
+					);
+				} 
+			},
+		]
+	});
+}
+
 function reset_file_selected(delay){
 	if(delay){
 		var timedelay = delay;
@@ -748,9 +787,9 @@ function set_active_file(file, collapse_on_complete){
 			$('title').text('{LA_MVT} | ' + current_real_mod + ' {LA_MVT_BREADCRUMB_ARROW} ' + file);
 			$('#breadcrumb').text('{LA_MVT} {LA_MVT_BREADCRUMB_ARROW} ' + current_real_mod + ' {LA_MVT_BREADCRUMB_ARROW} ' + file);
 			$('#btn_compare').children('a').removeClass('active');
-			<!-- IF .version_selector -->
-			version_differentiator();
-			<!-- ENDIF -->
+			if (version_selector){
+				version_differentiator();
+			}
 
 			//Small hack to allow users to use link as shortcut even with hash :)
 			hash_ignore_update = true;

@@ -162,14 +162,12 @@ if ($dh)
 						$parser->set_file($phpbb_root_path .'mods/' . $mod_dir . SLASH . $base_30x_file);
 						$mod_details = $parser->get_details();
 						$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
-						$mod_name_versioned = "$mod_name {$mod_details['MOD_VERSION']}";
 						$mod_version = $mod_details['MOD_VERSION'];
 					break;
 
 					case '3.1.x':
 						$mod_details = json_decode(file_get_contents($phpbb_root_path . 'mods/' . $mod_dir . SLASH . $base_31x_file), true);
 						$mod_name = $mod_details['extra']['display-name'];
-						$mod_name_versioned = "$mod_name {$mod_details['version']}";
 						$mod_version = $mod_details['version'];
 					break;
 				}
@@ -184,21 +182,23 @@ if ($dh)
 				{
 					$block_vars[$mod_name] = array(
 						'S_VMODE'	=> $vmode,
-						'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
+						'L_TITLE'	=> strlen($mod_name) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name,
 						'U_TITLE'	=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir)),
 						'S_MOD_DIR'	=> $mod_dir,
 						'S_SELECTED'=> $mod == $mod_dir ? true : false,
+						'S_VERSION' => $mod_version,
 					);
 				}
 
-				if($user_mod == $mod_dir)
+				if ($user_mod == $mod_dir)
 				{
 					$block_vars[$mod_name] = array(
 						'S_VMODE'	=> $vmode,
-						'L_TITLE'	=> strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned,
+						'L_TITLE'	=> strlen($mod_name) > $config['mvt_tab_str_len'] ? utf8_substr($mod_name, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name,
 						'U_TITLE'	=> append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod_dir)),
 						'S_MOD_DIR'	=> $mod_dir,
 						'S_SELECTED'=> $mod == $mod_dir ? true : false,
+						'S_VERSION' => $mod_version,
 					);
 				}
 

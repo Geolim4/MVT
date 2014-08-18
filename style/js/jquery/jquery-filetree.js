@@ -97,8 +97,10 @@ if(jQuery) (function($){
 					}).
 					//Start phpBB addition
 					each(function(e, t) {
-						if($(t).hasClass('tree-link ')){
+						if($(t).hasClass('tree-link')){
 							bind_file_events(t);
+						}else{
+							bind_dir_events(t);
 						}
 					});
 					//End phpBB addition
