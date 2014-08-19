@@ -796,6 +796,9 @@ function set_active_file(file, collapse_on_complete){
 			window.location = '#' + file;
 			file_encoding(current_mod, current_file, false);
 			file_eol(current_mod, current_file, false);
+
+			//
+			mvt_notify({text: "Loaded <strong>" + file + '</strong>', type: "info", timeout: 1000});
 		},
 		error: function(data, textStts, errThrown) {
 
