@@ -64,7 +64,7 @@ function init(){
 		scrollTop: $("#acp").last().offset().top
 	}, 250);
 	<!-- IF not S_CFG_NEW_TAB and S_CFG_EXIT_HANDLER -->
-	$('#tabs').find("a.mods-links").click(function(){
+	$('#tabs').find('a.mods-links[data-ajax="true"]').click(function(){
 		exit_handler(this.href);
 		return false;
 	});
@@ -695,7 +695,7 @@ function ajax_location(url){
 			busy = false;
 			set_active_file(current_file);
 			// Re-handle binding
-			$('#tabs').find("a.mods-links").click(function(){
+			$('#tabs').find('a.mods-links[data-ajax="true"]').click(function(){
 				exit_handler(this.href);
 				return false;
 			});

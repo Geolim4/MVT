@@ -245,8 +245,6 @@ switch ($mode)
 
 	case 'add_mod':
 		include($phpbb_root_path . 'includes/functions_compress.' . $phpEx);
-		include($phpbb_root_path . 'includes/functions_mods.' . $phpEx);
-		include($phpbb_root_path . 'includes/mod_parser.' . $phpEx);
 
 		$stream = stream_copy($url, $phpbb_root_path . 'mods/', $meta_data);
 
@@ -337,20 +335,24 @@ switch ($mode)
 								$parser->set_file($phpbb_root_path . $mod_dir . SLASH . $base_30x_file);
 								$mod_details = $parser->get_details();
 								$mod_name = isset($mod_details['MOD_NAME'][$user->data['user_lang']]) ? $mod_details['MOD_NAME'][$user->data['user_lang']] : current($mod_details['MOD_NAME']);
-								$mod_name_versioned = addslashes("$mod_name {$mod_details['MOD_VERSION']}");
+								$mod_version = $mod_details['MOD_VERSION'];
+								$mod_name_versioned = addslashes("{$mod_name} {$mod_version}");
 							break;
 
 							case '3.1.x':
 								$mod_details = json_decode(file_get_contents($phpbb_root_path . $mod_dir . SLASH . $base_31x_file), true);
 								$mod_name = $mod_details['extra']['display-name'];
-								$mod_name_versioned = addslashes("$mod_name {$mod_details['version']}");
+								$mod_version = $mod_details['version'];
+								$mod_name_versioned = addslashes("{$mod_name} {$mod_version}");
 							break;
 						}
 						
 
 						$json = array(
 							'status' => true, 
-							'eval' => 'add_mod_tab("' . (strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned) . '", "' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => substr(strrchr($mod_dir, '/'), 1))) . '", "' . str_replace('mods' . SLASH, '', $mod_dir) . '", "' . $vmode . '")'
+							'eval' => '
+								add_mod_tab("' . (strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned) . '", "' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => substr(strrchr($mod_dir, '/'), 1))) . '", "' . str_replace('mods' . SLASH, '', $mod_dir) . '", "' . $vmode . '");
+								mvt_notify({text: "' . addslashes($user->lang('MVT_SUCCESSFULLY_UPLOADED_' . strtoupper(str_replace('.', '', $vmode)), $mod_name, $mod_version)) . '", type: "success"});',
 						);
 					}
 					else
@@ -370,7 +372,7 @@ switch ($mode)
 				{
 					$json = array(
 						'status' => false, 
-						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_MOD_ALREADY_PRESENT'] . '")'
+						'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_MOD_ALREADY_PRESENT']) . '", type: "error"});'
 					);
 				}
 			}
@@ -427,7 +429,15 @@ switch ($mode)
 			if (destroy_dir($mods_root_path . $mod . SLASH))
 			{
 				echo json_encode(array(
-						'eval' => '$("a[href=\'' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod)) .'\']").parent().remove(); mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_MOD_DELETED'] . '", function(){(mod_to_delete == current_mod) ? location.assign(index) : false;})',
+						'eval' => 'if(mod_to_delete == current_mod){
+										mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_MOD_DELETED'] . '", 
+											function(){
+													location.assign(index);
+											});
+								}else{
+									mvt_notify({text: "' . addslashes($user->lang['MVT_MOD_DELETED']) . '", type: "success"});
+									$("a[href=\'' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod)) .'\']").parent().remove(); 
+								}',
 						'status' => true,
 					)
 				);

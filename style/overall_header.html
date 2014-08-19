@@ -22,6 +22,7 @@
 <script src="style/js/jquery/jquery-dropzone.js" type="text/javascript"></script>
 <script src="style/js/jquery/jquery.ui-contextmenu.min.js" type="text/javascript"></script>
 <script src="style/js/jquery/jquery-chosen.min.js" type="text/javascript"></script>
+<script src="style/js/jquery/jquery.noty.min.js" type="text/javascript"></script>
 <script src="style/js/misc/main.js" type="text/javascript"></script>
 </head>
 
@@ -37,10 +38,10 @@
 			<ul>
 			<!-- IF not .mods_blocks and not S_USER_NOTICE --><li><a href="{U_INDEX}"><span class="<!-- IF mods_blocks.S_VMODE == "3.1.x" -->vmode31x<!-- ELSE -->vmode30x<!-- ENDIF -->">{L_MVT_HOME}</span></a></li><!-- ENDIF -->
 			<!-- BEGIN mods_blocks -->
-				<li<!-- IF mods_blocks.S_SELECTED --> id="activetab"<!-- ENDIF --> class="mods-tab"><a rel="tab" class="mods-links" href="{mods_blocks.U_TITLE}"<!-- IF S_CFG_NEW_TAB --> onclick="window.open(this.href); return false;"<!-- ENDIF -->><span class="<!-- IF mods_blocks.S_VMODE == "3.1.x" -->vmode31x<!-- ELSE -->vmode30x<!-- ENDIF -->">{mods_blocks.L_TITLE}<!-- IF mods_blocks.S_SELECTED --> {mods_blocks.S_VERSION}<!-- ENDIF -->&nbsp;&nbsp;&nbsp;</span></a><!-- IF not S_IN_CONFIG --><img alt="" onclick="delete_mod('{mods_blocks.S_MOD_DIR}'); return false;" class="mod-delete" src="style/images/mod_delete.png" /><!-- ENDIF --></li>
+				<li<!-- IF mods_blocks.S_SELECTED --> id="activetab"<!-- ENDIF --> class="mods-tab"><a data-ajax="true" class="mods-links" href="{mods_blocks.U_TITLE}"<!-- IF S_CFG_NEW_TAB --> onclick="window.open(this.href); return false;"<!-- ENDIF -->><span class="<!-- IF mods_blocks.S_VMODE == "3.1.x" -->vmode31x<!-- ELSE -->vmode30x<!-- ENDIF -->">{mods_blocks.L_TITLE}<!-- IF mods_blocks.S_SELECTED --> {mods_blocks.S_VERSION}<!-- ENDIF -->&nbsp;&nbsp;&nbsp;</span></a><!-- IF not S_IN_CONFIG --><img alt="" onclick="delete_mod('{mods_blocks.S_MOD_DIR}'); return false;" class="mod-delete" src="style/images/mod_delete.png" /><!-- ENDIF --></li>
 			<!-- END mods_blocks -->
 				<!-- IF S_USER_NOTICE --><li id="activetab"><a href="javascript:void(0)"><span>{L_INFORMATION}</span></a></li><!-- ENDIF -->
-				<li<!-- IF S_IN_CONFIG --> id="activetab"<!-- ENDIF --> class="settings"><a rel="tab" class="mods-links" href="{U_CONFIG}"<!-- IF S_CFG_NEW_TAB --> onclick="window.open(this.href); return false;"<!-- ENDIF -->><span>{L_MVT_SETTINGS}</span></a></li>
+				<li<!-- IF S_IN_CONFIG --> id="activetab"<!-- ENDIF --> class="settings"><a class="mods-links" href="{U_CONFIG}"<!-- IF S_CFG_NEW_TAB --> onclick="window.open(this.href); return false;"<!-- ENDIF -->><span>{L_MVT_SETTINGS}</span></a></li>
 				<!-- IF not S_IN_CONFIG --><li class="add-mod"><a href="javascript:add_mod()"><span><img alt="{L_MVT_SCROLL_LEFT}" src="style/images/file_new.gif"/></span></a></li><!-- ENDIF -->
 			</ul>
 		</div>
