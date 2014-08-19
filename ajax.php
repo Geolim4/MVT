@@ -11,12 +11,12 @@ define('IN_PHPBB_MVT', true);
 
 $level = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED;
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : './';
-$mods_root_path = $phpbb_root_path . 'mods/';
-$absolute_mod_path = __DIR__ . '/mods/';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 
 include($phpbb_root_path . 'common.' . $phpEx);
 include($phpbb_root_path . 'includes/geshi/geshi.' . $phpEx);
+$mods_root_path = $phpbb_root_path . MODS_ROOT_PATH;
+$absolute_mod_path = __DIR__ . '/' . MODS_ROOT_PATH;
 
 $user->add_lang('mvt');
 $picture_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'swf');
@@ -246,20 +246,20 @@ switch ($mode)
 	case 'add_mod':
 		include($phpbb_root_path . 'includes/functions_compress.' . $phpEx);
 
-		$stream = stream_copy($url, $phpbb_root_path . 'mods/', $meta_data);
+		$stream = stream_copy($url, $mods_root_path, $meta_data);
 
 		if ($stream)
 		{	
 			if (substr(strrchr($stream['filename'], '.'), 1) == 'zip')
 			{
 				$before_extracting = directory_to_array($phpbb_root_path . 'mods', false, true, false);
-				$compress = new compress_zip('r', $phpbb_root_path . 'mods/' . $stream['filename']);
-				$compress->extract($phpbb_root_path . 'mods/');
+				$compress = new compress_zip('r', $mods_root_path . $stream['filename']);
+				$compress->extract($mods_root_path);
 				$compress->close();
 				$after_extracting = directory_to_array($phpbb_root_path . 'mods', false, true, false);
-				if (file_exists($phpbb_root_path . 'mods/' . $stream['filename']))
+				if (file_exists($mods_root_path . $stream['filename']))
 				{
-					unlink($phpbb_root_path . 'mods/' . $stream['filename']);
+					unlink($mods_root_path . $stream['filename']);
 				}
 
 				// Now search for MOD install files...
@@ -352,7 +352,21 @@ switch ($mode)
 							'status' => true, 
 							'eval' => '
 								add_mod_tab("' . (strlen($mod_name_versioned) > $config['mvt_tab_str_len'] ? substr($mod_name_versioned, 0, $config['mvt_tab_str_len'] - 3) . '...' : $mod_name_versioned) . '", "' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => substr(strrchr($mod_dir, '/'), 1))) . '", "' . str_replace('mods' . SLASH, '', $mod_dir) . '", "' . $vmode . '");
-								mvt_notify({text: "' . addslashes($user->lang('MVT_SUCCESSFULLY_UPLOADED_' . strtoupper(str_replace('.', '', $vmode)), $mod_name, $mod_version)) . '", type: "success"});',
+								mvt_notify({
+									text: "' . addslashes($user->lang('MVT_SUCCESSFULLY_UPLOADED_' . strtoupper(str_replace('.', '', $vmode)), $mod_name, $mod_version)) . '", 
+									type: "success",
+									 buttons: [
+											{addClass: "btn btn-primary", text: "' . addslashes($user->lang['MVT_OK']) . '", onClick: function($noty) {
+													$noty.close();
+													ajax_location("' . append_sid(generate_board_url() . "/index.$phpEx", "mod=" . str_replace(MODS_ROOT_PATH, '', $mod_dir)) . '");
+												}
+											},
+											{addClass: "btn btn-danger", text: "' . addslashes($user->lang['CANCEL']) . '", onClick: function($noty) {
+													$noty.close();
+												}
+											}
+										]
+									});',
 						);
 					}
 					else
@@ -380,7 +394,7 @@ switch ($mode)
 			{
 				if($stream['filename'])
 				{
-					@unlink($phpbb_root_path . 'mods/' . $stream['filename']);
+					@unlink($mods_root_path . $stream['filename']);
 				}
 				$json = array(
 					'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('AVATAR_DISALLOWED_EXTENSION', substr(strrchr($stream['filename'], '.'), 1)) . '")',
@@ -459,7 +473,7 @@ switch ($mode)
 			if (is_protected_file($mod, $file))
 			{
 				echo json_encode(array(
-						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED_PROTECTED', $file) . '")',
+						'eval' => 'mvt_notify({text: "' . addslashes($user->lang('MVT_FILE_DELETE_FAILED_PROTECTED', $file)) . '", type: "error"});',
 						'status' => false,
 					)
 				);
@@ -469,7 +483,7 @@ switch ($mode)
 				if (@unlink($mods_root_path . $mod . SLASH . $file))
 				{
 					echo json_encode(array(
-							'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_FILE_DELETED'] . '", function(){ })',
+							'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_FILE_DELETED']) . '", type: "success"});',
 							'status' => true,
 						)
 					);
@@ -477,7 +491,7 @@ switch ($mode)
 				else
 				{
 					echo json_encode(array(
-							'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED', $file) . '")',
+							'eval' => 'mvt_notify({text: "' . addslashes($user->lang('MVT_FILE_DELETE_FAILED', $file)) . '", type: "error"});',
 							'status' => false,
 						)
 					);
@@ -487,7 +501,7 @@ switch ($mode)
 		else
 		{
 			echo json_encode(array(
-					'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_FILE_DELETE_FAILED', $mod) . '")',
+					'eval' => 'mvt_notify({text: "' . addslashes( $user->lang('MVT_FILE_DELETE_FAILED', $file)) . '", type: "error"});',
 					'status' => false,
 				)
 			);
@@ -500,7 +514,7 @@ switch ($mode)
 			if (destroy_dir($mods_root_path . $mod . SLASH . $file))
 			{
 				echo json_encode(array(
-						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_DIR_DELETED'] . '", function(){ })',
+						'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_DIR_DELETED']) . '", type: "success"});',
 						'status' => true,
 					)
 				);
@@ -508,7 +522,7 @@ switch ($mode)
 			else
 			{
 				echo json_encode(array(
-						'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('MVT_DIR_DELETE_FAILED', $file) . '")',
+						'eval' => 'mvt_notify({text: "' . addslashes( $user->lang('MVT_DIR_DELETE_FAILED', $file)) . '", type: "error"});',
 						'status' => false,
 					)
 				);

@@ -10,36 +10,36 @@
 <div id="tools-sticker"></div>
 <div id="tools">
 	<ul>
-		<li id="btn_report_notice"><a href="#" class="btn uppercase" onclick="report_code('[color=blue][ {L_MVT_TAG_NOTICE} ][/color]'); return false;" title="{L_MVT_TAG_NOTICE}"><strong style="color: blue;">[&nbsp;{L_MVT_TAG_NOTICE}&nbsp;]</strong></a></li>
-		<li id="btn_report_warning"><a href="#" class="btn uppercase" onclick="report_code('[color=orange][ {L_MVT_TAG_WARNING} ][/color]'); return false;" title="{L_MVT_TAG_WARNING}"><strong style="color: orange;">[&nbsp;{L_MVT_TAG_WARNING}&nbsp;]</strong></a></li>
-		<li id="btn_report_fail"><a href="#" class="btn uppercase" onclick="report_code('[color=red][ {L_MVT_TAG_FAIL} ][/color]'); return false;" title="{L_MVT_TAG_FAIL}"><strong style="color: red;">[&nbsp;{L_MVT_TAG_FAIL}&nbsp;]</strong></a></li>
-		<li id="btn_internal_mesage"><a href="#" class="btn" onclick="internal_mesage(); return false;" id="internal-button" title="{L_MVT_INTERNAL}"><img alt="{L_MVT_INTERNAL}" src="style/images/internal.png" /></a></li>
-		<li id="btn_filename"><a href="#" class="btn" onclick="insert_filename(); return false;" id="filename-button" title="{L_MVT_INSERT_FILENAME}"><img alt="{L_MVT_INSERT_FILENAME}" src="style/images/filename.png" /></a></li>
-		<!-- IF .version_selector --><li id="btn_compare"><a href="#" class="btn" onclick="btn_compare(); return false;" id="compare-button" title="{L_MVT_COMPARE}"><img alt="{L_MVT_COMPARE}" src="style/images/compare.png" /></a></li><!-- ENDIF -->
-		<li id="btn_filestats"><a href="#" class="btn" onclick="get_filestats(); return false;" id="filestats-button" title="{L_MVT_FILESTATS}"><img alt="{L_MVT_FILESTATS}" src="style/images/filestats.png" /></a></li>
-		<li id="btn_base64_decode"><a href="#" class="btn" onclick="base64_decode(); return false;" title="{L_MVT_BASE64_DECODE}"><img alt="{L_MVT_BASE64_DECODE}" src="style/images/base64.png" /></a></li>
-		<!-- IF S_CFG_SYNTAX --><li id="btn_check_syntax"><a href="#" class="btn" onclick="check_syntax(); return false;" title="{L_MVT_PHP_SYNTAX}"><img alt="{L_MVT_PHP_SYNTAX}" src="style/images/php_syntax.png" /></a></li><!-- ENDIF -->
+		<li id="btn_report_notice"><a href="#" class="mvt-btn uppercase" onclick="report_code('[color=blue][ {L_MVT_TAG_NOTICE} ][/color]'); return false;" title="{L_MVT_TAG_NOTICE}"><strong style="color: blue;">[&nbsp;{L_MVT_TAG_NOTICE}&nbsp;]</strong></a></li>
+		<li id="btn_report_warning"><a href="#" class="mvt-btn uppercase" onclick="report_code('[color=orange][ {L_MVT_TAG_WARNING} ][/color]'); return false;" title="{L_MVT_TAG_WARNING}"><strong style="color: orange;">[&nbsp;{L_MVT_TAG_WARNING}&nbsp;]</strong></a></li>
+		<li id="btn_report_fail"><a href="#" class="mvt-btn uppercase" onclick="report_code('[color=red][ {L_MVT_TAG_FAIL} ][/color]'); return false;" title="{L_MVT_TAG_FAIL}"><strong style="color: red;">[&nbsp;{L_MVT_TAG_FAIL}&nbsp;]</strong></a></li>
+		<li id="btn_internal_mesage"><a href="#" class="mvt-btn" onclick="internal_mesage(); return false;" id="internal-button" title="{L_MVT_INTERNAL}"><img alt="{L_MVT_INTERNAL}" src="style/images/internal.png" /></a></li>
+		<li id="btn_filename"><a href="#" class="mvt-btn" onclick="insert_filename(); return false;" id="filename-button" title="{L_MVT_INSERT_FILENAME}"><img alt="{L_MVT_INSERT_FILENAME}" src="style/images/filename.png" /></a></li>
+		<!-- IF .version_selector --><li id="btn_compare"><a href="#" class="mvt-btn" onclick="btn_compare(); return false;" id="compare-button" title="{L_MVT_COMPARE}"><img alt="{L_MVT_COMPARE}" src="style/images/compare.png" /></a></li><!-- ENDIF -->
+		<li id="btn_filestats"><a href="#" class="mvt-btn" onclick="get_filestats(); return false;" id="filestats-button" title="{L_MVT_FILESTATS}"><img alt="{L_MVT_FILESTATS}" src="style/images/filestats.png" /></a></li>
+		<li id="btn_base64_decode"><a href="#" class="mvt-btn" onclick="base64_decode(); return false;" title="{L_MVT_BASE64_DECODE}"><img alt="{L_MVT_BASE64_DECODE}" src="style/images/base64.png" /></a></li>
+		<!-- IF S_CFG_SYNTAX --><li id="btn_check_syntax"><a href="#" class="mvt-btn" onclick="check_syntax(); return false;" title="{L_MVT_PHP_SYNTAX}"><img alt="{L_MVT_PHP_SYNTAX}" src="style/images/php_syntax.png" /></a></li><!-- ENDIF -->
 		<li class="separator">|</li>
-		<li id="btn_select_code"><a href="#" class="btn" onclick="selectCode(document.getElementById('code-content'), $('#code-content').children().first().prop('tagName')); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
-		<li id="btn_notepad"><a href="#" class="btn" onclick="$('#notepad').show(300); $(this).addClass('active'); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
-		<li id="btn_purge_notepad"><a href="#" class="btn" onclick="purge_notepad(); return false;" id="notepad-purge" title="{L_MVT_PURGE}"><img alt="{L_MVT_PURGE}" src="style/images/purge.png" /></a></li>
+		<li id="btn_select_code"><a href="#" class="mvt-btn" onclick="selectCode(document.getElementById('code-content'), $('#code-content').children().first().prop('tagName')); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
+		<li id="btn_notepad"><a href="#" class="mvt-btn" onclick="$('#notepad').show(300); $(this).addClass('active'); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
+		<li id="btn_purge_notepad"><a href="#" class="mvt-btn" onclick="purge_notepad(); return false;" id="notepad-purge" title="{L_MVT_PURGE}"><img alt="{L_MVT_PURGE}" src="style/images/purge.png" /></a></li>
 		<li class="f-right">
 			<div id="left-tools">
 				<div class="mask"></div>
 				<ul>
-					<li id="btn_list_numbers"><a href="#" class="btn" onclick="btn_list_numbers(); return false;" title="{L_MVT_LIST_NUMBERS}" ><img alt="{L_MVT_LIST_NUMBERS}" src="style/images/list-numbers.png" /></a></li>
-					<li id="btn_list_breakline"><a href="#" class="btn" onclick="btn_list_breakline(); return false;" title="{L_MVT_LIST_LINEBREAK}" ><img alt="{L_MVT_LIST_LINEBREAK}" src="style/images/list-linebreak.png" /></a></li>
-					<li id="btn_left_scroll"><a href="#" class="btn" onclick="left_scroll(); return false;" title="{L_MVT_SCROLL_LEFT}" ><img alt="{L_MVT_SCROLL_LEFT}" src="style/images/scroll_left.png" /></a></li>
-					<li id="btn_right_scroll"><a href="#" class="btn" onclick="right_scroll(); return false;" title="{L_MVT_SCROLL_RIGHT}"><img alt="{L_MVT_SCROLL_RIGHT}" src="style/images/scroll_right.png" /></a></li>
-					<li id="btn_top_scroll"><a href="#" class="btn" onclick="top_scroll(); return false;" title="{L_MVT_SCROLL_TOP}"><img alt="{L_MVT_SCROLL_TOP}" src="style/images/scroll_up.png" /></a></li>
-					<li id="btn_down_scroll"><a href="#" class="btn" onclick="down_scroll(); return false;" title="{L_MVT_SCROLL_DOWN}"><img alt="{L_MVT_SCROLL_DOWN}" src="style/images/scroll_down.png" /></a></li>
-					<li id="btn_search_engine"><a href="#" class="btn" onclick="search_engine(); return false;" title="{L_MVT_SEARCH_ENGINE}"><img alt="{L_MVT_SEARCH_ENGINE}" src="style/images/{S_CFG_SEARCH_ENGINE_IMG}" /></a></li>
-					<li id="btn_fullscreen"><a href="#" class="btn" onclick="btn_fullscreen(); return false;" title="{L_MVT_FULLSCREEN}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/fullscreen.png" /></a></li>
+					<li id="btn_list_numbers"><a href="#" class="mvt-btn" onclick="btn_list_numbers(); return false;" title="{L_MVT_LIST_NUMBERS}" ><img alt="{L_MVT_LIST_NUMBERS}" src="style/images/list-numbers.png" /></a></li>
+					<li id="btn_list_breakline"><a href="#" class="mvt-btn" onclick="btn_list_breakline(); return false;" title="{L_MVT_LIST_LINEBREAK}" ><img alt="{L_MVT_LIST_LINEBREAK}" src="style/images/list-linebreak.png" /></a></li>
+					<li id="btn_left_scroll"><a href="#" class="mvt-btn" onclick="left_scroll(); return false;" title="{L_MVT_SCROLL_LEFT}" ><img alt="{L_MVT_SCROLL_LEFT}" src="style/images/scroll_left.png" /></a></li>
+					<li id="btn_right_scroll"><a href="#" class="mvt-btn" onclick="right_scroll(); return false;" title="{L_MVT_SCROLL_RIGHT}"><img alt="{L_MVT_SCROLL_RIGHT}" src="style/images/scroll_right.png" /></a></li>
+					<li id="btn_top_scroll"><a href="#" class="mvt-btn" onclick="top_scroll(); return false;" title="{L_MVT_SCROLL_TOP}"><img alt="{L_MVT_SCROLL_TOP}" src="style/images/scroll_up.png" /></a></li>
+					<li id="btn_down_scroll"><a href="#" class="mvt-btn" onclick="down_scroll(); return false;" title="{L_MVT_SCROLL_DOWN}"><img alt="{L_MVT_SCROLL_DOWN}" src="style/images/scroll_down.png" /></a></li>
+					<li id="btn_search_engine"><a href="#" class="mvt-btn" onclick="search_engine(); return false;" title="{L_MVT_SEARCH_ENGINE}"><img alt="{L_MVT_SEARCH_ENGINE}" src="style/images/{S_CFG_SEARCH_ENGINE_IMG}" /></a></li>
+					<li id="btn_fullscreen"><a href="#" class="mvt-btn" onclick="btn_fullscreen(); return false;" title="{L_MVT_FULLSCREEN}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/fullscreen.png" /></a></li>
 				</ul>
 			</div>
 		</li>
 		<li class="separator f-right">|</li>
-		<li id="btn_enc_eol" class="f-right"><a href="#" class="btn" onclick="return false;"><span id="file-encoding"></span>&nbsp;|&nbsp;<span id="file-eol"></span></a></li>
+		<li id="btn_enc_eol" class="f-right"><a href="#" class="mvt-btn" onclick="return false;"><span id="file-encoding"></span>&nbsp;|&nbsp;<span id="file-eol"></span></a></li>
 	</ul>
 </div>
 <p class="clear"></p>
