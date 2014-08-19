@@ -775,6 +775,10 @@ function set_active_file(file, collapse_on_complete){
 		},
 		success: function(data, textStts, errThrown) {
 			$("#code-content").html(data);
+			$("#code-content a").on('click',function(){
+				window.open(this.href);
+				return false;
+			});
 			$('html, body').animate({
 				scrollTop: $("#tools").offset().top
 			}, 250);
