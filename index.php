@@ -345,7 +345,7 @@ if ($mode == 'config')
 		$settings = array (
 			'mvt_lang' => request_var('mvt_lang', ''),
 		);
-		if(!MVT_DEMO_MODE)
+		if (!MVT_DEMO_MODE  || (MVT_DEMO_MODE === null && in_array($user->ip, array('127.0.0.1', '::1'))))
 		{
 			$settings += array (
 				'mvt_php_syntax' => request_var('mvt_php_syntax', 1),
@@ -390,7 +390,7 @@ $template->assign_vars(array(
 
 	//Misc
 	'L_MVT_SEARCH_ENGINE' => $user->lang('MVT_SEARCH_ENGINE', $config['mvt_search_engine']),
-	'S_DEMO_MODE' => MVT_DEMO_MODE,
+	'S_DEMO_MODE' => !(!MVT_DEMO_MODE  || (MVT_DEMO_MODE === null && in_array($user->ip, array('127.0.0.1', '::1')))),
 	'S_AJAX_NAVIGATION' => $ajax_nav,
 	'U_FILE_READER' => append_sid('file_reader.' . $phpEx, array('m' => '%m%', 'f' => '%f%'), false)
 ));

@@ -22,7 +22,7 @@ define('BASE_30X_FILE', 'install_mod.xml');
 define('BASE_31X_FILE', 'composer.json');
 define('BASE_INSTALL_FILE_EXT', 'json,xml');
 define('MVT_SUPPORTED_VERSIONS', '3.0.x:30x,3.1.x:31x');
-define('MVT_DEMO_MODE', true);
+define('MVT_DEMO_MODE', null);// FALSE to allow settings to be changed, TRUE for settings in read only (except language), NULL to allow settings to be changed from localhost only
 define('MVT_DRAFT_MAX_SIZE', 524288); //Octet (512Ko currently)
 define('MVT_VALIDATION_STATUS_NEW', null);
 define('MVT_VALIDATION_STATUS_CHECKED', 1);

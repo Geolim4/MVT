@@ -681,10 +681,18 @@ class mvt_sha1
 		}
 	}
 }
+
+function get_contrib_type($contrib_dir)
+{
+	global $phpbb_root_path;
+	$mods_root_path = $phpbb_root_path . MODS_ROOT_PATH;
+
+}
+
 function is_protected_file($mod_dir, $file)
 {
 	global $phpbb_root_path;
-	$mods_root_path = $phpbb_root_path . 'mods/';
+	$mods_root_path = $phpbb_root_path . MODS_ROOT_PATH;
 
 	if (in_array(substr(strrchr($file, '.'), 1), explode(',', BASE_INSTALL_FILE_EXT)))
 	{

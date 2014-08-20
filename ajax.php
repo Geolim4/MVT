@@ -232,8 +232,8 @@ switch ($mode)
 		{
 			header('Content-Type: application/json; charset=UTF-8');
 			echo json_encode(array(
-				'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_MOD_FAILED'] . '")',
-				'status' => false,
+				'status' => false, 
+				'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_MOD_FAILED']) . '", type: "error"});'
 			));
 		}
 		else
@@ -373,12 +373,12 @@ switch ($mode)
 					{
 						if($mod_dir)
 						{
-							// This is not a phpBB MOD remove that dir.
+							// This is not a phpBB MOD/Ext remove that dir.
 							destroy_dir($mod_dir . SLASH);
 						}
 						$json = array(
-							'status' =>  $stream['filename'], 
-							'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_NO_XML'] . '")'
+							'status' => $stream['filename'], 
+							'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_NO_XML']) . '", type: "error"});'
 						);
 					}
 				}
@@ -386,7 +386,7 @@ switch ($mode)
 				{
 					$json = array(
 						'status' => false, 
-						'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_MOD_ALREADY_PRESENT']) . '", type: "error"});'
+						'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_CONTRIB_ALREADY_PRESENT']) . '", type: "error"});'
 					);
 				}
 			}
@@ -397,16 +397,16 @@ switch ($mode)
 					@unlink($mods_root_path . $stream['filename']);
 				}
 				$json = array(
-					'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang('AVATAR_DISALLOWED_EXTENSION', substr(strrchr($stream['filename'], '.'), 1)) . '")',
-					'status' => false,
+					'status' => false, 
+					'eval' => 'mvt_notify({text: "' . addslashes($user->lang('AVATAR_DISALLOWED_EXTENSION', substr(strrchr($stream['filename'], '.'), 1))) . '", type: "warning"});'
 				);
 			}
 		}
 		else
 		{
 			$json = array(
-				'eval' => 'mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_MOD_FAILED'] . '")',
-				'status' => false,
+				'status' => false, 
+				'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_MOD_FAILED']) . '", type: "error"});'
 			);
 		}
 		header('Content-Type: application/json; charset=UTF-8');
@@ -444,12 +444,12 @@ switch ($mode)
 			{
 				echo json_encode(array(
 						'eval' => 'if(mod_to_delete == current_mod){
-										mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_MOD_DELETED'] . '", 
+										mvt_info("' . $user->lang['MVT_INFORMATION'] . '", "' . $user->lang['MVT_CONTRIB_DELETED'] . '", 
 											function(){
 													location.assign(index);
 											});
 								}else{
-									mvt_notify({text: "' . addslashes($user->lang['MVT_MOD_DELETED']) . '", type: "success"});
+									mvt_notify({text: "' . addslashes($user->lang['MVT_CONTRIB_DELETED']) . '", type: "success"});
 									$("a[href=\'' . append_sid($phpbb_root_path . 'index.' . $phpEx, array('mod' => $mod)) .'\']").parent().remove(); 
 								}',
 						'status' => true,
