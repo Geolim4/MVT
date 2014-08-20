@@ -26,16 +26,61 @@ class user extends mvt_session
 	public $timezone = 0;
 	public $dst = 0;
 	public $host = '';
+	public $ip;
 	
 	public function __construct()
 	{
 		global $phpbb_root_path;
+		$this->init();
 		$this->get_languages();
 		$this->load_language();
 		$this->host = $this->extract_current_hostname();
 		$this->page = $this->extract_current_page($phpbb_root_path);
 
 		$this->session_start();
+	}
+
+	protected function init()
+	{
+		// Why no forwarded_for et al? Well, too easily spoofed. With the results of my recent requests
+		// it's pretty clear that in the majority of cases you'll at least be left with a proxy/cache ip.
+		$this->ip = (!empty($_SERVER['REMOTE_ADDR'])) ? (string) $_SERVER['REMOTE_ADDR'] : '';
+		$this->ip = preg_replace('# {2,}#', ' ', str_replace(',', ' ', $this->ip));
+
+		// split the list of IPs
+		$ips = explode(' ', trim($this->ip));
+
+		// Default IP if REMOTE_ADDR is invalid
+		$this->ip = '127.0.0.1';
+
+		foreach ($ips as $ip)
+		{
+			if (preg_match(get_preg_expression('ipv4'), $ip))
+			{
+				$this->ip = $ip;
+			}
+			else if (preg_match(get_preg_expression('ipv6'), $ip))
+			{
+				// Quick check for IPv4-mapped address in IPv6
+				if (stripos($ip, '::ffff:') === 0)
+				{
+					$ipv4 = substr($ip, 7);
+
+					if (preg_match(get_preg_expression('ipv4'), $ipv4))
+					{
+						$ip = $ipv4;
+					}
+				}
+
+				$this->ip = $ip;
+			}
+			else
+			{
+				// We want to use the last valid address in the chain
+				// Leave foreach loop when address is invalid
+				break;
+			}
+		}
 	}
 
 	public function get_languages()
