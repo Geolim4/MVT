@@ -239,29 +239,9 @@ if ($dh)
 						// We automatically handle $base_3xx_file if present.
 						if ((strpos($mod_directory_, $base_30x_file) || strpos($mod_directory_, $base_31x_file))|| $file == $mod_directory_)
 						{
-							switch ($file_ext)
-							{
-								case 'html':
-								case 'htm':
-									$file_ext = 'html4strict';
-								break;
-
-								case 'yml':
-									$file_ext = 'yaml';
-								break;
-
-								case 'js':
-								case 'json':
-									$file_ext = 'javascript';
-								break;
-
-								default:
-									$file_ext = substr(strrchr($mod_directory_, '.'), 1);
-								break;
-							}
 							$s_current_file = str_replace($mod_dir . SLASH, '', $mod_directory_);
 							$template->assign_vars(array(
-								'S_CURRENT_FILE' => str_replace($mod_dir . SLASH, '', $mod_directory_),
+								'S_CURRENT_FILE' => preg_replace('#' . preg_quote($mod_dir . SLASH, '#') . '#', '', $mod_directory_, 1),
 								'S_CURRENT_REAL_MOD' => $mod_name,
 								'S_CURRENT_MOD_VERSION' => $mod_version,
 								'S_BREADCRUMB'	=> $user->lang['MVT'] . ' » ' . $mod_name . ' » ' . $s_current_file,

@@ -693,8 +693,13 @@ function ajax_location(url){
 		*/
 		//get the link location that was clicked
 		pageurl = url;
+
 		//to get the ajax content and display in div with id 'content'
 		$( "#page-body" ).load( url + "&ajax_nav=1", function() {
+			for (key in current_path_anchor){
+				expanded_folders += current_path_anchor[key] + '/';
+				current_tree_path[key] = current_mod + '/' + expanded_folders;
+			}
 			// Finally, re-init js
 			$('#file-tree').fileTree({
 					root: current_mod + '/',
