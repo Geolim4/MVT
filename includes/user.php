@@ -617,14 +617,18 @@ class mvt_session
 		}
 	}
 
-	public function save_notepad_draft($data)
+	public function save_notepad_draft($mod, $data)
 	{
-		$this->session['_notepad_draft'] = utf8_substr($data, 0, MVT_DRAFT_MAX_SIZE);
+		$this->session['_notepad_draft'][$mod] = utf8_substr($data, 0, MVT_DRAFT_MAX_SIZE);
 	}
 
-	public function get_notepad_draft()
+	public function get_notepad_draft($mod)
 	{
-		return $this->session['_notepad_draft'];
+		if (!empty($this->session['_notepad_draft'][$mod]))
+		{
+			return $this->session['_notepad_draft'][$mod];
+		}
+		return false;
 	}
 
 	public function save_file_validation_status($mod, $file, $status)

@@ -55,6 +55,8 @@ function init(){
 		}
 	}, 500);
 	$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
+	get_report();
+
 	$(function () {
 		$(window).scroll(berstick);
 		berstick();
@@ -236,17 +238,25 @@ function btn_compare(mod_to, file_to, diff_mode){
 
 function btn_fullscreen(){
 	var acp_element = document.getElementById("acp");
-	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
+	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen || acp_element.msRequestFullscreen){
 		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
 			RunPrefixMethod(document, "CancelFullScreen");
 			$('#btn_fullscreen').children('a').removeClass('active');
 		}
+		else if (document.msFullscreenElement) {
+			RunPrefixMethod(document, "ExitFullscreen");
+			$('#btn_fullscreen').children('a').removeClass('active');
+		}
 		else {
-			RunPrefixMethod(acp_element, "RequestFullScreen");
+			if(acp_element.msRequestFullscreen){
+				RunPrefixMethod(acp_element, "RequestFullscreen");
+			}else{
+				RunPrefixMethod(acp_element, "RequestFullScreen");
+			}
 			$('#btn_fullscreen').children('a').addClass('active');
 		}
 	}else{
-		mvt_info('{LA_MVT_FULLSCREEN_UNSUPPORTED}');
+		mvt_info('{LA_INFORMATION}', '{LA_MVT_FULLSCREEN_UNSUPPORTED}');
 	}
 }
 
@@ -717,11 +727,17 @@ function ajax_location(url){
 			);
 			busy = false;
 			set_active_file(current_file);
+
 			// Re-handle binding
 			$('#tabs').find('a.mods-links[data-ajax="true"]').click(function(){
 				exit_handler(this.href);
 				return false;
 			});
+
+			// Reload notepad
+			$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
+			get_report();
+
 			// Reload core
 			core_init();
 		});
@@ -1036,6 +1052,25 @@ function internal_mesage(){
 		function () {
 		}, false, '#dialogbox'
 	);
+}
+
+function save_report(){
+	$.post('{U_AJAX}', {mode: 'save_report', mod: current_mod, data: {'report': $('#notepad-report').val()}}, function( data ){
+		if(data['eval']){
+			eval(data['eval']);
+		}
+	}, 'json');
+}
+
+function get_report(){
+	$.post('{U_AJAX}', {mode: 'get_report', mod: current_mod}, function( data ){
+		if(data['eval']){
+			eval(data['eval']);
+		}
+		if(data['status']){
+			$('#notepad-report').val(data.data).trigger('autosize.resize')
+		}
+	}, 'json');
 }
 
 core_init();

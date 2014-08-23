@@ -24,6 +24,7 @@ $picture_exts = array('gif', 'png', 'jpg', 'jpeg', 'bmp', 'svg', 'swf');
 $mod = utf8_normalize_nfc(request_var('mod', '', true));
 $url = utf8_normalize_nfc(request_var('url', '', true));
 $file = utf8_normalize_nfc(request_var('file', '', true));
+$data = utf8_normalize_nfc(request_var('data', array('' => ''), true));
 $mode = request_var('mode', 'geshi');
 $meta_data = array();
 
@@ -465,6 +466,30 @@ switch ($mode)
 				);
 			}
 		}
+	break;
+
+	case 'flag_file':
+	
+	break;
+
+	case 'save_report':
+		if($data['report']){
+			$user->save_notepad_draft($mod, $data['report']);
+			echo json_encode(array(
+					'eval' => 'mvt_notify({text: "' . addslashes($user->lang['INFORMATION']) . '", type: "success"});',
+					'status' => true,
+				)
+			);
+		}
+	break;
+
+	case 'get_report':
+			echo json_encode(array(
+					'eval' => '',
+					'data' => html_entity_decode($user->get_notepad_draft($mod)),
+					'status' => true,
+				)
+			);
 	break;
 
 	case 'delete_file':

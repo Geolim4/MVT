@@ -277,8 +277,11 @@ function file_eol(mod, file, eol){
 
 function fullscreen_handler(){
 	var acp_element = document.getElementById("acp");
-	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen){
+	if(acp_element.requestFullScreen || acp_element.webkitRequestFullScreen || acp_element.mozRequestFullScreen || acp_element.msRequestFullscreen){
 		if (RunPrefixMethod(document, "FullScreen") || RunPrefixMethod(document, "IsFullScreen")) {
+			$('#btn_fullscreen').children('a').addClass('active');
+			$('#code-content').css({'max-height': ($(document).height() - $("#code-content").offset().top)});
+		}else if (document.msFullscreenElement) {
 			$('#btn_fullscreen').children('a').addClass('active');
 			$('#code-content').css({'max-height': ($(document).height() - $("#code-content").offset().top)});
 		}
