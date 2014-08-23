@@ -132,6 +132,7 @@ $lang = array_merge($lang, array(
 	'MVT_NO_FILE_TO_COMPARE' => 'The file to compare to doesn’t exists!',
 	'MVT_EMPTY_MESSAGE' => 'Empty message!',
 	'MVT_INTERNAL_EXPLAIN' => 'Join a message to the validation Team',
+	'MVT_JAVASCRIPT_MSG' => 'Your browser doesnt support Javascript or he is disabled. In order to use the MVT please enable Javascript.',
 	'MVT_TOOLS' => 'Tools',
 	'MVT_SELECT_TOOL' => 'Selection tool',
 	'MVT_SELECT_ALL' => 'Select all',

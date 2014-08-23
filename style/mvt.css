@@ -38,6 +38,22 @@ html.busy, html.busy * {
 #acp:full-screen #content{
 	height: 1200px;
 }
+#no-script{
+	background: none repeat scroll 0 0 rgba(25, 25, 25, 0.8);
+	color: #fff;
+	display: block;
+	font-family: helvetica;
+	font-size: 16px;
+	font-weight: bold;
+	height: 100%;
+	left: 0;
+	padding-top: 250px;
+	position: fixed;
+	text-align: center;
+	top: 0;
+	width: 100%;
+	z-index: 100000;
+}
 #page-header{
 	height: 70px;
 }

@@ -122,6 +122,7 @@ $lang = array_merge($lang, array(
 	'MVT_IDENTICAL_FILES' => 'Les deux fichiers sont identiques.',
 	'MVT_INVALID_PHPBIN' => '<strong class="error">Chemin de l’exécutable PHP invalide!</strong>',
 	'MVT_INTERNAL' => '@Interne',
+	'MVT_JAVASCRIPT_MSG' => 'Votre navigateur ne supporte pas Javascript ou celui-ci est désactivé. Avant d’utiliser le MVT, merci d’activer Javascript..',
 	'MVT_LIST_NUMBERS' => 'Cacher la liste décimale',
 	'MVT_LIST_LINEBREAK' => 'Retour automatique à la ligne',
 	'MVT_MATCH' => '%d résultat',
