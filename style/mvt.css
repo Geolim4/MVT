@@ -93,6 +93,16 @@ html.busy, html.busy * {
 #code-content > pre > ol > li {
 	font-size: 11px;
 }
+#code-content > pre > ol > li.user-selection-similar:before {
+	color: #7DD9A2;
+	content: "==>";
+	display: block;
+	left: 0px;
+	position: absolute;
+	text-align: right;
+	width: 34px;
+	background: #FFF;
+}
 #code-content > p.loading{
 	margin-top: 10px;
 	text-align: center;
@@ -103,6 +113,10 @@ html.busy, html.busy * {
 }
 #code-content *::-moz-selection, #code-content s::-moz-selection{
 	background: none repeat scroll 0 0 #ADFEB0 !important;
+	background-image: none;
+}
+span.user-selection-similar{
+	background: none repeat scroll 0 0 #CFFECE !important;
 	background-image: none;
 }
 #code-content.breakline{
@@ -419,6 +433,7 @@ span.tree-external{
 	cursor: alias;
 }
 #code-content{
+	position: relative;
 	background-color: #FFFAFA;
 	border: 1px solid #808080;
 	border-radius: 5px;

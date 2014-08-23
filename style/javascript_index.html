@@ -17,6 +17,9 @@ function init(){
 	if($.cookie(breakline_cookie_name)){
 		btn_list_breakline();
 	}
+	if($.cookie(select_tool_cookie_name)){
+		btn_select_tool();
+	}
 	$(document).keydown(function(e)
 	{
 		if (e.keyCode == ctrlKey) ctrlDown = true;
@@ -264,6 +267,21 @@ function btn_list_numbers(force){
 		$('#btn_list_numbers').children('a').addClass('active');
 	}
 }
+
+function btn_select_tool(force){
+	if($('#code-content').data('select-tool') && !force){
+		$.removeCookie(select_tool_cookie_name, {path: '/'});
+		$('#code-content').removeData('select-tool', false);
+		$('#btn_select_tool').children('a').removeClass('active');
+		bind_editor_highlighter(false);
+	}else{
+		$.cookie(select_tool_cookie_name, true, {path: '/'});
+		$('#code-content').data('select-tool', true);
+		$('#btn_select_tool').children('a').addClass('active');
+		$("#code-content").bind('mouseup dblclick', bind_editor_highlighter);
+	}
+}
+
 function btn_list_breakline(force){
 	if($('#code-content').hasClass('breakline') && !force){
 		$.removeCookie(breakline_cookie_name, {path: '/'});
@@ -779,6 +797,10 @@ function set_active_file(file, collapse_on_complete){
 				window.open(this.href);
 				return false;
 			});
+			if($('#code-content').data('select-tool')){
+				$("#code-content").bind('dblclick', bind_editor_highlighter);
+				$("#code-content").bind('mouseup', bind_editor_highlighter);
+			}
 			$('html, body').animate({
 				scrollTop: $("#tools").offset().top
 			}, 250);
@@ -808,6 +830,31 @@ function set_active_file(file, collapse_on_complete){
 
 		},
 	});
+}
+
+function bind_editor_highlighter(e, t){
+	if(e){
+		var selected_code = getSelectedCode();
+		if(selected_code){
+			var sel_count = 0;
+			$('#code-content span:contains("' + selected_code + '")').add(e.target).each(function(){
+				$(this).closest('li').addClass('user-selection-similar');
+				$(this).addClass('user-selection-similar');
+				sel_count++;
+			});
+			$(this).click(function(e, t){
+				$('.user-selection-similar').attr('title', '').removeClass('user-selection-similar');
+				e.stopPropagation();
+			});
+			$('span.user-selection-similar, div.user-selection-similar').attr({title: (sel_count > 1 ? mvt_lang.MATCHES.replace('%d', sel_count) : mvt_lang.MATCH.replace('%d', sel_count) )}).tooltip();
+			$(e.target).tooltip('open');
+		}
+	}else{
+		$('.user-selection-similar').attr('title', '').removeClass('user-selection-similar');
+		$('.user-selection-similar').tooltip('destroy');
+		$("#code-content").unbind('dblclick', bind_editor_highlighter);
+		$("#code-content").unbind('mouseup', bind_editor_highlighter);
+	}
 }
 
 function set_button_status(){
