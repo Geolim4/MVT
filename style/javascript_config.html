@@ -5,6 +5,7 @@ var current_file = '{S_CURRENT_FILE}', current_file_ext = '{S_CURRENT_FILE_EXT}'
 var current_file_anchor = window.location.hash.replace('#/', '').replace('#', '');
 var current_path_anchor = window.location.hash ? current_file_anchor.replace(strrchr(window.location.hash.replace('#', ''), '/'), '').split('/') : current_file.split('/');
 var current_tree_path = new Array(), expanded_folders = '', tree_filter = {};
+var current_notepad_content = '';
 var current_mod_versions = {<!-- BEGIN version_selector --><!-- IF version_selector.S_ROW_COUNT > 0 -->, <!-- ENDIF -->'{version_selector.VERSION_ID}' : '{version_selector.VERSION_DIR}'<!-- END version_selector -->};
 var hash_ignore_update = false, hide_list_cookie_name = 'mvt_hide_list', breakline_cookie_name = 'mvt_breakline', select_tool_cookie_name = 'mvt_select_tool',  vendor_prefix = ["webkit", "moz", "ms", "o", ""];
 var file_groups = {

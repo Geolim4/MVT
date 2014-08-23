@@ -55,7 +55,7 @@ function init(){
 		}
 	}, 500);
 	$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
-	get_report();
+	get_report(true);
 
 	$(function () {
 		$(window).scroll(berstick);
@@ -652,7 +652,7 @@ function reset_file_selected(delay){
 }
 
 function notepad_report_checker(){
-	if($('#notepad-report').val()){
+	if($('#notepad-report').val() != current_notepad_content){
 		window.onbeforeunload = onbeforeunload_handler;
 	}else{
 		window.onbeforeunload = false;
@@ -676,17 +676,31 @@ function set_onbeforeunload_handler(handler){
 }
 
 function exit_handler(url){
-	if($('#notepad-report').val()){
-		mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_EXIT_ALERT}",
-			function () {
-				window.onbeforeunload = false;
-				ajax_location(url);
-			},
-			function () {
-				$('#notepad').show(300);
-				$('#btn_notepad').children('a').addClass('active');
-			}
-		);
+	if($('#notepad-report').val() != current_notepad_content){
+		var btns = {}, awBtn = '{LA_MVT_CONTINUE}', cwBtn = '{LA_MVT_CANCEL}', swBtn = 'Save & quit';
+
+		btns[cwBtn] = function () {
+			$(this).dialog('close');
+		};
+		btns[swBtn] = function () {
+			save_report();
+			window.onbeforeunload = false;
+			ajax_location(url);
+			$(this).dialog('close');
+		};
+		btns[awBtn] = function () {
+			$('#notepad').show(300);
+			$('#btn_notepad').children('a').addClass('active');
+			$(this).dialog('close');
+		};
+
+		$('#infobox').children('div').html("{LA_MVT_EXIT_ALERT}");
+		$('#infobox').dialog({
+			modal: true, title: '{LA_MVT_INFORMATION}',
+			zIndex: 10000, autoOpen: true,
+			width: '400px', resizable: false,
+			draggable : false, buttons: btns,
+		});
 	}else{
 		ajax_location(url);
 	}
@@ -736,7 +750,7 @@ function ajax_location(url){
 
 			// Reload notepad
 			$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
-			get_report();
+			get_report(true);
 
 			// Reload core
 			core_init();
@@ -1059,18 +1073,32 @@ function save_report(){
 		if(data['eval']){
 			eval(data['eval']);
 		}
+		if(data['status']){
+			current_notepad_content = $('#notepad-report').val();
+		}
 	}, 'json');
 }
 
-function get_report(){
-	$.post('{U_AJAX}', {mode: 'get_report', mod: current_mod}, function( data ){
-		if(data['eval']){
-			eval(data['eval']);
-		}
-		if(data['status']){
-			$('#notepad-report').val(data.data).trigger('autosize.resize')
-		}
-	}, 'json');
+function get_report(confirm){
+	if(!confirm){
+		mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_DRAFT_RELOAD_WARNING}",
+			function () {
+				get_report(true);
+			},
+			function () {
+			}, true
+		);
+	}else{
+		$.post('{U_AJAX}', {mode: 'get_report', mod: current_mod}, function( data ){
+			if(data['eval']){
+				eval(data['eval']);
+			}
+			if(data['status']){
+				$('#notepad-report').val(data.data).trigger('autosize.resize');
+				current_notepad_content = data.data;
+			}
+		}, 'json');
+	}
 }
 
 core_init();

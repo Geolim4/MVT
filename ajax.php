@@ -476,7 +476,7 @@ switch ($mode)
 		if($data['report']){
 			$user->save_notepad_draft($mod, $data['report']);
 			echo json_encode(array(
-					'eval' => 'mvt_notify({text: "' . addslashes($user->lang['INFORMATION']) . '", type: "success"});',
+					'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_DRAFT_SAVED']) . '", type: "success"});',
 					'status' => true,
 				)
 			);
@@ -484,9 +484,10 @@ switch ($mode)
 	break;
 
 	case 'get_report':
+		$draft = html_entity_decode($user->get_notepad_draft($mod));
 			echo json_encode(array(
-					'eval' => '',
-					'data' => html_entity_decode($user->get_notepad_draft($mod)),
+					'eval' => ($draft ? 'mvt_notify({text: "' . addslashes($user->lang['MVT_DRAFT_LOADED']) . '", type: "success"});' : ''),
+					'data' => $draft,
 					'status' => true,
 				)
 			);

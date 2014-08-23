@@ -323,7 +323,7 @@ span.user-selection-similar{
 	top: 25px;
 	overflow: hidden;
 	border: 1px dashed tomato;
-	z-index: 10000;
+	z-index: 99;
 	box-shadow: 3px 3px 8px 3px;
 }
 
