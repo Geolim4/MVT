@@ -486,7 +486,7 @@ switch ($mode)
 	case 'get_report':
 		$draft = html_entity_decode($user->get_notepad_draft($mod));
 			echo json_encode(array(
-					'eval' => ($draft ? 'mvt_notify({text: "' . addslashes($user->lang['MVT_DRAFT_LOADED']) . '", type: "success"});' : ''),
+					'eval' => ($draft ? 'mvt_notify({text: "' . addslashes($user->lang['MVT_DRAFT_LOADED']) . '", type: "info"});' : ''),
 					'data' => $draft,
 					'status' => true,
 				)
