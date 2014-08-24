@@ -677,7 +677,7 @@ function set_onbeforeunload_handler(handler){
 
 function exit_handler(url){
 	if($('#notepad-report').val() != current_notepad_content){
-		var btns = {}, awBtn = '{LA_MVT_CONTINUE}', cwBtn = '{LA_MVT_CANCEL}', swBtn = 'Save & quit';
+		var btns = {}, awBtn = '{LA_MVT_CONTINUE}', cwBtn = '{LA_MVT_CANCEL}', swBtn = '{LA_MVT_SAVE_AND_CONTINUE}';
 
 		btns[cwBtn] = function () {
 			$(this).dialog('close');
