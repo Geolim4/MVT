@@ -5,7 +5,7 @@
 		<a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');$('#notepad').effect('highlight', {color:'#669966'}, 1500);$('#notepad').draggable({axis: 'x', handle: '#notepad-handle'});" class="button">-</a>
 		<a id="notepad-handle" href="javascript:void(0);" class="button display-on-reduced" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a>
 		<a href="javascript:void(0);" onclick="save_report();" class="button left green">&#x1f4be;</a>
-		<a href="javascript:void(0);" onclick="get_report();" class="button left green get_report">&#10226;</a>
+		<a href="javascript:void(0);" onclick="get_report(!$('#notepad-report').val());" class="button left green get_report">&#10226;</a>
 	</h3>
 	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: 9em;"></textarea>
 </div>

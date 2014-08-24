@@ -485,12 +485,15 @@ switch ($mode)
 
 	case 'get_report':
 		$draft = html_entity_decode($user->get_notepad_draft($mod));
+		if ($draft)
+		{
 			echo json_encode(array(
-					'eval' => ($draft ? 'mvt_notify({text: "' . addslashes($user->lang['MVT_DRAFT_LOADED']) . '", type: "info"});' : ''),
-					'data' => $draft,
+					'eval' => 'mvt_notify({text: "' . addslashes($user->lang['MVT_DRAFT_LOADED']) . '", type: "info"});',
+					'data' => $draft  . "\n\n",// PHP is trimming string stored in sessions.
 					'status' => true,
 				)
 			);
+		}
 	break;
 
 	case 'delete_file':
