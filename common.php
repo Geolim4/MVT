@@ -37,6 +37,7 @@ $config['mvt_search_engine_img']	= isset($config['mvt_search_engine_img'])	? $co
 $config['mvt_search_engine_url']	= isset($config['mvt_search_engine_url'])	? $config['mvt_search_engine_url']	: 'https://github.com/search?type=Code&q=%CODE%';
 $config['mvt_tab_str_len']			= isset($config['mvt_tab_str_len'])			? $config['mvt_tab_str_len']		: 25;
 $config['mvt_exit_handler']			= isset($config['mvt_exit_handler'])		? $config['mvt_exit_handler']		: true;
+$config['mvt_tiny_mce']				= isset($config['mvt_tiny_mce'])			? $config['mvt_tiny_mce']			: false;
 
 //Only the first one is important, other will be auto-set automatically
 $config['force_server_vars']		= isset($config['force_server_vars'])		? $config['force_server_vars']		: false;

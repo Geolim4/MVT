@@ -336,6 +336,7 @@ if ($mode == 'config')
 				'mvt_search_engine_img' => request_var('mvt_search_engine_img', ''),
 				'mvt_tab_str_len' => request_var('mvt_tab_str_len', 25),
 				'mvt_exit_handler' => request_var('mvt_exit_handler', 1),
+				'mvt_tiny_mce' => request_var('mvt_tiny_mce', 1),
 			);
 		}
 		foreach ($settings as $config_name => $config_value)
@@ -367,6 +368,7 @@ $template->assign_vars(array(
 	'S_CFG_SEARCH_ENGINE_URL' => $config['mvt_search_engine_url'],
 	'S_CFG_TAB_STR_LEN' => $config['mvt_tab_str_len'],
 	'S_CFG_EXIT_HANDLER' => $config['mvt_exit_handler'],
+	'S_CFG_TINY_MCE' => $config['mvt_tiny_mce'],
 
 	//Misc
 	'L_MVT_SEARCH_ENGINE' => $user->lang('MVT_SEARCH_ENGINE', $config['mvt_search_engine']),

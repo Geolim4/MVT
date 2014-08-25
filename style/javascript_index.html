@@ -116,6 +116,9 @@ function init(){
 	mvt_service('url_auto_updater', url_auto_updater, 500, 'start');
 
 	set_dropzone();
+	<!-- IF S_CFG_TINY_MCE-->
+	init_mce_editor();
+	<!-- ENDIF -->
 	tree_count_filters('filter-select');
 	file_encoding(current_mod, current_file, false);
 	file_eol(current_mod, current_file, false);
@@ -751,6 +754,9 @@ function ajax_location(url){
 			// Reload notepad
 			$("#notepad").draggable({handle: "#notepad-handle", containment: "#wrap"});
 			get_report(true);
+			<!-- IF S_CFG_TINY_MCE-->
+			init_mce_editor();
+			<!-- ENDIF -->
 
 			// Reload core
 			core_init();
@@ -921,7 +927,10 @@ function insert_filename(){
 	$("#btn_filename").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
 		function () {
 			$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
-			$('#notepad-report').val($('#notepad-report').val() + "[b][size=110]" + current_file + "[/size][/b]\n").trigger('autosize.resize');
+			$('#notepad-report').val($('#notepad-report').val() + "[b][size=110]" + current_file + "[/size][/b]\n")<!-- IF not S_CFG_TINY_MCE-->.trigger('autosize.resize')<!-- ENDIF -->;
+			<!-- IF S_CFG_TINY_MCE-->
+			tinyMCE.activeEditor.setContent( $('#notepad-report').val() );
+			<!-- ENDIF -->
 		}
 	);
 }
@@ -939,9 +948,12 @@ function report_code(err_code){
 		function () {
 			$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
 				function () {
-					$('#notepad-report').val($('#notepad-report').val() + "[b]" + err_code + "[/b]\n[code]" + SelectedCode + "[/code]" + $('#user-report').val() + "\n\n").trigger('autosize.resize');
+					$('#notepad-report').val($('#notepad-report').val() + "[b]" + err_code + "[/b]\n[code]" + SelectedCode + "[/code]" + $('#user-report').val() + "\n\n")<!-- IF not S_CFG_TINY_MCE-->.trigger('autosize.resize')<!-- ENDIF -->;
 					$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
 					$('#user-report').val('');
+					<!-- IF S_CFG_TINY_MCE-->
+					tinyMCE.activeEditor.setContent( $('#notepad-report').val() );
+					<!-- ENDIF -->
 				}
 			);
 		},
@@ -953,7 +965,7 @@ function report_code(err_code){
 function purge_notepad(){
 	mvt_confirm("{LA_MVT_INFORMATION}", "{LA_MVT_PURGE_CONFIRM}",
 		function () {
-			$('#notepad-report').val('').trigger('autosize.resize');
+			$('#notepad-report').val('')<!-- IF not S_CFG_TINY_MCE-->.trigger('autosize.resize')<!-- ENDIF -->;
 		},
 		function () {
 		}, true
@@ -1055,7 +1067,7 @@ function internal_mesage(){
 				alert('{LA_MVT_EMPTY_MESSAGE}');
 				return;
 			}
-			$('#notepad-report').val($('#notepad-report').val() + "[quote][size=120][b]{LA_MVT_INTERNAL}:[/b][/size]" + ((SelectedCode) ? "\n\n[b][size=110]" + current_file + "[/size][/b][code]" + SelectedCode + "[/code]" : '') + "\n\n" + $('#user-report').val() + "[/quote]\n").trigger('autosize.resize');
+			$('#notepad-report').val($('#notepad-report').val() + "[quote][size=120][b]{LA_MVT_INTERNAL}:[/b][/size]" + ((SelectedCode) ? "\n\n[b][size=110]" + current_file + "[/size][/b][code]" + SelectedCode + "[/code]" : '') + "\n\n" + $('#user-report').val() + "[/quote]\n")<!-- IF not S_CFG_TINY_MCE-->.trigger('autosize.resize')<!-- ENDIF -->;
 			$("#user-report").effect('transfer', {to: "#notepad-button", className: "ui-effects-transfer" }, 500,
 				function () {
 					$("#notepad-button").effect('highlight', {color:"#669966"}, 500);
@@ -1069,6 +1081,9 @@ function internal_mesage(){
 }
 
 function save_report(){
+	<!-- IF S_CFG_TINY_MCE-->
+	tinyMCE.triggerSave();
+	<!-- ENDIF -->
 	$.post('{U_AJAX}', {mode: 'save_report', mod: current_mod, data: {'report': $('#notepad-report').val()}}, function( data ){
 		if(data['eval']){
 			eval(data['eval']);
@@ -1094,11 +1109,26 @@ function get_report(confirm){
 				eval(data['eval']);
 			}
 			if(data['status']){
-				$('#notepad-report').val(data.data).trigger('autosize.resize');
+				$('#notepad-report').val(data.data)<!-- IF not S_CFG_TINY_MCE-->.trigger('autosize.resize')<!-- ENDIF -->;
 				current_notepad_content = data.data;
+				<!-- IF S_CFG_TINY_MCE-->
+				tinyMCE.activeEditor.setContent( $('#notepad-report').val() );
+				<!-- ENDIF -->
 			}
 		}, 'json');
 	}
+}
+
+function init_mce_editor(){
+	tinyMCE.init({
+		'entities': ' ,	',   
+		cleanup : false,
+		entity_encoding : "raw",
+		theme : "modern",
+		plugins : "bbcode code",
+		selector: "#notepad-report",
+		content_css : "style/mvt-tinymce.css",
+	});
 }
 
 core_init();

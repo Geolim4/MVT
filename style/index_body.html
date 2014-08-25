@@ -5,9 +5,9 @@
 		<a href="javascript:void(0);" onclick="$('#notepad').addClass('reduced');$('#notepad').effect('highlight', {color:'#669966'}, 1500);$('#notepad').draggable({axis: 'x', handle: '#notepad-handle'});" class="button">-</a>
 		<a id="notepad-handle" href="javascript:void(0);" class="button display-on-reduced" style="cursor: move;">{L_MVT_DRAG_BUTTON}</a>
 		<a href="javascript:void(0);" onclick="save_report();" class="button left green">&#x1f4be;</a>
-		<a href="javascript:void(0);" onclick="get_report(!$('#notepad-report').val());" class="button left green get_report">&#10226;</a>
+		<a href="javascript:void(0);" onclick="get_report();" class="button left green get_report">&#10226;</a>
 	</h3>
-	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: 9em;"></textarea>
+	<textarea id="notepad-report" class="inputbox" tabindex="3" cols="76" rows="7" name="message" style="height: <!-- IF not S_CFG_TINY_MCE-->9em<!-- ELSE -->25em<!-- ENDIF -->;"></textarea>
 </div>
 <div id="tools-sticker"></div>
 <div id="tools">
@@ -24,7 +24,7 @@
 		<li class="separator">|</li>
 		<li id="btn_select_tool"><a href="#" class="mvt-btn" onclick="btn_select_tool(); return false;" title="{L_MVT_SELECT_TOOL}"><img alt="{L_MVT_SELECT_TOOL}" src="style/images/select_tool.png" /></a></li>
 		<li id="btn_select_code"><a href="#" class="mvt-btn" onclick="selectCode(document.getElementById('code-content'), $('#code-content').children().first().prop('tagName')); return false;" title="{L_MVT_SELECT_ALL}"><img alt="{L_MVT_SELECT_ALL}" src="style/images/select_all.png" /></a></li>
-		<li id="btn_notepad"><a href="#" class="mvt-btn" onclick="$('#notepad').show(300); $(this).addClass('active'); $('#notepad-report').autosize(); return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
+		<li id="btn_notepad"><a href="#" class="mvt-btn" onclick="$('#notepad').show(300); $(this).addClass('active');<!-- IF not S_CFG_TINY_MCE--> $('#notepad-report').autosize();<!-- ENDIF --> return false;" id="notepad-button" title="{L_MVT_OPEN_NOTEPAD}"><img alt="{L_MVT_OPEN_NOTEPAD}" src="style/images/notepad.png" /></a></li>
 		<li id="btn_purge_notepad"><a href="#" class="mvt-btn" onclick="purge_notepad(); return false;" id="notepad-purge" title="{L_MVT_PURGE}"><img alt="{L_MVT_PURGE}" src="style/images/purge.png" /></a></li>
 		<li class="f-right">
 			<div id="left-tools">

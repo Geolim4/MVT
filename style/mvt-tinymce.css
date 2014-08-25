@@ -1,0 +1,26 @@
+/* TinyMCE stuff */
+div.codeStyle pre{
+	display: block;
+	border: 1px solid #d8d8d8;
+	color: #2e8b57;
+	font: 0.9em/1.3em Monaco,"Andale Mono","Courier New",Courier,mono;
+	height: auto;
+	margin: 2px 0;
+	max-height: 200px;
+	overflow: auto;
+	padding-top: 5px;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+span.quoteStyle{
+	display: block;
+	background: none no-repeat scroll 6px 8px #ebebeb;
+	background-color: #ebeadd;
+	background-image: url("./images/quote.gif");
+	border: 1px solid #dbdbce;
+	font-size: 0.95em;
+	margin: 0.5em 1px 0 25px;
+	overflow: hidden;
+	padding: 25px 5px 5px 5px;
+}

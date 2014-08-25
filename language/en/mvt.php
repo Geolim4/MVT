@@ -169,6 +169,7 @@ $lang = array_merge($lang, array(
 	'MVT_TAG_NOTICE' => 'NOTICE',
 	'MVT_TAG_WARNING' => 'WARNING',
 	'MVT_TAG_FAIL' => 'FAIL',
+	'MVT_TINY_MCE' => 'Use rich a editor (TinyMCE) instead of a simple text area',
 	'MVT_TOGGLE' => 'Hide or display the side menu',
 	'MVT_VERSION_ERROR' => 'Cannot retrieve version from server, error message: %s',
 	'MVT_LATEST_VERSION' => 'Latest version: %1$s, <a href="%1$s">read more</a>.',
